@@ -20,4 +20,5 @@
     $ sudo pip install flask
     $ pip freeze > requirement.txt
 ```
-
+- run.py, app/__init__.py, app/templates/ 만들어서 테스트 해봄
+- howsmart_nginx.conf nginx config 파일을 생성
