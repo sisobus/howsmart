@@ -13,9 +13,11 @@
     - mysql-client
     - mysql-server
 - virtualenv 로 개발 환경 만듬
+
 "'
     $ virtualenv venv
     $ . venv/bin/activate
     $ sudo pip install flask
     $ pip freeze > requirement.txt
 "'
+
