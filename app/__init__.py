@@ -13,3 +13,6 @@ app = Flask(__name__)
 def main():
     return render_template('main.html')
 
+@app.route('/test')
+def test():
+    return render_template('base.html')

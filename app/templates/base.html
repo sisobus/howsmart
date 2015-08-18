@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <script>
+        paceOptions = {
+            elements: true
+        };
+    </script>
+    <script src="/assets/js/pace.min.js"></script>
+</head>
+<body>
+
+<!-- Modal login -->
+<div class="modal signUpContent fade" id="ModalLogin" tabindex="-1" role="dialog">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
+                <h3 class="modal-title-site text-center"> Login </h3>
+            </div>
+            <div class="modal-body">
+                <div class="form-group login-username">
+                    <div>
+                        <input name="log" id="login-user" class="form-control input" size="20"
+                               placeholder="Enter Username" type="text">
+                    </div>
+                </div>
+                <div class="form-group login-password">
+                    <div>
+                        <input name="Password" id="login-password" class="form-control input" size="20"
+                               placeholder="Password" type="password">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div>
+                        <div class="checkbox login-remember">
+                            <label>
+                                <input name="rememberme" value="forever" checked="checked" type="checkbox">
+                                Remember Me </label>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <input name="submit" class="btn  btn-block btn-lg btn-primary" value="LOGIN" type="submit">
+                    </div>
+                </div>
+                <!--userForm-->
+
+            </div>
+            <div class="modal-footer">
+                <p class="text-center"> Not here before? <a data-toggle="modal" data-dismiss="modal"
+                                                            href="#ModalSignup"> Sign Up </a> <br>
+                    <a href="forgot-password.html"> Lost your password? </a></p>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- Modal Signup start -->
+<div class="modal signUpContent fade" id="ModalSignup" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
+                <h3 class="modal-title-site text-center"> REGISTER </h3>
+            </div>
+            <div class="modal-body">
+                <div class="control-group"><a class="fb_button btn  btn-block btn-lg " href="#"> SIGNUP WITH
+                    FACEBOOK </a></div>
+                <h5 style="padding:10px 0 10px 0;" class="text-center"> OR </h5>
+
+                <div class="form-group reg-username">
+                    <div>
+                        <input name="login" class="form-control input" size="20" placeholder="Enter Username"
+                               type="text">
+                    </div>
+                </div>
+                <div class="form-group reg-email">
+                    <div>
+                        <input name="reg" class="form-control input" size="20" placeholder="Enter Email" type="text">
+                    </div>
+                </div>
+                <div class="form-group reg-password">
+                    <div>
+                        <input name="password" class="form-control input" size="20" placeholder="Password"
+                               type="password">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div>
+                        <div class="checkbox login-remember">
+                            <label>
+                                <input name="rememberme" id="rememberme" value="forever" checked="checked"
+                                       type="checkbox">
+                                Remember Me </label>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <input name="submit" class="btn  btn-block btn-lg btn-primary" value="REGISTER" type="submit">
+                    </div>
+                </div>
+                <!--userForm-->
+
+            </div>
+            <div class="modal-footer">
+                <p class="text-center"> Already member? <a data-toggle="modal" data-dismiss="modal" href="#ModalLogin">
+                    Sign in </a></p>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+
+    </div>
+    <!-- /.modal-dialog -->
+
+</div>
+<!-- /.ModalSignup End -->
+
+<!-- Fixed navbar start -->
+<div class="navbar navbar-tshop navbar-fixed-top megamenu" role="navigation">
+    <div class="navbar-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-sm-6 col-xs-6 col-md-6">
+                    <div class="pull-left ">
+                        <ul class="userMenu ">
+                            <li><a href="#"> <span class="hidden-xs">Search bar</span><i
+                                    class="glyphicon glyphicon-info-sign hide visible-xs "></i> </a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-sm-6 col-xs-6 col-md-6 no-margin no-padding">
+                    <div class="pull-right">
+                        <ul class="userMenu">
+                            <li><a href="account-1.html"><span class="hidden-xs"> My Account</span> <i
+                                    class="glyphicon glyphicon-user hide visible-xs "></i></a></li>
+                            <li><a href="#" data-toggle="modal" data-target="#ModalLogin"> <span class="hidden-xs">Sign In</span>
+                                <i class="glyphicon glyphicon-log-in hide visible-xs "></i> </a></li>
+                            <li class="hidden-xs"><a href="#" data-toggle="modal" data-target="#ModalSignup"> Create
+                                Account </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/.navbar-top-->
+
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"><span
+                    class="sr-only"> Toggle navigation </span> <span class="icon-bar"> </span> <span
+                    class="icon-bar"> </span> <span class="icon-bar"> </span></button>
+            <a class="navbar-brand " href="/"> LOGO </a>
+
+            <!-- this part for mobile -->
+            <div class="search-box pull-right hidden-lg hidden-md hidden-sm">
+                <div class="input-group">
+                    <button class="btn btn-nobg getFullSearch" type="button"><i class="fa fa-search"> </i></button>
+                </div>
+                <!-- /input-group -->
+            </div>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#"> Home </a></li>
+                <li class="dropdown megamenu-fullwidth"><a data-toggle="dropdown" class="dropdown-toggle" href="#"> Photos <b class="caret"> </b> </a>
+                    <ul class="dropdown-menu">
+                        <li class="megamenu-content ">
+                            <ul class="col-lg-3  col-sm-3 col-md-3 unstyled noMarginLeft newCollectionUl">
+                                <li class="no-border">
+                                    <p class="promo-1"><strong> category1 </strong></p>
+                                </li>
+                                <li><a href="#"> category1 </a></li>
+                                <li><a href="#"> category1 </a></li>
+                                <li><a href="#"> category1 </a></li>
+                                <li><a href="#"> category1 </a></li>
+                                <li><a href="#"> category1 </a></li>
+                                <li><a href="#"> category1 </a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown megamenu-fullwidth"><a data-toggle="dropdown" class="dropdown-toggle" href="#"> Findpros <b class="caret"> </b> </a>
+                    <ul class="dropdown-menu">
+                        <li class="megamenu-content ">
+                            <ul class="col-lg-3  col-sm-3 col-md-3 unstyled noMarginLeft newCollectionUl">
+                                <li class="no-border">
+                                    <p class="promo-1"><strong> category2 </strong></p>
+                                </li>
+                                <li><a href="#"> category1 </a></li>
+                                <li><a href="#"> category1 </a></li>
+                                <li><a href="#"> category1 </a></li>
+                                <li><a href="#"> category1 </a></li>
+                                <li><a href="#"> category1 </a></li>
+                                <li><a href="#"> category1 </a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown megamenu-fullwidth"><a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                    Shop <b class="caret"> </b> </a>
+                    <ul class="dropdown-menu">
+                        <li class="megamenu-content">
+
+                            <!-- megamenu-content -->
+
+                            <h3 class="promo-1 no-margin hidden-xs"> SHOP </h3>
+
+                            <h3 class="promo-1sub hidden-xs"> shop </h3>
+                            <ul class="col-lg-2  col-sm-2 col-md-2 unstyled">
+                                <li class="no-border">
+                                    <p><strong> category1 </strong></p>
+                                </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                            </ul>
+                            <ul class="col-lg-2  col-sm-2 col-md-2 unstyled">
+                                <li class="no-border">
+                                    <p><strong> category2 </strong></p>
+                                </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                            </ul>
+                            <ul class="col-lg-2  col-sm-2 col-md-2 unstyled">
+                                <li class="no-border">
+                                    <p><strong> &nbsp; </strong></p>
+                                </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                            </ul>
+                            <ul class="col-lg-2  col-sm-2 col-md-2 unstyled">
+                                <li class="no-border">
+                                    <p><strong> category3 </strong></p>
+                                </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                                <li> <a href="#">category</a> </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            </div>
+            <!--/.navbar-nav hidden-xs-->
+        </div>
+        <!--/.nav-collapse -->
+
+    </div>
+    <!--/.container -->
+
+    <div class="search-full text-right"><a class="pull-right search-close"> <i class=" fa fa-times-circle"> </i> </a>
+
+        <div class="searchInputBox pull-right">
+            <input type="search" data-searchurl="search?=" name="q" placeholder="start typing and hit enter to search"
+                   class="search-input">
+            <button class="btn-nobg search-btn" type="submit"><i class="fa fa-search"> </i></button>
+        </div>
+    </div>
+    <!--/.search-full-->
+
+</div>
+    
+{% block content %}{% endblock %}
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
+</script>
+<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script>
+    // this script required for subscribe modal
+    $(window).load(function () {
+        // full load
+        $('#modalAds').modal('show');
+        $('#modalAds').removeClass('hide');
+    });
+
+</script>
+
+<!-- include jqueryCycle plugin -->
+<script src="/assets/js/jquery.cycle2.min.js"></script>
+
+<!-- include easing plugin -->
+<script src="/assets/js/jquery.easing.1.3.js"></script>
+
+<!-- include  parallax plugin -->
+<script type="text/javascript" src="/assets/js/jquery.parallax-1.1.js"></script>
+
+<!-- optionally include helper plugins -->
+<script type="text/javascript" src="/assets/js/helper-plugins/jquery.mousewheel.min.js"></script>
+
+<!-- include mCustomScrollbar plugin //Custom Scrollbar  -->
+
+<script type="text/javascript" src="/assets/js/jquery.mCustomScrollbar.js"></script>
+
+<!-- include checkRadio plugin //Custom check & Radio  -->
+<script type="text/javascript" src="/assets/js/ion-checkRadio/ion.checkRadio.min.js"></script>
+
+<!-- include grid.js // for equal Div height  -->
+<script src="/assets/js/grids.js"></script>
+
+<!-- include carousel slider plugin  -->
+<script src="/assets/js/owl.carousel.min.js"></script>
+
+<!-- jQuery minimalect // custom select   -->
+<script src="/assets/js/jquery.minimalect.min.js"></script>
+
+<!-- include touchspin.js // touch friendly input spinner component   -->
+<script src="/assets/js/bootstrap.touchspin.js"></script>
+
+<!-- include custom script for only homepage  -->
+<script src="/assets/js/home.js"></script>
+<!-- include custom script for site  -->
+<script src="/assets/js/script.js"></script>
+<script>
+
+</script>
+</body>
+</html>
