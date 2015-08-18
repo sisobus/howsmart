@@ -51,5 +51,20 @@ socket = /tmp/%n.sock
 logto = /var/log/uwsgi/%n.log
 workers = 3
 ```
+- uwsgi 랑 nginx restart
+```
+    $ sudo service uwsgi restart
+    $ sudo service nginx restart
+```
 
 ## 2015.08.18
+navigation bar, main page banner를 추가했다.
+
+- assets 위치를 잡을 수 있도록 howsmart_nginx.conf 파일을 수정했다.
+```
+    location /assets/ {
+        alias /home/howsmart/howsmart/app/assets/;
+    }
+```
+- navbar의 색을 #ffffff로 하고, body의 background-color를 #f5f5f5로 설정했다.
+- 기본 글씨색을 #666으로 설정했다. 
