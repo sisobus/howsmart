@@ -71,5 +71,6 @@ navigation bar, main page banner를 추가했다.
 - http://code.tutsplus.com/tutorials/intro-to-flask-signing-in-and-out--net-29982 
     - 여기 참고해서 login 구현하면 될 듯
     - flask-login 모듈 사용
+
 ### To do
 - login, logout, sign up, fb-login
