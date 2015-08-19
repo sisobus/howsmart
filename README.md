@@ -218,3 +218,6 @@ key_buffer              = 16M
 #
 !includedir /etc/mysql/conf.d/
 ```
+
+- 로그인 구현을 위하여 db modeling 을 함
+![alt tag](http://1.234.80.248/assets/images/db_modeling.png)
