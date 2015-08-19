@@ -229,5 +229,5 @@ key_buffer              = 16M
     - https://github.com/maxcountryman/flask-login/wiki/A-simple-working-demo
     - 둘을 참고하되 flask-wtf를 쓰지않고, form을 넘겨서 구현하는 방식으로 해야함
 
-## 2015.08.19
+## 2015.08.20
 
