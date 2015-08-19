@@ -80,6 +80,8 @@ navigation bar, main page banner를 추가했다.
     - libmysqlclient-dev
 - venv 에 mysql-python 을 설치함
 - mysql default character set을 utf8 로 설정(한글깨짐방지)
+    - /etc/mysql/my.cnf
+    - test : show variables like 'c%';
 
 ```
 #
