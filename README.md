@@ -221,3 +221,10 @@ key_buffer              = 16M
 
 - 로그인 구현을 위하여 db modeling 을 함
 ![alt tag](http://1.234.80.248/assets/images/db_modeling.png)
+- mysql 에 모델링한 db를 올림
+
+### To do
+- sign up, sign in을 꼭 구현해야 함.
+    - http://code.tutsplus.com/tutorials/intro-to-flask-signing-in-and-out--net-29982
+    - https://github.com/maxcountryman/flask-login/wiki/A-simple-working-demo
+    - 둘을 참고하되 flask-wtf를 쓰지않고, form을 넘겨서 구현하는 방식으로 해야함
