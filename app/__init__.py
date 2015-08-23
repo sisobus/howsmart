@@ -1,18 +1,20 @@
 #-*- coding:utf-8 -*-
-from flask import Flask
-from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 import os
 import sys
 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-app = Flask(__name__)
+import routes
 
-@app.route('/')
-def main():
-    return render_template('main.html')
-
-@app.route('/test')
-def test():
-    return render_template('base.html')
+#@app.route('/signup', methods=['GET', 'POST'])
+#def signup():
+#    form = SignupForm()
+#
+#    if request.method == 'POST':
+#        if form.validate() == False:
+#            return render_template('test.html', form=form)
+#        else :
+#            return "[1] Create a new user [2] sign in the user [3] redirect to the user's profile"
+#    elif request.method == 'GET':
+#        return render_template('test.html', form=form)
