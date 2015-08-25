@@ -4,14 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
+    <!--
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="/assets/css/style.css">
+    -->
+    <link rel="stylesheet" href="{{  url_for('static',filename='bootstrap/css/bootstrap.css') }}" />
+    <link rel="stylesheet" href="{{  url_for('static',filename='css/style.css') }}" />
     <script>
         paceOptions = {
             elements: true
         };
     </script>
-    <script src="/assets/js/pace.min.js"></script>
+    <style type="text/css">
+        form input#username,
+        form input#email,
+        form input#password  {
+            border-color: #DDDDDD;
+            -webkit-border-radius: 3px 0 0 3px;
+            -moz-border-radius: 3px 0 0 3px;
+            border-radius: 3px 0 0 3px;
+            border-style: solid;
+            border-width: 2px 1px 1px 2px;
+            color: #888888;
+            font-size: 14px;
+            height: 36px;
+            width: 100%;
+        }
+        form input#password {
+            margin-bottom: 10px;
+        }
+        form input#username:focus,
+        form input#email:focus,
+        form input#password:focus {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+            outline: 0 none;
+        }
+    </style>
+    <script src="{{  url_for('static',filename='js/pace.min.js') }} "></script>
 </head>
 <body>
 
@@ -24,18 +53,34 @@
                 <h3 class="modal-title-site text-center"> Login </h3>
             </div>
             <div class="modal-body">
+                <!-- user loginForm -->
+                <form action="{{ url_for('signin') }}" method=post>
+                    {{ signinForm.hidden_tag() }}
                 <div class="form-group login-username">
                     <div>
+                        {% for message in signinForm.email.errors %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                        {{ signinForm.email(placeholder="Enter email") }}
+                        <!--
                         <input name="log" id="login-user" class="form-control input" size="20"
                                placeholder="Enter Username" type="text">
+                               -->
                     </div>
                 </div>
                 <div class="form-group login-password">
                     <div>
+                        {% for message in signinForm.password.errors %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                        {{ signinForm.password(placeholder="Enter your password") }}
+                        <!--
                         <input name="Password" id="login-password" class="form-control input" size="20"
                                placeholder="Password" type="password">
+                               -->
                     </div>
                 </div>
+                <!--
                 <div class="form-group">
                     <div>
                         <div class="checkbox login-remember">
@@ -45,11 +90,13 @@
                         </div>
                     </div>
                 </div>
+                -->
                 <div>
                     <div>
                         <input name="submit" class="btn  btn-block btn-lg btn-primary" value="LOGIN" type="submit">
                     </div>
                 </div>
+                    </form>
                 <!--userForm-->
 
             </div>
@@ -78,21 +125,41 @@
                 <h5 style="padding:10px 0 10px 0;" class="text-center"> OR </h5>
 
                 <!-- User form start-->
+                <form action="{{ url_for('signup') }}" method=post>
+                    {{ signupForm.hidden_tag() }}
                 <div class="form-group reg-username">
                     <div>
+                        {% for message in signupForm.username.errors %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                        {{ signupForm.username(placeholder="Enter username") }}
+                        <!--
                         <input name="login" class="form-control input" size="20" placeholder="Enter Username"
                                type="text">
+                               -->
                     </div>
                 </div>
                 <div class="form-group reg-email">
                     <div>
+                        {% for message in signupForm.email.errors %}
+                            <div class="flash">{{  message }}</div>
+                        {% endfor %}
+                        {{ signupForm.email(placeholder="Enter your Email") }}
+                        <!--
                         <input name="reg" class="form-control input" size="20" placeholder="Enter Email" type="text">
+                        -->
                     </div>
                 </div>
                 <div class="form-group reg-password">
                     <div>
+                        {% for message in signupForm.password.errors %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                        {{ signupForm.password(placeholder="Enter your password") }}
+                        <!--
                         <input name="password" class="form-control input" size="20" placeholder="Password"
                                type="password">
+                               -->
                     </div>
                 </div>
                 <div>
@@ -100,6 +167,7 @@
                         <input name="submit" class="btn  btn-block btn-lg btn-primary" value="REGISTER" type="submit">
                     </div>
                 </div>
+                </form>
                 <!--userForm-->
 
             </div>
@@ -129,16 +197,29 @@
                         </ul>
                     </div>
                 </div>
+                <!-- User Menu start -->
+                {% if session.logged_in %}
+                <div class="col-lg-6 col-sm-6 col-xs-6 col-md-6 no-margin no-padding">
+                    <div class="pull-right">
+                        <ul class="userMenu">
+                            <li><a href="#"><span class="hidden-xs">{{ session['username'] }}님 환영합니다</span></a></li>
+                            <i class="glyphicon glyphicon-log-in hide visible-xs "></i> </a></li>
+                            <li><a href="{{ url_for('signout') }}">Sign out</a></li>
+                        </ul>
+                    </div>
+                </div>
+                {% elif not session.logged_in %}
                 <div class="col-lg-6 col-sm-6 col-xs-6 col-md-6 no-margin no-padding">
                     <div class="pull-right">
                         <ul class="userMenu">
                             <li><a href="#" data-toggle="modal" data-target="#ModalLogin"> <span class="hidden-xs">Sign In</span>
                                 <i class="glyphicon glyphicon-log-in hide visible-xs "></i> </a></li>
-                            <li class="hidden-xs"><a href="#" data-toggle="modal" data-target="#ModalSignup"> Create
-                                Account </a></li>
+                            <li class="hidden-xs"><a href="#" data-toggle="modal" data-target="#ModalSignup"> Create Account </a></li>
                         </ul>
                     </div>
                 </div>
+                {% endif %}
+                <!-- user menu end -->
             </div>
         </div>
     </div>
@@ -276,13 +357,13 @@
     <!--/.search-full-->
 
 </div>
-    
+
 {% block content %}{% endblock %}
 
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
 </script>
-<script src="assets/bootstrap/js/bootstrap.min.js"></script>
+<script src="{{  url_for('static',filename='bootstrap/js/bootstrap.min.js') }}"></script>
 <script>
     // this script required for subscribe modal
     $(window).load(function () {
@@ -294,40 +375,39 @@
 </script>
 
 <!-- include jqueryCycle plugin -->
-<script src="/assets/js/jquery.cycle2.min.js"></script>
-
+<script src="{{  url_for('static',filename='js/jquery.cycle2.min.js') }}"></script>
 <!-- include easing plugin -->
-<script src="/assets/js/jquery.easing.1.3.js"></script>
+<script src="{{  url_for('static',filename='js/jquery.easing.1.3.js') }}"></script>
 
 <!-- include  parallax plugin -->
-<script type="text/javascript" src="/assets/js/jquery.parallax-1.1.js"></script>
+<script src="{{  url_for('static',filename='js/jquery/parallax-1.1.js') }}"></script>
 
 <!-- optionally include helper plugins -->
-<script type="text/javascript" src="/assets/js/helper-plugins/jquery.mousewheel.min.js"></script>
+<script src="{{  url_for('static',filename='js/helper-plugins/jquery.mousewheel.min.js') }}"></script>
 
 <!-- include mCustomScrollbar plugin //Custom Scrollbar  -->
 
-<script type="text/javascript" src="/assets/js/jquery.mCustomScrollbar.js"></script>
+<script src="{{  url_for('static',filename='js/jquery.mCustomScrollbar.js') }}"></script>
 
 <!-- include checkRadio plugin //Custom check & Radio  -->
-<script type="text/javascript" src="/assets/js/ion-checkRadio/ion.checkRadio.min.js"></script>
+<script src="{{  url_for('static',filename='js/ion-checkRadio/ion.checkRadio.min.js') }}"></script>
 
 <!-- include grid.js // for equal Div height  -->
-<script src="/assets/js/grids.js"></script>
+<script src="{{  url_for('static',filename='js/grids.js') }}"></script>
 
 <!-- include carousel slider plugin  -->
-<script src="/assets/js/owl.carousel.min.js"></script>
+<script src="{{  url_for('static',filename='js/owl.carousel.min.js') }}"></script>
 
 <!-- jQuery minimalect // custom select   -->
-<script src="/assets/js/jquery.minimalect.min.js"></script>
+<script src="{{  url_for('static',filename='js/jquery.minimalect.min.js') }}"></script>
 
 <!-- include touchspin.js // touch friendly input spinner component   -->
-<script src="/assets/js/bootstrap.touchspin.js"></script>
+<script src="{{  url_for('static',filename='js/bootstrap.touchspin.js') }}"></script>
 
 <!-- include custom script for only homepage  -->
-<script src="/assets/js/home.js"></script>
+<script src="{{  url_for('static',filename='js/home.js') }}"></script>
 <!-- include custom script for site  -->
-<script src="/assets/js/script.js"></script>
+<script src="{{  url_for('static',filename='js/script.js') }}"></script>
 <script>
 
 </script>
