@@ -229,5 +229,8 @@ key_buffer              = 16M
     - https://github.com/maxcountryman/flask-login/wiki/A-simple-working-demo
     - 둘을 참고하되 flask-wtf를 쓰지않고, form을 넘겨서 구현하는 방식으로 해야함
 
-## 2015.08.20
+## 2015.08.25
+로그인을 구현했다.
+- flask-wtf 를 사용함
+- flask-Login 을 이용했기 때문에 injection은 문제없을듯
 
