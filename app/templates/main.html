@@ -14,11 +14,11 @@
                  data-cycle-swipe=true
                  data-cycle-prev=".prevControl"
                  data-cycle-next=".nextControl" data-cycle-loader="wait">
-                <div class="slider-item slider-item-img1"><img src="/assets/images/wide_image1.jpg"
+                <div class="slider-item slider-item-img1"><img src="{{ url_for('static',filename='images/wide_image1.jpg') }}"
                                                                class="img-responsive parallaximg sliderImg" alt="img">
                 </div>
                 <div class="slider-item slider-item-img1">
-                    <img src="/assets/images/wide_image2.jpg" class="img-responsive parallaximg sliderImg" alt="img">
+                    <img src="{{ url_for('static',filename='images/wide_image2.jpg') }}" class="img-responsive parallaximg sliderImg" alt="img">
                 </div>
                 <!--/.slider-item-->
             </div>
