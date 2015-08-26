@@ -234,3 +234,18 @@ key_buffer              = 16M
 - flask-wtf 를 사용함
 - flask-Login 을 이용했기 때문에 injection은 문제없을듯
 
+## 2015.08.26
+feed 쓰는 페이지를 생성했다.
+- image_container 는 스크롤이 되지 않고, content_container 만 스크롤 되게 하기 힘들었다.
+- content_container 의 크기를 300px 로 고정시키고, image_container를 relative 로 주려했으나 실패! 그 후 70:30%로 fix함
+    - 고쳐야 되면 나중에 고치도록 하자!
+
+### To do
+- forms.py 에 wrtieFeedForm 을 추가한다.
+- write_feed.html에 적용한 뒤 db 등록
+- image 추가 및 등록은 추후에 하도록 한다.
+    - 아직 image에 태깅을 어떻게 해야할지 감이안옴.
+    - 일단은 tag에 x,y좌표값을 저장하는 생각을 해봤으나 조금더 관련 라이브러리를 찾아봐야함.
+- feed_detail 페이지를 만든다.
+    - 아마 write_feed 페이지와 거의 유사할 것 같으므로 write_feed만 끝나면 쉽게할 수 있을듯
+
