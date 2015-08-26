@@ -83,3 +83,7 @@ def signout():
     session.pop('username', None)
     session.pop('logged_in', None)
     return redirect(url_for('main'))
+
+@app.route('/write_feed')
+def write_feed():
+    return render_template('write_feed.html')

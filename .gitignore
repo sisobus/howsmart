@@ -3,3 +3,4 @@ venv/*
 app/*.pyc
 app/assets/*
 app/db/*
+app/static/*
