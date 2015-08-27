@@ -249,3 +249,19 @@ feed 쓰는 페이지를 생성했다.
 - feed_detail 페이지를 만든다.
     - 아마 write_feed 페이지와 거의 유사할 것 같으므로 write_feed만 끝나면 쉽게할 수 있을듯
 
+## 2015.08.26
+file upload를 구현하고 추후 드랍다운 및 프리뷰를 어떻게 할지 결정함
+- file은 app/files 에 저장하기로 하고, 디비에 path를 저장함
+- drag & drop이 가능하게 하기 위하여 관련 jquery 라이브러리를 찾음
+    - dropzone.js 가 drag & drop과 프리뷰를 지원함
+    - http://www.dropzonejs.com/
+    - https://github.com/moremorefor/flask-fileupload-dropzonejs : flask + dropzone example
+
+### To do
+- 원래 오늘 하려 했던 위쪽 to do를 상속한다.
+    - forms.py 에 writeFeedForm 을 추가한다.
+    - write_feed.html에 적용한 뒤 db등록
+    - feed_detail.html 페이지를 만든다.
+- image file upload를 dropzonejs를 이용하여 구현한다.
+    - image_container 에 적용하면 될 듯
+    - content_form_container 를 이쁘게 구현해야 함

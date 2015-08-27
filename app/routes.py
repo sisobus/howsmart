@@ -3,13 +3,13 @@ from flask import Flask, url_for
 from werkzeug import secure_filename
 import utils
 import os
-#UPLOAD_FOLDER = '/Users/sisobus/coding/howsmart/app/files'
-UPLOAD_FOLDER = '/home/howsmart/howsmart/app/files'
+
+from config import UPLOAD_FOLDER, HOWSMART_DATABASE_URI, HOWSMART_SECRET_KEY
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:tkdrmsld123@1.234.80.248/howsmart'
-app.config['SECRET_KEY'] = 'SET T0 4NY SECRET KEY L1KE RAND0M H4SH'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['SQLALCHEMY_DATABASE_URI']   = HOWSMART_DATABASE_URI
+app.config['SECRET_KEY']                = HOWSMART_SECRET_KEY
+app.config['UPLOAD_FOLDER']             = UPLOAD_FOLDER
 
 from models import db, User
 
@@ -29,13 +29,6 @@ def main():
 
     return render_template('main.html', signupForm=signupForm, signinForm=signinForm)
 
-
-@app.route('/test')
-def test():
-    if db.session.query("1").from_statement("SELECT 1").all():
-        return 'It works.'
-    else:
-        return 'Something is broken.'
 
 
 @app.route('/signup', methods=['GET', 'POST'])
