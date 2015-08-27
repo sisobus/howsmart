@@ -1,9 +1,15 @@
 # -*- coding:utf-8 -*-
 from flask import Flask, url_for
+from werkzeug import secure_filename
+import utils
+import os
+UPLOAD_FOLDER = '/home/howsmart/howsmart/app/files'
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:tkdrmsld123@1.234.80.248/howsmart'
 app.config['SECRET_KEY'] = 'SET T0 4NY SECRET KEY L1KE RAND0M H4SH'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 from models import db, User
 
 db.init_app(app)
@@ -87,3 +93,30 @@ def signout():
 @app.route('/write_feed')
 def write_feed():
     return render_template('write_feed.html')
+
+@app.route('/upload_file',methods=['GET','POST'])
+def uploadFile():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and utils.allowedFile(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+            return redirect(url_for('uploadedFile',filename=filename))
+    else:
+        return '''
+            <!doctype html>
+            <h1>Upload new file</h1>
+            <form action="" method=post entype=multipart/form-data>
+            <p><input type=file name=file>
+            <input type=submit value=Upload>
+            </form>
+            </html>
+            '''
+
+@app.route('/uploaded_file')
+def uploadedFile():
+    return '''
+        <!doctype html>
+        <h1>{{ filename }} is uploaded</h1>
+        </html>
+    '''
