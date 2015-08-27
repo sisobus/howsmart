@@ -3,6 +3,7 @@ from flask import Flask, url_for
 from werkzeug import secure_filename
 import utils
 import os
+#UPLOAD_FOLDER = '/Users/sisobus/coding/howsmart/app/files'
 UPLOAD_FOLDER = '/home/howsmart/howsmart/app/files'
 
 app = Flask(__name__)
@@ -106,7 +107,7 @@ def uploadFile():
         return '''
             <!doctype html>
             <h1>Upload new file</h1>
-            <form action="" method=post entype=multipart/form-data>
+            <form action="upload_file" method=post enctype=multipart/form-data>
             <p><input type=file name=file>
             <input type=submit value=Upload>
             </form>
@@ -117,6 +118,6 @@ def uploadFile():
 def uploadedFile():
     return '''
         <!doctype html>
-        <h1>{{ filename }} is uploaded</h1>
+        <h1>file is uploaded</h1>
         </html>
     '''
