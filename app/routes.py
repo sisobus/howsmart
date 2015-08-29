@@ -18,7 +18,8 @@ db.init_app(app)
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask import get_flashed_messages
 from flask.ext.login import LoginManager, UserMixin, current_user, login_user, logout_user
-from forms import SignupForm, SigninForm
+from forms import SignupForm, SigninForm, WriteFeedForm
+from datetime import datetime
 
 
 @app.route('/')
@@ -43,6 +44,7 @@ def signup():
             return render_template('main.html', signupForm=signupForm, signinForm=signinForm)
         else:
             newuser = User(signupForm.username.data, signupForm.email.data, signupForm.password.data)
+            newuser.created_at = datetime.utcnow()
             db.session.add(newuser)
             db.session.commit()
 
@@ -84,9 +86,18 @@ def signout():
     session.pop('logged_in', None)
     return redirect(url_for('main'))
 
-@app.route('/write_feed')
+@app.route('/write_feed',methods=['GET','POST'])
 def write_feed():
-    return render_template('write_feed.html')
+    with app.app_context():
+        writeFeedForm = WriteFeedForm()
+
+    if request.method == 'POST':
+        if not writeFeedForm.validate():
+            return render_template('write_feed.html', writeFeedForm=writeFeedForm)
+        else :
+            return redirect(url_for('write_feed'))
+    elif request.method == 'GET':
+        return render_template('write_feed.html',writeFeedForm=writeFeedForm)
 
 @app.route('/upload_file',methods=['GET','POST'])
 def uploadFile():

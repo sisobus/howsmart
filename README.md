@@ -265,3 +265,8 @@ file upload를 구현하고 추후 드랍다운 및 프리뷰를 어떻게 할�
 - image file upload를 dropzonejs를 이용하여 구현한다.
     - image_container 에 적용하면 될 듯
     - content_form_container 를 이쁘게 구현해야 함
+
+## 2015.08.29
+write_fedd page 어느정도 완성
+- jquery를 이용하여 간단하게 preview 구현
+- WriteFeedForm 추가

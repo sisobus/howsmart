@@ -209,7 +209,9 @@
                 <div class="col-lg-6 col-sm-6 col-xs-6 col-md-6 no-margin no-padding">
                     <div class="pull-right">
                         <ul class="userMenu">
-                            <li><a href="#"><span class="hidden-xs">{{ session['username'] }}님 환영합니다</span></a></li>
+                            <li><a href="{{ url_for('write_feed') }}">글쓰기
+                            <i class="glyphicon glyphicon-log-in hide visible-xs "></i> </a></li>
+                            <li><a href="#"><span class="hidden-xs">{{ session['username'] }}님 환영합니다</span>
                             <i class="glyphicon glyphicon-log-in hide visible-xs "></i> </a></li>
                             <li><a href="{{ url_for('signout') }}">Sign out</a></li>
                         </ul>

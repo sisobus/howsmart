@@ -56,6 +56,42 @@
         #content-form-container::-webkit-scrollbar {
             display: none;
         }
+        form input#title,
+        form textarea#body,
+        form input#uploadImageContainer {
+            border-color: #DDDDDD;
+            -webkit-border-radius: 3px 0 0 3px;
+            -moz-border-radius: 3px 0 0 3px;
+            border-radius: 3px 0 0 3px;
+            border-style: solid;
+            border-width: 2px 1px 1px 2px;
+            color: #888888;
+            font-size: 14px;
+            height: 36px;
+            width: 100%;
+        }
+        form input#title {
+            margin-top: 100px;
+        }
+        form textarea#body {
+            height: 300px;
+        }
+        form input#uploadImageContainer {
+            margin-bottom: 10px;
+        }
+        form input#title:hover,
+        form textarea#body:hover,
+        form input#uploadImageContainer:hover {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+        form input#title:focus,
+        form textarea#body:focus,
+        form input#uploadImageContainer:focus {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+
 
 
 	</style>
@@ -66,50 +102,36 @@
 <div id="container" >
     <div id="content-container">
         <div id="content-form-container">
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
-            asdf<br>
+            <form action="{{ url_for('write_feed') }}" method="post">
+                {{ writeFeedForm.hidden_tag() }}
+                <div>
+                {{ writeFeedForm.title(placeholder="enter feed title") }}
+                    {% for message in writeFeedForm.title.errors %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                <div>
+                {% for message in writeFeedForm.body.errors %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+                {{ writeFeedForm.body(placeholder="enter feed body") }}
+                </div>
+                <div>
+                {% for message in writeFeedForm.filename.errors %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+                {{ writeFeedForm.filename(id="uploadImageContainer") }}
+                </div>
+                <div>
+                    <input name="submit" class="btn  btn-block btn-lg btn-primary" value="Write feed" type="submit">
+                </div>
+            </form>
+
         </div>
     </div>
     <div id="image-container">
         <div id="image-real-container">
-            <img src="{{ url_for('static',filename='images/wide_image1.jpg') }}" class="img-responsive parallaximg sliderImg" alt="img">
+            <img id="uploadImagePreview" src="" class="img-responsive parallaximg sliderImg"/>
         </div>
     </div>
 </div>
@@ -157,6 +179,19 @@
 <!-- include custom script for site  -->
 <script src="{{  url_for('static',filename='js/script.js') }}"></script>
 <script>
+function readURL(input){
+    if ( input.files && input.files[0] ) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $('#uploadImagePreview').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+$('#uploadImageContainer').change(function() {
+    readURL(this);
+});
 
 </script>
 </body>

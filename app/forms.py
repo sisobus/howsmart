@@ -1,5 +1,5 @@
 from flask.ext.wtf import Form
-from wtforms import TextField,TextAreaField, SubmitField, validators, ValidationError, PasswordField
+from wtforms import TextField,TextAreaField, SubmitField, validators, ValidationError, PasswordField, FileField
 from models import db, User
 
 class SignupForm(Form):
@@ -39,3 +39,16 @@ class SigninForm(Form):
         else:
             self.email.errors.append('invalid email or password')
             return False
+
+class WriteFeedForm(Form):
+    title       = TextField('title', [validators.Required('please enter this feed title')])
+    body        = TextAreaField('body', [validators.Required('please enter this feed body')])
+    filename    = FileField('filename', [validators.Required('please enter this feed image file')])
+
+    def __init__(self, *args, **kargs):
+        Form.__init__(self, *args, **kargs)
+
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        return True

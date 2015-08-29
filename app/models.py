@@ -10,6 +10,7 @@ class User(db.Model):
     username = db.Column(db.String(100))
     email = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(54))
+    created_at = db.Column(db.DateTime)
 
     def __init__(self, username, email, password):
         self.username = username
