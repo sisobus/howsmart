@@ -5,3 +5,4 @@ app/assets/*
 app/db/*
 app/static/*
 app/files/*
+app/config.py

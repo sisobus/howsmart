@@ -43,12 +43,16 @@
             padding: 0;
             margin: 0;
             background: #f5f5f5;
+
         }
         #content-form-container {
             height: inherit;
             overflow-y: scroll;
             padding-bottom: 45px;
             -ms-overflow-style: none;
+            border-color: #DDDDDD;
+            border-style: solid;
+            border-width: 1px 1px 1px 1px;
 
             margin: 10px 10px 10px 10px;
             background: #ffffff;
@@ -121,7 +125,7 @@
                 {% for message in writeFeedForm.filename.errors %}
                     <div class="flash">{{ message }}</div>
                 {% endfor %}
-                {{ writeFeedForm.filename(id="uploadImageContainer") }}
+                {{ writeFeedForm.filename(id="uploadImageContainer",name="file") }}
                 </div>
                 <div>
                     <input name="submit" class="btn  btn-block btn-lg btn-primary" value="Write feed" type="submit">

@@ -33,6 +33,11 @@ class Feed(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     image_id = db.Column(db.Integer, db.ForeignKey('image.id'))
 
+    def __init__(self, title, body, created_at):
+        self.title = title
+        self.body  = body
+        self.created_at = created_at
+
 
 class Comment(db.Model):
     __tablename__ = 'comment'
@@ -48,6 +53,9 @@ class Image(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     image_path = db.Column(db.String(100))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __init__(self, image_path):
+        self.image_path = image_path
 
 
 class Product(db.Model):
