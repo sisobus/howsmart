@@ -125,7 +125,7 @@
                 {% for message in writeFeedForm.filename.errors %}
                     <div class="flash">{{ message }}</div>
                 {% endfor %}
-                {{ writeFeedForm.filename(id="uploadImageContainer",name="file") }}
+                {{ writeFeedForm.filename(id="uploadImageContainer") }}
                 </div>
                 <div>
                     <input name="submit" class="btn  btn-block btn-lg btn-primary" value="Write feed" type="submit">
