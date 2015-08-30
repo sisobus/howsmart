@@ -96,22 +96,36 @@ def write_feed():
             return render_template('write_feed.html', writeFeedForm=writeFeedForm)
         else :
             user = User.query.filter_by(email=session['email'].lower()).first()
-            file = request.files['file']
-            if file and utils.allowedFile(file.filename):
-                directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
-                filename = secure_filename(file.filename)
-                utils.createDirectory(directory_url)
-                file_path = os.path.join(directory_url,filename)
-                file.save(file_path)
-                image = Image(file_path)
-                image.user_id = user.id
-                db.session.add(image)
+            if writeFeedForm.validate_on_submit():
+                filename = secure_filename(writeFeedForm.filename.data.filename)
+                if utils.allowedFile(filename):
+                    directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
+                    utils.createDirectory(directory_url)
+                    file_path = os.path.join(directory_url,filename)
+                    writeFeedForm.filename.data.save(file_path)
+                    image = Image(file_path)
+                    image.user_id = user.id
+                    db.session.add(image)
+                    db.session.commit()
+                feed = Feed(writeFeedForm.title.data, writeFeedForm.body.data, datetime.utcnow())
+                feed.user_id = user.id
+                feed.image_id = image.id
+                db.session.add(feed)
                 db.session.commit()
-            feed = Feed(writeFeedForm.title.data, writeFeedForm.body.data, datetime.utcnow())
-            feed.user_id = user.id
-            feed.image_id = image.id
-            db.session.add(feed)
-            db.session.commit()
+#                directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
+#                filename = secure_filename(file.data)
+#                utils.createDirectory(directory_url)
+#                file_path = os.path.join(directory_url,filename)
+#                file.save(file_path)
+#                image = Image(file_path)
+#                image.user_id = user.id
+#                db.session.add(image)
+#                db.session.commit()
+#            feed = Feed(writeFeedForm.title.data, writeFeedForm.body.data, datetime.utcnow())
+#            feed.user_id = user.id
+#            feed.image_id = image.id
+#            db.session.add(feed)
+#            db.session.commit()
             return redirect(url_for('write_feed'))
     elif request.method == 'GET':
         return render_template('write_feed.html',writeFeedForm=writeFeedForm)

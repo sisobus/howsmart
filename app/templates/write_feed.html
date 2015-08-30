@@ -107,7 +107,7 @@
 <div id="container" >
     <div id="content-container">
         <div id="content-form-container">
-            <form action="{{ url_for('write_feed') }}" method="post">
+            <form action="{{ url_for('write_feed') }}" method="post" enctype="multipart/form-data">
                 {{ writeFeedForm.hidden_tag() }}
                 <div>
                 {{ writeFeedForm.title(placeholder="enter feed title") }}
