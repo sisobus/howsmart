@@ -112,7 +112,7 @@ def write_feed():
                 feed.image_id = image.id
                 db.session.add(feed)
                 db.session.commit()
-            return redirect(url_for('write_feed'))
+            return redirect(url_for('feed_detail/%d'%feed.id))
     elif request.method == 'GET':
         return render_template('write_feed.html',writeFeedForm=writeFeedForm)
 
