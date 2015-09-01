@@ -112,23 +112,19 @@ def write_feed():
                 feed.image_id = image.id
                 db.session.add(feed)
                 db.session.commit()
-#                directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
-#                filename = secure_filename(file.data)
-#                utils.createDirectory(directory_url)
-#                file_path = os.path.join(directory_url,filename)
-#                file.save(file_path)
-#                image = Image(file_path)
-#                image.user_id = user.id
-#                db.session.add(image)
-#                db.session.commit()
-#            feed = Feed(writeFeedForm.title.data, writeFeedForm.body.data, datetime.utcnow())
-#            feed.user_id = user.id
-#            feed.image_id = image.id
-#            db.session.add(feed)
-#            db.session.commit()
             return redirect(url_for('write_feed'))
     elif request.method == 'GET':
         return render_template('write_feed.html',writeFeedForm=writeFeedForm)
+
+@app.route('/feed_detail/<int:feed_id>',methods=['GET'])
+def feed_detail(feed_id):
+    if request.method == 'GET':
+        feed = Feed.query.filter_by(id=feed_id).first()
+        image = Image.query.filter_by(id=feed.image_id).first()
+        user = User.query.filter_by(id=feed.user_id).first()
+        image_path = utils.get_image_path(image.image_path)
+
+        return render_template('feed_detail.html',feed=feed,image_path=image_path,user=user)
 
 @app.route('/upload_file',methods=['GET','POST'])
 def uploadFile():
