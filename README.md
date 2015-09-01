@@ -270,3 +270,8 @@ file upload를 구현하고 추후 드랍다운 및 프리뷰를 어떻게 할�
 write_fedd page 어느정도 완성
 - jquery를 이용하여 간단하게 preview 구현
 - WriteFeedForm 추가
+
+## 2015.09.01
+feed_detail 페이지를 추가했다.
+- css의 수정 필요
+- 태깅 필요
