@@ -107,10 +107,15 @@
 <div id="container" >
     <div id="content-container">
         <div id="content-form-container">
+            <div id="content-form-header">
+                <a href="javascript:history.go(-1)"><p align="right">X</p></a>
+            </div>
+            <div>
            <h1>{{ feed.title }}</h1>
             <h3>{{ feed.created_at }}</h3>
             <h3>{{ user.username }}</h3>
             <h2>{{ feed.body }}</h2>
+            </div>
         </div>
     </div>
     <div id="image-container">

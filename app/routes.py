@@ -28,7 +28,24 @@ def main():
         signupForm = SignupForm()
         signinForm = SigninForm()
 
-    return render_template('main.html', signupForm=signupForm, signinForm=signinForm)
+    feeds = Feed.query.order_by(Feed.created_at).limit(10)
+    ret_feeds = []
+    for feed in feeds:
+        d = {}
+        image = Image.query.filter_by(id=feed.image_id).first()
+        image_path = utils.get_image_path(image.image_path)
+        user = User.query.filter_by(id=feed.user_id).first()
+        d['image_path'] = image_path
+        d['user'] = user
+        d['feed'] = feed
+        ret_feeds.append(d)
+#    images = []
+#    feed = Feed.query.filter_by(id=1).first()
+#    image = Image.query.filter_by(id=feed.image_id).first()
+#    user = User.query.filter_by(id=feed.user_id).first()
+#    image_path = utils.get_image_path(image.image_path)
+
+    return render_template('main.html', signupForm=signupForm, signinForm=signinForm, feeds=ret_feeds)
 
 
 
