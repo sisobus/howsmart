@@ -28,7 +28,7 @@ def main():
         signupForm = SignupForm()
         signinForm = SigninForm()
 
-    feeds = Feed.query.order_by(Feed.created_at).limit(10)
+    feeds = Feed.query.order_by(Feed.created_at.desc()).limit(10).all()
     ret_feeds = []
     for feed in feeds:
         d = {}
