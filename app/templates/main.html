@@ -34,7 +34,7 @@
         <card_header>
             <div class="bio">
                 <a href="/feed_detail/{{ feed.feed.id }}" target="_black">
-                    <div class="bg" style="background: {{ url_for('static',filename=feed.image_path) }};
+                    <div class="bg" style="background:  url({{ feed.image_path }});
                             background-repeat:no-repeat;
                             background-size: cover;
                             background-position: center;
@@ -45,6 +45,7 @@
                         <div class="row">
                             <div calss="card_custom_body">
                                 <h4>{{ feed.feed.title }}</h4>
+                                {{ feed.image_path }}
                             </div>
                         </div>
                     </div>
