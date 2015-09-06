@@ -144,16 +144,21 @@ def feed_detail(feed_id):
         return render_template('feed_detail.html',feed=feed,image_path=image_path,user=user,commentForm=commentForm,all_comments=all_comments)
     elif request.method == 'POST':
         if not commentForm.validate():
+            print '?'
             return render_template('feed_detail.html', feed=feed,image_path=image_path,user=user,commentForm=commentForm,all_comments=all_comments)
 
-        comment = Comment(commentForm.body.data, datetime.utcnow())
-        comment_user = User.query.filter_by(email=session['email'].lower()).first()
-        comment.user_id = comment_user.id
-        comment.feed_id = feed.id
-        db.session.add(comment)
-        db.session.commit()
-        all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-        return render_template('feed_detail.html',feed=feed,image_path=image_path,user=user,commentForm=commentForm,all_comments=all_comments)
+        print '!'
+        if commentForm.validate_on_submit():
+            print '?!'
+            comment = Comment(commentForm.body.data, datetime.utcnow())
+            comment_user = User.query.filter_by(email=session['email'].lower()).first()
+            comment.user_id = comment_user.id
+            comment.feed_id = feed.id
+            db.session.add(comment)
+            db.session.commit()
+            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+        #return render_template('feed_detail.html',feed=feed,image_path=image_path,user=user,commentForm=commentForm,all_comments=all_comments)
+        return redirect(url_for('feed_detail', feed_id=feed.id))
 
 @app.route('/upload_file',methods=['GET','POST'])
 def uploadFile():

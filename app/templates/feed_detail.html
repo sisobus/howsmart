@@ -116,6 +116,10 @@
             border-color: #EEEEEE;
             outline: 0 none;
         }
+        #comment-container {
+            margin-left: 10px;
+        }
+
 
 
 	</style>
@@ -136,20 +140,23 @@
             <h2>{{ feed.body }}</h2>
             </div>
         <form action="{{ url_for('feed_detail',feed_id=feed.id) }}" method="post">
+            {{ commentForm.hidden_tag() }}
             <div class="form-group login-username">
                 <div>
                     {% for message in commentForm.body.errors %}
                         <div class="flash">{{ message }}</div>
                     {% endfor %}
-                    {{ commentForm.body(placeholder="Enter your comment") }}
+                    {{ commentForm.body(placeholder="Enter your comment",autofocus=true) }}
                 </div>
                 <input name="submit" class="btn btn-block btn-lg btn-primary" value="comment" type="submit">
             </div>
         </form>
+        <div id="comment-container">
         {% for comment in all_comments %}
-            {{ comment }}
+            {{ comment.body }} | {{ comment.created_at }}
             <br>
         {% endfor %}
+        </div>
         </div>
     </div>
     <div id="image-container">
