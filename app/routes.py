@@ -188,3 +188,11 @@ def uploadedFile():
         <h1>file is uploaded</h1>
         </html>
     '''
+
+@app.route('/user_portfolio/<int:user_id>')
+def user_portfolio(user_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+    user = User.query.filter_by(id=user_id).first()
+    return render_template('user_portfolio.html',user=user,signupForm=signupForm,signinForm=signinForm)
