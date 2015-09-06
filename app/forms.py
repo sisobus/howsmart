@@ -52,3 +52,14 @@ class WriteFeedForm(Form):
         if not Form.validate(self):
             return False
         return True
+
+class CommentForm(Form):
+    body        = TextField('body', [validators.Required('please enter your comment')])
+
+    def __init__(self, *args, **kargs):
+        Form.__init__(self, *args, **kargs)
+
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        return True

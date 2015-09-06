@@ -47,6 +47,9 @@ class Comment(db.Model):
     feed_id = db.Column(db.Integer, db.ForeignKey('feed.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+    def __init__(self, body, created_at):
+        self.body = body
+        self.created_at = created_at
 
 class Image(db.Model):
     __tablename__ = 'image'

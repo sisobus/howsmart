@@ -60,6 +60,12 @@
         #content-form-container::-webkit-scrollbar {
             display: none;
         }
+        #content-form-body {
+            white-space: normal;
+            word-break: break-all;
+            margin: 10px 10px 10px 10px;
+        }
+
         form input#title,
         form textarea#body,
         form input#uploadImageContainer {
@@ -99,6 +105,19 @@
             width: 100%;
         }
 
+        form input#body {
+            width: 100%;
+        }
+        form input#body:hover {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+        form input#body:focus {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+
+
 	</style>
 
     <script src="{{  url_for('static',filename='js/pace.min.js') }} "></script>
@@ -110,12 +129,27 @@
             <div id="content-form-header">
                 <a href="javascript:history.go(-1)"><p align="right">X</p></a>
             </div>
-            <div>
+            <div id="content-form-body">
            <h1>{{ feed.title }}</h1>
             <h3>{{ feed.created_at }}</h3>
             <h3>{{ user.username }}</h3>
             <h2>{{ feed.body }}</h2>
             </div>
+        <form action="{{ url_for('feed_detail',feed_id=feed.id) }}" method="post">
+            <div class="form-group login-username">
+                <div>
+                    {% for message in commentForm.body.errors %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ commentForm.body(placeholder="Enter your comment") }}
+                </div>
+                <input name="submit" class="btn btn-block btn-lg btn-primary" value="comment" type="submit">
+            </div>
+        </form>
+        {% for comment in all_comments %}
+            {{ comment }}
+            <br>
+        {% endfor %}
         </div>
     </div>
     <div id="image-container">

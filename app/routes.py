@@ -11,14 +11,14 @@ app.config['SQLALCHEMY_DATABASE_URI']   = HOWSMART_DATABASE_URI
 app.config['SECRET_KEY']                = HOWSMART_SECRET_KEY
 app.config['UPLOAD_FOLDER']             = UPLOAD_FOLDER
 
-from models import db, User, Feed, Image
+from models import db, User, Feed, Image, Comment
 
 db.init_app(app)
 
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask import get_flashed_messages
 from flask.ext.login import LoginManager, UserMixin, current_user, login_user, logout_user
-from forms import SignupForm, SigninForm, WriteFeedForm
+from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm
 from datetime import datetime
 
 
@@ -39,11 +39,6 @@ def main():
         d['user'] = user
         d['feed'] = feed
         ret_feeds.append(d)
-#    images = []
-#    feed = Feed.query.filter_by(id=1).first()
-#    image = Image.query.filter_by(id=feed.image_id).first()
-#    user = User.query.filter_by(id=feed.user_id).first()
-#    image_path = utils.get_image_path(image.image_path)
 
     return render_template('main.html', signupForm=signupForm, signinForm=signinForm, feeds=ret_feeds)
 
@@ -133,15 +128,32 @@ def write_feed():
     elif request.method == 'GET':
         return render_template('write_feed.html',writeFeedForm=writeFeedForm)
 
-@app.route('/feed_detail/<int:feed_id>',methods=['GET'])
+@app.route('/feed_detail/<int:feed_id>',methods=['GET','POST'])
 def feed_detail(feed_id):
-    if request.method == 'GET':
-        feed = Feed.query.filter_by(id=feed_id).first()
-        image = Image.query.filter_by(id=feed.image_id).first()
-        user = User.query.filter_by(id=feed.user_id).first()
-        image_path = utils.get_image_path(image.image_path)
+    with app.app_context():
+        commentForm = CommentForm()
 
-        return render_template('feed_detail.html',feed=feed,image_path=image_path,user=user)
+    feed = Feed.query.filter_by(id=feed_id).first()
+    image = Image.query.filter_by(id=feed.image_id).first()
+    user = User.query.filter_by(id=feed.user_id).first()
+    image_path = utils.get_image_path(image.image_path)
+
+    all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+
+    if request.method == 'GET':
+        return render_template('feed_detail.html',feed=feed,image_path=image_path,user=user,commentForm=commentForm,all_comments=all_comments)
+    elif request.method == 'POST':
+        if not commentForm.validate():
+            return render_template('feed_detail.html', feed=feed,image_path=image_path,user=user,commentForm=commentForm,all_comments=all_comments)
+
+        comment = Comment(commentForm.body.data, datetime.utcnow())
+        comment_user = User.query.filter_by(email=session['email'].lower()).first()
+        comment.user_id = comment_user.id
+        comment.feed_id = feed.id
+        db.session.add(comment)
+        db.session.commit()
+        all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+        return render_template('feed_detail.html',feed=feed,image_path=image_path,user=user,commentForm=commentForm,all_comments=all_comments)
 
 @app.route('/upload_file',methods=['GET','POST'])
 def uploadFile():
