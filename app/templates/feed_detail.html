@@ -134,12 +134,12 @@
                 <a href="javascript:history.go(-1)"><p align="right">X</p></a>
             </div>
             <div id="content-form-body">
-           <h1>{{ feed.title }}</h1>
-            <h3>{{ feed.created_at }}</h3>
-            <h3>{{ user.username }}</h3>
-            <h2>{{ feed.body }}</h2>
+           <h1>{{ ret.feed.title }}</h1>
+            <h3>{{ ret.feed.created_at }}</h3>
+            <h3>{{ ret.user.username }}</h3>
+            <h2>{{ ret.feed.body }}</h2>
             </div>
-        <form action="{{ url_for('feed_detail',feed_id=feed.id) }}" method="post">
+        <form action="{{ url_for('feed_detail',feed_id=ret.feed.id) }}" method="post">
             {{ commentForm.hidden_tag() }}
             <div class="form-group login-username">
                 <div>

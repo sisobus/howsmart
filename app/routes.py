@@ -35,9 +35,11 @@ def main():
         image = Image.query.filter_by(id=feed.image_id).first()
         image_path = utils.get_image_path(image.image_path)
         user = User.query.filter_by(id=feed.user_id).first()
+        all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
         d['image_path'] = image_path
         d['user'] = user
         d['feed'] = feed
+        d['number_of_comment'] = len(all_comments)
         ret_feeds.append(d)
 
     return render_template('main.html', signupForm=signupForm, signinForm=signinForm, feeds=ret_feeds)
@@ -139,12 +141,16 @@ def feed_detail(feed_id):
     image_path = utils.get_image_path(image.image_path)
 
     all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+    ret = {}
+    ret['feed'] = feed
+    ret['user'] = user
+    ret['image_path'] = image_path
 
     if request.method == 'GET':
-        return render_template('feed_detail.html',feed=feed,image_path=image_path,user=user,commentForm=commentForm,all_comments=all_comments)
+        return render_template('feed_detail.html',ret=ret,commentForm=commentForm,all_comments=all_comments)
     elif request.method == 'POST':
         if not commentForm.validate():
-            return render_template('feed_detail.html', feed=feed,image_path=image_path,user=user,commentForm=commentForm,all_comments=all_comments)
+            return render_template('feed_detail.html',ret=ret,commentForm=commentForm,all_comments=all_comments)
 
         if commentForm.validate_on_submit():
             comment = Comment(commentForm.body.data, datetime.utcnow())
@@ -154,7 +160,6 @@ def feed_detail(feed_id):
             db.session.add(comment)
             db.session.commit()
             all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-        #return render_template('feed_detail.html',feed=feed,image_path=image_path,user=user,commentForm=commentForm,all_comments=all_comments)
         return redirect(url_for('feed_detail', feed_id=feed.id))
 
 @app.route('/upload_file',methods=['GET','POST'])
