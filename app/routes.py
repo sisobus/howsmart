@@ -20,29 +20,56 @@ from flask import get_flashed_messages
 from flask.ext.login import LoginManager, UserMixin, current_user, login_user, logout_user
 from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm
 from datetime import datetime
+from bs4 import BeautifulSoup
 
 
-@app.route('/')
+@app.route('/',methods=['GET','POST'])
 def main():
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
 
-    feeds = Feed.query.order_by(Feed.created_at.desc()).limit(10).all()
-    ret_feeds = []
-    for feed in feeds:
-        d = {}
-        image = Image.query.filter_by(id=feed.image_id).first()
-        image_path = utils.get_image_path(image.image_path)
-        user = User.query.filter_by(id=feed.user_id).first()
-        all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-        d['image_path'] = image_path
-        d['user'] = user
-        d['feed'] = feed
-        d['number_of_comment'] = len(all_comments)
-        ret_feeds.append(d)
 
-    return render_template('main.html', signupForm=signupForm, signinForm=signinForm, feeds=ret_feeds)
+    if request.method == 'GET':
+        offset = 10
+        feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
+        ret_feeds = []
+        for feed in feeds:
+            d = {}
+            image = Image.query.filter_by(id=feed.image_id).first()
+            image_path = utils.get_image_path(image.image_path)
+            user = User.query.filter_by(id=feed.user_id).first()
+            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+            d['image_path'] = image_path
+            d['user'] = user
+            d['feed'] = feed
+            d['number_of_comment'] = len(all_comments)
+            ret_feeds.append(d)
+
+        return render_template('main.html', signupForm=signupForm, signinForm=signinForm, feeds=ret_feeds, offset=offset)
+    elif request.method == 'POST':
+        offset = int(request.form['offset'])
+        feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
+        ret_feeds = []
+        for feed in feeds:
+            d = {}
+            image = Image.query.filter_by(id=feed.image_id).first()
+            image_path = utils.get_image_path(image.image_path)
+            user = User.query.filter_by(id=feed.user_id).first()
+            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+            d['image_path'] = image_path
+            d['user'] = user
+            d['feed'] = feed
+            d['number_of_comment'] = len(all_comments)
+            ret_feeds.append(d)
+
+        html_code = render_template('main.html', signupForm=signupForm, signinForm=signinForm, feeds=ret_feeds, offset=offset)
+        return html_code
+#        soup = BeautifulSoup(html_code,"html.parser")
+#        feed_container = soup.find('div',id='feed_container')
+#        print feed_container
+#        return feed_container
+
 
 
 
@@ -65,6 +92,7 @@ def signup():
             session['username'] = newuser.username
             session['email'] = newuser.email
             session['logged_in'] = True
+            session['user_id'] = newuser.id
 
             return redirect(url_for('main'))
 
@@ -86,6 +114,7 @@ def signin():
             session['email'] = signinForm.email.data
             session['username'] = user.username
             session['logged_in'] = True
+            session['user_id'] = user.id
             return redirect(url_for('main'))
     elif request.method == 'GET':
         return render_template('main.html', signupForm=signupForm, signinForm=signinForm)
@@ -98,6 +127,7 @@ def signout():
     session.pop('email', None)
     session.pop('username', None)
     session.pop('logged_in', None)
+    session.pop('user_id', None)
     return redirect(url_for('main'))
 
 @app.route('/write_feed',methods=['GET','POST'])

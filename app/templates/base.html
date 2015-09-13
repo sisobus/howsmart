@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="{{  url_for('static',filename='bootstrap/css/bootstrap.css') }}" />
     <link rel="stylesheet" href="{{  url_for('static',filename='css/style.css') }}" />
     <link rel="stylesheet" href="{{  url_for('static',filename='css/twitter_card.css') }}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
+    </script>
     <script>
         paceOptions = {
             elements: true
@@ -212,7 +214,7 @@
                         <ul class="userMenu">
                             <li><a href="{{ url_for('write_feed') }}">글쓰기
                             <i class="glyphicon glyphicon-log-in hide visible-xs "></i> </a></li>
-                            <li><a href="#"><span class="hidden-xs">{{ session['username'] }}님 환영합니다</span>
+                            <li><a href="/user_portfolio/{{ session['user_id'] }}"><span class="hidden-xs">{{ session['username'] }}님 환영합니다</span>
                             <i class="glyphicon glyphicon-log-in hide visible-xs "></i> </a></li>
                             <li><a href="{{ url_for('signout') }}">Sign out</a></li>
                         </ul>
@@ -380,8 +382,6 @@
 {% block content %}{% endblock %}
 
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
-</script>
 <script src="{{  url_for('static',filename='bootstrap/js/bootstrap.min.js') }}"></script>
 <script>
     // this script required for subscribe modal

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+    <div id="main-contents-container">
 <div class="banner">
     <div class="full-container">
         <div class="slider-content">
@@ -28,7 +29,7 @@
     <br>
     <br>
     <br>
-<div class="container main-container">
+<div class="container main-container" id="feed_container">
     {% for feed in feeds %}
     <div class="card_container">
         <card_header>
@@ -56,11 +57,20 @@
         <br>
     {% endfor %}
 </div>
-<script>
+    </div>
+<script type="text/javascript">
 $(window).scroll(function() {
-    if ( $(window).scrollTop() == $(document).height() - $(window).height() ) {
-    alert('end');
-    }
+    if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+        $.ajax({
+            async : true,
+            type : "POST",
+            url : "{{ url_for('main') }}",
+            data : { offset: "{{ offset+10 }}" },
+            success: function(result) {
+                $("#main-contents-container").html(result);
+            }
         });
+    }
+});
 </script>
 {% endblock %}
