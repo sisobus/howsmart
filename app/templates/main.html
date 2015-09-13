@@ -56,4 +56,11 @@
         <br>
     {% endfor %}
 </div>
+<script>
+$(window).scroll(function() {
+    if ( $(window).scrollTop() == $(document).height() - $(window).height() ) {
+    alert('end');
+    }
+        });
+</script>
 {% endblock %}
