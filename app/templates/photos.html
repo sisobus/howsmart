@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+    <br>
+<div class="container main-container ">
+    <div class="row">
+        <div class="breadcrumbDiv col-lg-12">
+            <ul class="breadcrumb">
+                <li><a href="/">HOME</a></li>
+                <li><a href="/photos">PHOTOS</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><a data-toggle="collapse" href="#collapseCategory" class="collapseWill">
+                        <span class="pull-left"> <i class="fa fa-caret-right"></i></span> Category </a></h4>
+                </div>
+                <div id="collapseCategory" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <ul class="nav nav-pills nav-stacked tree">
+                            <li class="active dropdown-tree open-tree"><a class="dropdown-tree-a"> <span
+                                    class="badge pull-right">42</span> 주거공간</a>
+                                <ul class="category-level-2 dropdown-menu-tree">
+                                    <li class="dropdown-tree"><a class="dropdown-tree-a" href="sub-category.html">
+                                        주방</a></li>
+                                    <li><a> 화장실</a></li>
+                                    <li><a> 방</a></li>
+                                    <li><a> 거실</a></li>
+                                    <li><a> 현관</a></li>
+                                    <li><a> 기타</a></li>
+                                </ul>
+                            </li>
+                            <li class="active dropdown-tree open-tree"><a class="dropdown-tree-a"> <span
+                                    class="badge pull-right">42</span> 상업공간</a>
+                                <ul class="category-level-2 dropdown-menu-tree">
+                                    <li class="dropdown-tree"><a>카페</a></li>
+                                    <li><a>식당</a></li>
+                                    <li><a>사무실</a></li>
+                                    <li><a>기타</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-12">
+            <h2>PHOTOS</h2>
+            <div class="w100 productFilter clearfix">
+                <p class="pull-left"> Showing <strong>??</strong> PHOTOS </p>
+
+                <div class="pull-right ">
+                    <div class="change-order pull-right">
+                        <select class="form-control" name="orderby">
+                            <option selected="selected">Default sorting</option>
+                            <option value="popularity">Sort by popularity</option>
+                            <option value="rating">Sort by average rating</option>
+                            <option value="date">Sort by newness</option>
+                            <option value="price">Sort by price: low to high</option>
+                            <option value="price-desc">Sort by price: high to low</option>
+                        </select>
+                    </div>
+                    <div class="change-view pull-right"><a href="#" title="Grid" class="grid-view"> <i
+                            class="fa fa-th-large"></i> </a> <a href="#" title="List" class="list-view "><i
+                            class="fa fa-th-list"></i></a></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

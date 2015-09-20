@@ -253,3 +253,10 @@ def find_pros():
         signupForm = SignupForm()
         signinForm = SigninForm()
     return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm)
+
+@app.route('/photos/')
+def photos():
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+    return render_template('photos.html',signupForm=signupForm,signinForm=signinForm)
