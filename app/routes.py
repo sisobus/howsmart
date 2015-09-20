@@ -225,4 +225,31 @@ def user_portfolio(user_id):
         signupForm = SignupForm()
         signinForm = SigninForm()
     user = User.query.filter_by(id=user_id).first()
-    return render_template('user_portfolio.html',user=user,signupForm=signupForm,signinForm=signinForm)
+    feeds = Feed.query.filter_by(user_id=user.id).order_by(Feed.created_at.desc()).all()
+    ret_feeds = []
+
+    for feed in feeds:
+        d = {}
+        image = Image.query.filter_by(id=feed.image_id).first()
+        image_path = utils.get_image_path(image.image_path)
+        all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+        d['image_path'] = image_path
+        d['user'] = user
+        d['feed'] = feed
+        d['number_of_comment'] = len(all_comments)
+        ret_feeds.append(d)
+    return render_template('user_portfolio.html',user=user,signupForm=signupForm,signinForm=signinForm,feeds=ret_feeds)
+
+@app.route('/product_detail/<int:product_id>')
+def product_detail(product_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+    return render_template('product_detail.html',signupForm=signupForm,signinForm=signinForm)
+
+@app.route('/find_pros/')
+def find_pros():
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+    return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm)

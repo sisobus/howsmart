@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block content %}
+    <br>
+<div class="container main-container ">
+    <div class="row">
+        <div class="breadcrumbDiv col-lg-12">
+            <ul class="breadcrumb">
+                <li><a href="/">HOME</a></li>
+                <li><a href="/find_pros">FIND PROS</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><a data-toggle="collapse" href="#collapseCategory" class="collapseWill">
+                        <span class="pull-left"> <i class="fa fa-caret-right"></i></span> Category </a></h4>
+                </div>
+                <div id="collapseCategory" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <ul class="nav nav-pills nav-stacked tree">
+                            <li class="active dropdown-tree open-tree"><a class="dropdown-tree-a"> <span
+                                    class="badge pull-right">42</span> CATEGORY1</a>
+                                <ul class="category-level-2 dropdown-menu-tree">
+                                    <li class="dropdown-tree"><a class="dropdown-tree-a" href="sub-category.html">
+                                        CATEGORY1_1</a></li>
+                                    <li><a> CATEGORY1_2</a></li>
+                                    <li><a> CATEGORY1_3</a></li>
+                                    <li><a> CATEGORY1_4</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="#"> <span class="badge pull-right">42</span> CATEGORY2</a></li>
+                            <li><a href="#"> <span class="badge pull-right">42</span> CATEGORY3 </a></li>
+                            <li><a href="#"> <span class="badge pull-right">42</span> CATEGORY4 </a></li>
+                            <li><a href="#"> <span class="badge pull-right">42</span> CATEGORY5 </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><a class="collapseWill" data-toggle="collapse" href="#collapsePrice">
+                        Price <span class="pull-left"> <i class="fa fa-caret-right"></i></span> </a> <span
+                            class="pull-right clearFilter  label-danger"> Clear </span></h4>
+                </div>
+                <div id="collapsePrice" class="panel-collapse collapse in">
+                    <div class="panel-body priceFilterBody">
+                        <!-- -->
+                        <label>
+                            <input type="radio" name="agree" value="0"/>
+                            100$ - 500$</label>
+                        <br>
+                        <label>
+                            <input type="radio" name="agree" value="1"/>
+                            500$ - 1000$</label>
+                        <br>
+                        <label>
+                            <input type="radio" name="agree" value="2"/>
+                            1000$ - 1500$</label>
+                        <br>
+                        <label>
+                            <input type="radio" name="agree" value="3"/>
+                            1500$ - 2000$</label>
+                        <br>
+                        <label>
+                            <input type="radio" name="agree" value="4"/>
+                            2000$ - 2500$</label>
+                        <br>
+                        <label>
+                            <input type="radio" name="agree" value="5"/>
+                            2500$ - 3000$</label>
+                        <br>
+                        <label>
+                            <input type="radio" name="agree" value="6" disabled checked/>
+                            Don't know</label>
+                        <hr>
+                        <p>Enter a Price range </p>
+
+                        <form class="form-inline " role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="exampleInputEmail2"
+                                       placeholder="2000 $">
+                            </div>
+                            <div class="form-group sp"> -</div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="exampleInputPassword2"
+                                       placeholder="3000 $">
+                            </div>
+                            <button type="submit" class="btn btn-default pull-right">check</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9 col-md-9 col-sm-12">
+            <h2>FIND PROS</h2>
+            <div class="w100 productFilter clearfix">
+                <p class="pull-left"> Showing <strong>??</strong> PROS </p>
+
+                <div class="pull-right ">
+                    <div class="change-order pull-right">
+                        <select class="form-control" name="orderby">
+                            <option selected="selected">Default sorting</option>
+                            <option value="popularity">Sort by popularity</option>
+                            <option value="rating">Sort by average rating</option>
+                            <option value="date">Sort by newness</option>
+                            <option value="price">Sort by price: low to high</option>
+                            <option value="price-desc">Sort by price: high to low</option>
+                        </select>
+                    </div>
+                    <div class="change-view pull-right"><a href="#" title="Grid" class="grid-view"> <i
+                            class="fa fa-th-large"></i> </a> <a href="#" title="List" class="list-view "><i
+                            class="fa fa-th-list"></i></a></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

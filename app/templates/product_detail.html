@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+    <br>
+<div class="container main-container ">
+    <div class="row">
+        <div class="breadcrumbDiv col-lg-12">
+            <ul class="breadcrumb">
+                <li><a href="/">HOME</a></li>
+                <li><a href="/">CATEGORY</a></li>
+                <li><a href="/product_detail/1">FIXED DOWNLIGHT</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row transitionfx">
+        <div class="col-lg-6 col-md-6 col-sm-6">
+            <div class="main-image sp-wrap col-lg-12 no-padding">
+                <a href="{{ url_for('static',filename='images/wide_image1.jpg') }}">
+                <img src="{{ url_for('static',filename='images/wide_image1.jpg') }}" class="img-responsive" alt="img">
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-5">
+            <h1 class="product-title">NAME/MODEL : FIXED DOWNLIGHT</h1>
+            <h1 class="product-title">가격: 500000</h1>
+            <h3 class="product-code">ITEM-code : L-01</h3>
+            <h3 class="productInfo">BODY FINISH : WHITE POWDER PAINTED</h3>
+            <h3 class="productInfo">MATERIAL : AL. DIECASTING & SHEET</h3>
+            <h3 class="productInfo">LAMP : COB LED 15W 3000'K 28deg</h3>
+            <h3 class="productInfo">SIZE : 110 x H75mm (타공 95mm)</h3>
+            <h3 class="productInfo">LOCAL VENDOR FIRM : DOSHITEKLITE</h3>
+            <h3 class="productInfo">PERSON IN CHARGE : 조영철이사</h3>
+            <h3 class="productInfo">TEL.NO. 02-6452-0018</h3>
+            <div class="details-description">
+                <p>
+                    other info. 내부 8EA, 외부 1EA
+                </p>
+            </div>
+
+            <div class="cart-actions">
+                <div class="addto">
+                    <button class="button btn-cart cart first">
+                        BUY
+                    </button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+{% endblock %}
