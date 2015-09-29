@@ -11,14 +11,14 @@ app.config['SQLALCHEMY_DATABASE_URI']   = HOWSMART_DATABASE_URI
 app.config['SECRET_KEY']                = HOWSMART_SECRET_KEY
 app.config['UPLOAD_FOLDER']             = UPLOAD_FOLDER
 
-from models import db, User, Feed, Image, Comment
+from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed
 
 db.init_app(app)
 
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask import get_flashed_messages
 from flask.ext.login import LoginManager, UserMixin, current_user, login_user, logout_user
-from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm
+from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm
 from datetime import datetime
 from bs4 import BeautifulSoup
 
@@ -28,6 +28,7 @@ def main():
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
 
 
     if request.method == 'GET':
@@ -46,7 +47,7 @@ def main():
             d['number_of_comment'] = len(all_comments)
             ret_feeds.append(d)
 
-        return render_template('main.html', signupForm=signupForm, signinForm=signinForm, feeds=ret_feeds, offset=offset)
+        return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset)
     elif request.method == 'POST':
         offset = int(request.form['offset'])
         feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
@@ -63,7 +64,7 @@ def main():
             d['number_of_comment'] = len(all_comments)
             ret_feeds.append(d)
 
-        html_code = render_template('main.html', signupForm=signupForm, signinForm=signinForm, feeds=ret_feeds, offset=offset)
+        html_code = render_template('main.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset)
         return html_code
 #        soup = BeautifulSoup(html_code,"html.parser")
 #        feed_container = soup.find('div',id='feed_container')
@@ -79,10 +80,11 @@ def signup():
         #    with app.test_request_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
 
     if request.method == 'POST':
         if not signupForm.validate():
-            return render_template('main.html', signupForm=signupForm, signinForm=signinForm)
+            return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
         else:
             newuser = User(signupForm.username.data, signupForm.email.data, signupForm.password.data)
             newuser.created_at = datetime.utcnow()
@@ -98,17 +100,50 @@ def signup():
 
 
     if request.method == 'GET':
-        return render_template('main.html', signupForm=signupForm, signinForm=signinForm)
+        return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
+
+@app.route('/company_signup', methods=['GET','POST'])
+def company_signup():
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+
+    if request.method == 'POST':
+        if not companySignupForm.validate():
+            return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
+        else :
+            newuser = User(companySignupForm.username.data, companySignupForm.email.data, companySignupForm.password.data)
+            newuser.level = 2
+            newuser.created_at = datetime.utcnow()
+            db.session.add(newuser)
+            db.session.commit()
+            newcompany = Company(companySignupForm.introduction.data, companySignupForm.address.data, companySignupForm.tel.data, companySignupForm.website.data, newuser.id)
+            db.session.add(newcompany)
+            db.session.commit()
+
+            session['username']     = newuser.username
+            session['email']        = newuser.email
+            session['logged_in']    = True
+            session['user_id']      = newuser.id
+
+            return redirect(url_for('main'))
+    if request.method == 'GET':
+        return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
+
+
+
 
 @app.route('/signin',methods=['GET','POST'])
 def signin():
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
 
     if request.method == 'POST':
         if not signinForm.validate():
-            return render_template('main.html', signupForm=signupForm, signinForm=signinForm)
+            return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
         else :
             user = User.query.filter_by(email=signinForm.email.data.lower()).first()
             session['email'] = signinForm.email.data
@@ -117,7 +152,7 @@ def signin():
             session['user_id'] = user.id
             return redirect(url_for('main'))
     elif request.method == 'GET':
-        return render_template('main.html', signupForm=signupForm, signinForm=signinForm)
+        return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
 
 
 @app.route('/signout')
@@ -224,6 +259,7 @@ def user_portfolio(user_id):
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
     user = User.query.filter_by(id=user_id).first()
     feeds = Feed.query.filter_by(user_id=user.id).order_by(Feed.created_at.desc()).all()
     ret_feeds = []
@@ -238,25 +274,28 @@ def user_portfolio(user_id):
         d['feed'] = feed
         d['number_of_comment'] = len(all_comments)
         ret_feeds.append(d)
-    return render_template('user_portfolio.html',user=user,signupForm=signupForm,signinForm=signinForm,feeds=ret_feeds)
+    return render_template('user_portfolio.html',user=user,signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,feeds=ret_feeds)
 
 @app.route('/product_detail/<int:product_id>')
 def product_detail(product_id):
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
-    return render_template('product_detail.html',signupForm=signupForm,signinForm=signinForm)
+        companySignupForm = CompanySignupForm()
+    return render_template('product_detail.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm)
 
 @app.route('/find_pros/')
 def find_pros():
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
-    return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm)
+        companySignupForm = CompanySignupForm()
+    return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm)
 
 @app.route('/photos/')
 def photos():
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
-    return render_template('photos.html',signupForm=signupForm,signinForm=signinForm)
+        companySignupForm = CompanySignupForm()
+    return render_template('photos.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm)

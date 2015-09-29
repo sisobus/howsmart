@@ -21,7 +21,11 @@
     <style type="text/css">
         form input#username,
         form input#email,
-        form input#password  {
+        form input#password,
+        form textarea#introduction,
+        form input#address,
+        form input#tel,
+        form input#website {
             border-color: #DDDDDD;
             -webkit-border-radius: 3px 0 0 3px;
             -moz-border-radius: 3px 0 0 3px;
@@ -33,19 +37,30 @@
             height: 36px;
             width: 100%;
         }
-        form input#password {
+        form textarea#introduction {
+            height: 100px;
+        }
+        form input#website {
             margin-bottom: 10px;
         }
         form input#username:hover,
         form input#email:hover,
-        form input#password:hover {
+        form input#password:hover,
+        form input#address:hover,
+        form textarea#introduction:hover,
+        form input#tel:hover,
+        form input#website:hover {
             border-color: #EEEEEE;
             outline: 0 none;
         }
 
         form input#username:focus,
         form input#email:focus,
-        form input#password:focus {
+        form input#password:focus,
+        form textarea#introduction:focus,
+        form input#address:focus,
+        form input#tel:focus,
+        form input#website:focus {
             border-color: #EEEEEE;
             outline: 0 none;
         }
@@ -121,6 +136,95 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+<!-- Company Modal Start-->
+<div class="modal signUpContent fade" id="ModalCompanySignup" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
+                <h3 class="modal-title-site text-center"> Company REGISTER </h3>
+            </div>
+            <div class="modal-body">
+                <!-- User form start-->
+                <form action="{{ url_for('company_signup') }}" method=post>
+                    {{ companySignupForm.hidden_tag() }}
+                <div class="form-group reg-username">
+                    <div>
+                        {% for message in companySignupForm.username.errors %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                        {{ companySignupForm.username(placeholder="Enter your company name") }}
+                    </div>
+                </div>
+                <div class="form-group reg-email">
+                    <div>
+                        {% for message in companySignupForm.email.errors %}
+                            <div class="flash">{{  message }}</div>
+                        {% endfor %}
+                        {{ companySignupForm.email(placeholder="Enter your company Email") }}
+                    </div>
+                </div>
+                <div class="form-group reg-password">
+                    <div>
+                        {% for message in companySignupForm.password.errors %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                        {{ companySignupForm.password(placeholder="Enter your password") }}
+                    </div>
+                </div>
+                <div class="form-group ">
+                    <div>
+                        {% for message in companySignupForm.introduction.errors %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                        {{ companySignupForm.introduction(placeholder="Enter your company introduction") }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div>
+                        {% for message in companySignupForm.address.errors %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                        {{ companySignupForm.address(placeholder="Enter your company address") }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div>
+                        {% for meesage in companySignupForm.tel.errors %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                        {{ companySignupForm.tel(placeholder="Enter your company telephon number") }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div>
+                        {% for message in companySignupForm.website.errors %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                        {{ companySignupForm.website(placeholder="Enter your company website address") }}
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <input name="submit" class="btn  btn-block btn-lg btn-primary" value="REGISTER" type="submit">
+                    </div>
+                </div>
+                </form>
+                <!--userForm-->
+
+            </div>
+            <div class="modal-footer">
+                <p class="text-center"> Already member? <a data-toggle="modal" data-dismiss="modal" href="#ModalLogin">
+                    Sign in </a></p>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+
+    </div>
+    <!-- /.modal-dialog -->
+
+</div>
+<!-- /.CompanyModalSignup End -->
 <!-- Modal Signup start -->
 <div class="modal signUpContent fade" id="ModalSignup" tabindex="-1" role="dialog">
     <div class="modal-dialog">
@@ -130,6 +234,8 @@
                 <h3 class="modal-title-site text-center"> REGISTER </h3>
             </div>
             <div class="modal-body">
+                <p class="text-center"> 기업회원으로 가입하시겠습니까? <a data-toggle="modal" data-dismiss="modal" href="#ModalCompanySignup">
+                기업 회원으로 가입하기</a></p>
                 <div class="control-group"><a class="fb_button btn  btn-block btn-lg " href="#"> SIGNUP WITH
                     FACEBOOK </a></div>
                 <h5 style="padding:10px 0 10px 0;" class="text-center"> OR </h5>
@@ -255,8 +361,7 @@
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="#"> Home </a></li>
-                <li class="dropdown megamenu-40width"><a data-toggle="dropdown" class="dropdown-toggle" href="#"> Photos <b class="caret"> </b> </a>
+                <li class="dropdown megamenu-40width"><a class="dropdown-toggle" href="/photos/"> Photos <b class="caret"> </b> </a>
                     <ul class="dropdown-menu">
                         <li class="megamenu-content ">
                             <ul class="col-lg-6  col-sm-6 col-md-6 unstyled noMarginLeft newCollectionUl">
@@ -282,7 +387,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="dropdown megamenu-fullwidth"><a data-toggle="dropdown" class="dropdown-toggle" href="#"> Findpros <b class="caret"> </b> </a>
+                <li class="dropdown megamenu-fullwidth"><a  class="dropdown-toggle" href="/find_pros/"> Findpros <b class="caret"> </b> </a>
                     <ul class="dropdown-menu">
                         <li class="megamenu-content ">
                             <ul class="col-lg-3  col-sm-3 col-md-3 unstyled noMarginLeft newCollectionUl">

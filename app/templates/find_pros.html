@@ -1,5 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
+    <style type="text/css">
+
+    #all_pros_container {
+        background-color: #FFFFFF;
+    }
+    #pros_container {
+        background-color:inherit;
+        width: 100%;
+        float: left;
+        margin:0;
+        height: 250px;
+    }
+    #pros_background_image {
+        position: absolute;
+        width: 400px;
+        height: 240px;
+        margin: 5px 5px 5px 5px;
+    }
+    #pros_body {
+        position: relative;
+        margin: 0px 0px 0px 420px;
+    }
+    hr.find_pros {
+        margin: 10px 10px 10px 10px;
+        /*
+        width: 98%;
+        */
+        color: #f5f5f5; border: thin solid #f5f5f5;
+    }
+
+    </style>
     <br>
 <div class="container main-container ">
     <div class="row">
@@ -115,6 +146,57 @@
                 </div>
             </div>
 
+            <div class="row xsResponse clearfix">
+                <div id="all_pros_container">
+                    <div id="pros_container">
+                        <div id="pros_background_image" style="background: url('/static/files/1234.jpg');
+                            background-repeat: no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                        ">
+                        </div>
+                        <div id="pros_body">
+                            <h1>test</h1>
+                            <h2>test</h2>
+                            <h3>test</h3>
+                            <h4>test</h4>
+                        </div>
+                    </div>
+                    <hr class="find_pros">
+                 <div id="all_pros_container">
+                    <div id="pros_container">
+                        <div id="pros_background_image" style="background: url('/static/files/1234.jpg');
+                            background-repeat: no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                        ">
+                        </div>
+                        <div id="pros_body">
+                            <h1>test</h1>
+                            <h2>test</h2>
+                            <h3>test</h3>
+                            <h4>test</h4>
+                        </div>
+                    </div>
+                    <hr class="find_pros">
+                     <div id="all_pros_container">
+                    <div id="pros_container">
+                        <div id="pros_background_image" style="background: url('/static/files/1234.jpg');
+                            background-repeat: no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                        ">
+                        </div>
+                        <div id="pros_body">
+                            <h1>test</h1>
+                            <h2>test</h2>
+                            <h3>test</h3>
+                            <h4>test</h4>
+                        </div>
+                    </div>
+                    <hr class="find_pros">
+                </div>
+            </div>
         </div>
     </div>
 </div>
