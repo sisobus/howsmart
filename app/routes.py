@@ -11,7 +11,7 @@ app.config['SQLALCHEMY_DATABASE_URI']   = HOWSMART_DATABASE_URI
 app.config['SECRET_KEY']                = HOWSMART_SECRET_KEY
 app.config['UPLOAD_FOLDER']             = UPLOAD_FOLDER
 
-from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed
+from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed, Pros_category, Company_has_pros_category
 
 db.init_app(app)
 
@@ -117,6 +117,8 @@ def company_signup():
 
                 filename = secure_filename(companySignupForm.filename.data.filename)
                 if utils.allowedFile(filename):
+                    print companySignupForm.pros_category.data
+
                     newuser = User(companySignupForm.username.data, companySignupForm.email.data, companySignupForm.password.data)
                     newuser.level = 2
                     newuser.created_at = datetime.utcnow()
@@ -135,6 +137,13 @@ def company_signup():
                     newcompany.image_id = image.id
                     db.session.add(newcompany)
                     db.session.commit()
+
+                    for category_data in companySignupForm.pros_category.data:
+                        cur_pros_category_id = int(category_data)
+                        new_company_has_pros_category = Company_has_pros_category(newcompany.id,cur_pros_category_id)
+                        db.session.add(new_company_has_pros_category)
+                        db.session.commit()
+
 
                     session['username']     = newuser.username
                     session['email']        = newuser.email

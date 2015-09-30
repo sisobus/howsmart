@@ -206,6 +206,14 @@
                 </div>
                 <div class="form-group">
                     <div>
+                        {% for message in companySignupForm.pros_category.errors %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                        {{ companySignupForm.pros_category }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div>
                     {% for message in companySignupForm.filename.errors %}
                         <div class="flash">{{ message }}</div>
                     {% endfor %}

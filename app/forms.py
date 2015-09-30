@@ -1,5 +1,6 @@
-from flask.ext.wtf import Form
-from wtforms import TextField,TextAreaField, SubmitField, validators, ValidationError, PasswordField, FileField
+#-*- coding:utf-8 -*-
+from flask.ext.wtf import Form,widgets
+from wtforms import widgets,TextField,TextAreaField, SubmitField, validators, ValidationError, PasswordField, FileField, RadioField, SelectField, SelectMultipleField
 from models import db, User
 
 class SignupForm(Form):
@@ -22,6 +23,10 @@ class SignupForm(Form):
         else :
             return True
 
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
+
 class CompanySignupForm(Form):
     username    = TextField('username', [validators.Required('please enter your company name')])
     email       = TextField('email', [validators.Required('please enter your company email'), validators.Email('please enter your company email')])
@@ -31,6 +36,8 @@ class CompanySignupForm(Form):
     tel         = TextField('tel', [validators.Required('please enter your company tel')])
     website     = TextField('website', [validators.Required('please enter your company website address')])
     filename    = FileField('filename', [validators.Required('please enter this feed image file')])
+    #pros_category = RadioField('pros_category', choices=[('value_1','option1'),('value_2','option2'),('value_3','option3')])
+    pros_category = MultiCheckboxField('pros_category', choices=[('1','주거 인테리어'),('2','상업 인테리어'),('3','가구')])
 
     def __init__(self, *args, **kargs):
         Form.__init__(self, *args, **kargs)

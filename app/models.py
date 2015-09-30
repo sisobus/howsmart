@@ -114,3 +114,20 @@ class Project_has_feed(db.Model):
     __tablename__ = 'project_has_feed'
     project_id  = db.Column(db.Integer, primary_key=True)
     feed_id     = db.Column(db.Integer, primary_key=True)
+
+class Pros_category(db.Model):
+    __tablename__ = 'pros_category'
+    id = db.Column(db.Integer, primary_key=True)
+    category_name   = db.Column(db.String(500))
+
+    def __init__(self, category_name):
+        self.category_name = category_name
+
+class Company_has_pros_category(db.Model):
+    __tablename__ = 'company_has_pros_category'
+    company_id = db.Column(db.Integer, primary_key=True)
+    pros_category_id = db.Column(db.Integer, primary_key=True)
+
+    def __init__(self, company_id, pros_category_id):
+        self.company_id = company_id
+        self.pros_category_id = pros_category_id
