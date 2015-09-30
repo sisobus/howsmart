@@ -150,7 +150,7 @@
                 <div id="all_pros_container">
                     {% for pros in ret_pros %}
                     <div id="pros_container">
-                        <div id="pros_background_image" style="background: url('{{ pros.image_path }}');
+                        <div id="pros_background_image" style="background: url({{ '/static/'+pros.image_path }});
                             background-repeat: no-repeat;
                             background-size: cover;
                             background-position: center;
