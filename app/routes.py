@@ -328,6 +328,35 @@ def find_pros():
 
     return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros))
 
+@app.route('/find_pros/<int:pros_category_id>')
+def find_pros_detail(pros_category_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+
+    ret_pros = []
+    users = User.query.filter_by(level=2).order_by(User.created_at.desc()).all()
+    for user in users:
+        d = {}
+        company = Company.query.filter_by(user_id=user.id).first()
+        company_has_pros_categorys = Company_has_pros_category.query.filter_by(company_id=company.id).all()
+        ok = False
+        for company_has_pros_category in company_has_pros_categorys:
+            if int(company_has_pros_category.pros_category_id) == pros_category_id:
+                ok = True
+        if not ok:
+            continue
+        image = Image.query.filter_by(id=company.image_id).first()
+        image_path = utils.get_image_path(image.image_path)
+        d['user'] = user
+        d['company'] = company
+        d['image_path'] = image_path
+        ret_pros.append(d)
+
+    return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros))
+
+
 @app.route('/photos/')
 def photos():
     with app.app_context():
