@@ -30,6 +30,7 @@ class CompanySignupForm(Form):
     address     = TextField('address', [validators.Required('please enter your company address')])
     tel         = TextField('tel', [validators.Required('please enter your company tel')])
     website     = TextField('website', [validators.Required('please enter your company website address')])
+    filename    = FileField('filename', [validators.Required('please enter this feed image file')])
 
     def __init__(self, *args, **kargs):
         Form.__init__(self, *args, **kargs)

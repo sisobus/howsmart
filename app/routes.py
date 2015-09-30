@@ -113,21 +113,34 @@ def company_signup():
         if not companySignupForm.validate():
             return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
         else :
-            newuser = User(companySignupForm.username.data, companySignupForm.email.data, companySignupForm.password.data)
-            newuser.level = 2
-            newuser.created_at = datetime.utcnow()
-            db.session.add(newuser)
-            db.session.commit()
-            newcompany = Company(companySignupForm.introduction.data, companySignupForm.address.data, companySignupForm.tel.data, companySignupForm.website.data, newuser.id)
-            db.session.add(newcompany)
-            db.session.commit()
+            if companySignupForm.validate_on_submit():
+                newuser = User(companySignupForm.username.data, companySignupForm.email.data, companySignupForm.password.data)
+                newuser.level = 2
+                newuser.created_at = datetime.utcnow()
+                db.session.add(newuser)
+                db.session.commit()
 
-            session['username']     = newuser.username
-            session['email']        = newuser.email
-            session['logged_in']    = True
-            session['user_id']      = newuser.id
+                filename = secure_filename(companySignupForm.filename.data.filename)
+                if utils.allowedFile(filename):
+                    directory_url = os.path.join(app.config['UPLOAD_FOLDER'],newuser.email)
+                    utils.createDirectory(directory_url)
+                    file_path = os.path.join(directory_url,filename)
+                    companySignupForm.filename.data.save(file_path)
+                    image = Image(file_path)
+                    image.user_id = newuser.id
+                    db.session.add(image)
+                    db.session.commit()
+                newcompany = Company(companySignupForm.introduction.data, companySignupForm.address.data, companySignupForm.tel.data, companySignupForm.website.data, newuser.id)
+                newcompany.image_id = image.id
+                db.session.add(newcompany)
+                db.session.commit()
 
-            return redirect(url_for('main'))
+                session['username']     = newuser.username
+                session['email']        = newuser.email
+                session['logged_in']    = True
+                session['user_id']      = newuser.id
+
+                return redirect(url_for('main'))
     if request.method == 'GET':
         return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
 

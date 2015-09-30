@@ -146,7 +146,7 @@
             </div>
             <div class="modal-body">
                 <!-- User form start-->
-                <form action="{{ url_for('company_signup') }}" method=post>
+                <form action="{{ url_for('company_signup') }}" method=post enctype="multipart/form-data">
                     {{ companySignupForm.hidden_tag() }}
                 <div class="form-group reg-username">
                     <div>
@@ -204,6 +204,15 @@
                         {{ companySignupForm.website(placeholder="Enter your company website address") }}
                     </div>
                 </div>
+                <div class="form-group">
+                    <div>
+                    {% for message in companySignupForm.filename.errors %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ companySignupForm.filename(id="uploadImageContainer") }}
+                    </div>
+                </div>
+
                 <div>
                     <div>
                         <input name="submit" class="btn  btn-block btn-lg btn-primary" value="REGISTER" type="submit">

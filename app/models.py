@@ -94,6 +94,7 @@ class Company(db.Model):
     company_tel             = db.Column(db.String(100))
     company_website         = db.Column(db.String(500))
     user_id                 = db.Column(db.Integer, db.ForeignKey('user.id'))
+    image_id                = db.Column(db.Integer, db.ForeignKey('image.id'))
 
     def __init__(self, company_introduction, company_address, company_tel, company_website, user_id):
         self.company_introduction   = company_introduction
