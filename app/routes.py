@@ -114,14 +114,15 @@ def company_signup():
             return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
         else :
             if companySignupForm.validate_on_submit():
-                newuser = User(companySignupForm.username.data, companySignupForm.email.data, companySignupForm.password.data)
-                newuser.level = 2
-                newuser.created_at = datetime.utcnow()
-                db.session.add(newuser)
-                db.session.commit()
 
                 filename = secure_filename(companySignupForm.filename.data.filename)
                 if utils.allowedFile(filename):
+                    newuser = User(companySignupForm.username.data, companySignupForm.email.data, companySignupForm.password.data)
+                    newuser.level = 2
+                    newuser.created_at = datetime.utcnow()
+                    db.session.add(newuser)
+                    db.session.commit()
+
                     directory_url = os.path.join(app.config['UPLOAD_FOLDER'],newuser.email)
                     utils.createDirectory(directory_url)
                     file_path = os.path.join(directory_url,filename)
@@ -130,17 +131,17 @@ def company_signup():
                     image.user_id = newuser.id
                     db.session.add(image)
                     db.session.commit()
-                newcompany = Company(companySignupForm.introduction.data, companySignupForm.address.data, companySignupForm.tel.data, companySignupForm.website.data, newuser.id)
-                newcompany.image_id = image.id
-                db.session.add(newcompany)
-                db.session.commit()
+                    newcompany = Company(companySignupForm.introduction.data, companySignupForm.address.data, companySignupForm.tel.data, companySignupForm.website.data, newuser.id)
+                    newcompany.image_id = image.id
+                    db.session.add(newcompany)
+                    db.session.commit()
 
-                session['username']     = newuser.username
-                session['email']        = newuser.email
-                session['logged_in']    = True
-                session['user_id']      = newuser.id
+                    session['username']     = newuser.username
+                    session['email']        = newuser.email
+                    session['logged_in']    = True
+                    session['user_id']      = newuser.id
 
-                return redirect(url_for('main'))
+                    return redirect(url_for('main'))
     if request.method == 'GET':
         return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
 
