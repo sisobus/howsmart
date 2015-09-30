@@ -303,7 +303,20 @@ def find_pros():
         signupForm = SignupForm()
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
-    return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm)
+
+    ret_pros = []
+    users = User.query.filter_by(level=2).order_by(User.created_at.desc()).all()
+    for user in users:
+        d = {}
+        company = Company.query.filter_by(user_id=user.id).first()
+        image = Image.query.filter_by(id=company.image_id).first()
+        image_path = utils.get_image_path(image.image_path)
+        d['user'] = user
+        d['company'] = company
+        d['image_path'] = image_path
+        ret_pros.append(d)
+
+    return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros))
 
 @app.route('/photos/')
 def photos():

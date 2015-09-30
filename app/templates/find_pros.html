@@ -127,7 +127,7 @@
         <div class="col-lg-9 col-md-9 col-sm-12">
             <h2>FIND PROS</h2>
             <div class="w100 productFilter clearfix">
-                <p class="pull-left"> Showing <strong>??</strong> PROS </p>
+                <p class="pull-left"> Showing <strong>{{ pros_size }}</strong> PROS </p>
 
                 <div class="pull-right ">
                     <div class="change-order pull-right">
@@ -148,53 +148,22 @@
 
             <div class="row xsResponse clearfix">
                 <div id="all_pros_container">
+                    {% for pros in ret_pros %}
                     <div id="pros_container">
-                        <div id="pros_background_image" style="background: url('/static/files/1234.jpg');
+                        <div id="pros_background_image" style="background: url('{{ pros.image_path }}');
                             background-repeat: no-repeat;
                             background-size: cover;
                             background-position: center;
                         ">
                         </div>
                         <div id="pros_body">
-                            <h1>test</h1>
-                            <h2>test</h2>
-                            <h3>test</h3>
-                            <h4>test</h4>
+                            <h1>{{ pros.user.username }}</h1>
+                            <h2>{{ pros.user.email }}</h2>
+                            <h3>{{ pros.company.company_introduction }}</h3>
                         </div>
                     </div>
                     <hr class="find_pros">
-                 <div id="all_pros_container">
-                    <div id="pros_container">
-                        <div id="pros_background_image" style="background: url('/static/files/1234.jpg');
-                            background-repeat: no-repeat;
-                            background-size: cover;
-                            background-position: center;
-                        ">
-                        </div>
-                        <div id="pros_body">
-                            <h1>test</h1>
-                            <h2>test</h2>
-                            <h3>test</h3>
-                            <h4>test</h4>
-                        </div>
-                    </div>
-                    <hr class="find_pros">
-                     <div id="all_pros_container">
-                    <div id="pros_container">
-                        <div id="pros_background_image" style="background: url('/static/files/1234.jpg');
-                            background-repeat: no-repeat;
-                            background-size: cover;
-                            background-position: center;
-                        ">
-                        </div>
-                        <div id="pros_body">
-                            <h1>test</h1>
-                            <h2>test</h2>
-                            <h3>test</h3>
-                            <h4>test</h4>
-                        </div>
-                    </div>
-                    <hr class="find_pros">
+                    {% endfor %}
                 </div>
             </div>
         </div>
