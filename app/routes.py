@@ -449,10 +449,91 @@ def find_pros_detail(pros_category_id):
     return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros))
 
 
-@app.route('/photos/')
+@app.route('/photos/',methods=['GET','POST'])
 def photos():
+    feed_category_id = 0
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
-    return render_template('photos.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm)
+
+    if request.method == 'GET':
+        offset = 10
+        feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
+        ret_feeds = []
+        for feed in feeds:
+            d = {}
+            image = Image.query.filter_by(id=feed.image_id).first()
+            image_path = utils.get_image_path(image.image_path)
+            user = User.query.filter_by(id=feed.user_id).first()
+            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+            d['image_path'] = image_path
+            d['user'] = user
+            d['feed'] = feed
+            d['number_of_comment'] = len(all_comments)
+            ret_feeds.append(d)
+
+        return render_template('photos.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id)
+    elif request.method == 'POST':
+        offset = int(request.form['offset'])
+        feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
+        ret_feeds = []
+        for feed in feeds:
+            d = {}
+            image = Image.query.filter_by(id=feed.image_id).first()
+            image_path = utils.get_image_path(image.image_path)
+            user = User.query.filter_by(id=feed.user_id).first()
+            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+            d['image_path'] = image_path
+            d['user'] = user
+            d['feed'] = feed
+            d['number_of_comment'] = len(all_comments)
+            ret_feeds.append(d)
+
+        html_code = render_template('photos.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id)
+        return html_code
+
+@app.route('/photos/<int:feed_category_id>')
+def photos_detail(feed_category_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+
+    if request.method == 'GET':
+        offset = 10
+        feeds = Feed.query.filter_by(feed_category_id=feed_category_id).order_by(Feed.created_at.desc()).limit(offset).all()
+        ret_feeds = []
+        for feed in feeds:
+            d = {}
+            image = Image.query.filter_by(id=feed.image_id).first()
+            image_path = utils.get_image_path(image.image_path)
+            user = User.query.filter_by(id=feed.user_id).first()
+            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+            d['image_path'] = image_path
+            d['user'] = user
+            d['feed'] = feed
+            d['number_of_comment'] = len(all_comments)
+            ret_feeds.append(d)
+
+        return render_template('photos.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id)
+
+    elif request.method == 'POST':
+        offset = int(request.form['offset'])
+        feeds = Feed.query.filter_by(feed_category_id=feed_category_id).order_by(Feed.created_at.desc()).limit(offset).all()
+        ret_feeds = []
+        for feed in feeds:
+            d = {}
+            image = Image.query.filter_by(id=feed.image_id).first()
+            image_path = utils.get_image_path(image.image_path)
+            user = User.query.filter_by(id=feed.user_id).first()
+            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+            d['image_path'] = image_path
+            d['user'] = user
+            d['feed'] = feed
+            d['number_of_comment'] = len(all_comments)
+            ret_feeds.append(d)
+
+        html_code = render_template('photos.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id)
+        return html_code
+
