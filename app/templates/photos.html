@@ -1,5 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
+    <style type="text/css">
+
+    #all_photos_container {
+        background-color: #FFFFFF;
+    }
+    #photos_container {
+        background-color:inherit;
+        width: 100%;
+        float: left;
+        margin:0;
+        height: 250px;
+    }
+    #photos_background_image {
+        position: absolute;
+        width: 400px;
+        height: 240px;
+        margin: 5px 5px 5px 5px;
+    }
+    #photos_body {
+        position: relative;
+        margin: 0px 0px 0px 420px;
+    }
+    hr.photos {
+        margin: 10px 10px 10px 10px;
+        /*
+        width: 98%;
+        */
+        color: #f5f5f5; border: thin solid #f5f5f5;
+    }
+
+    </style>
     <br>
 <div class="container main-container ">
     <div class="row">
@@ -68,6 +99,22 @@
                 </div>
             </div>
 
+            <div class="row xsResponse clearfix">
+                <div id="all_photos_container">
+                    <div id="photos_container">
+                        <div id="photos_background_image" style="background: url({{ '/static/files/1234.jpg' }});
+                            background-repeat: no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                        ">
+                        </div>
+                        <div id="photos_body">
+                            <h1>body</h1>
+                        </div>
+                    </div>
+                    <hr class="photos">
+                </div>
+            </div>
         </div>
     </div>
 </div>

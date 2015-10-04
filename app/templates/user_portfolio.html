@@ -43,6 +43,10 @@ card_header {
     {{ user.username }}
     <br>
     {{ user.email }}
+    <br>
+    {% if session['is_company'] %}
+        <a href="/make_project"><button class="btn btn-default">프로젝트 만들기</button></a>
+    {% endif %}
     <hr>
 <div class="container main-container" id="feed_container">
     {% for feed in feeds %}

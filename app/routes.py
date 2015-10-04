@@ -18,13 +18,16 @@ db.init_app(app)
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask import get_flashed_messages
 from flask.ext.login import LoginManager, UserMixin, current_user, login_user, logout_user
-from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm
+from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm, MakeProjectForm
 from datetime import datetime
 from bs4 import BeautifulSoup
 
 
 @app.route('/',methods=['GET','POST'])
 def main():
+
+    session['project_id'] = 0
+
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
@@ -95,6 +98,7 @@ def signup():
             session['email'] = newuser.email
             session['logged_in'] = True
             session['user_id'] = newuser.id
+            session['is_company'] = False
 
             return redirect(url_for('main'))
 
@@ -149,6 +153,7 @@ def company_signup():
                     session['email']        = newuser.email
                     session['logged_in']    = True
                     session['user_id']      = newuser.id
+                    session['is_company'] = True
 
                     return redirect(url_for('main'))
     if request.method == 'GET':
@@ -173,6 +178,11 @@ def signin():
             session['username'] = user.username
             session['logged_in'] = True
             session['user_id'] = user.id
+            if user.level == 1:
+                session['is_company'] = False
+            elif user.level == 2:
+                session['is_company'] = True
+
             return redirect(url_for('main'))
     elif request.method == 'GET':
         return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
@@ -186,6 +196,8 @@ def signout():
     session.pop('username', None)
     session.pop('logged_in', None)
     session.pop('user_id', None)
+    session.pop('is_company',None)
+    session.pop('project_id',None)
     return redirect(url_for('main'))
 
 @app.route('/write_feed',methods=['GET','POST'])
@@ -217,6 +229,83 @@ def write_feed():
             return redirect(url_for('main'))
     elif request.method == 'GET':
         return render_template('write_feed.html',writeFeedForm=writeFeedForm)
+
+@app.route('/make_project',methods=['GET','POST'])
+def make_project():
+    project_id = session['project_id']
+    with app.app_context():
+        writeFeedForm = WriteFeedForm()
+        makeProjectForm = MakeProjectForm()
+
+    if request.method == 'POST':
+        if project_id == 0: # first make project
+            if not makeProjectForm.validate():
+                print 'not validate'
+                return render_template('make_project.html',writeFeedForm=writeFeedForm,makeProjectForm=makeProjectForm,project_id=project_id)
+            else :
+                if makeProjectForm.validate_on_submit():
+                    user = User.query.filter_by(email=session['email'].lower()).first()
+                    company = Company.query.filter_by(user_id=user.id).first()
+
+                    filename = secure_filename(writeFeedForm.filename.data.filename)
+                    if utils.allowedFile(filename):
+                        directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
+                        utils.createDirectory(directory_url)
+                        file_path = os.path.join(directory_url,filename)
+                        writeFeedForm.filename.data.save(file_path)
+                        image = Image(file_path)
+                        image.user_id = user.id
+                        db.session.add(image)
+                        db.session.commit()
+                    feed = Feed(writeFeedForm.title.data, writeFeedForm.body.data, datetime.utcnow())
+                    feed.user_id = user.id
+                    feed.image_id = image.id
+                    db.session.add(feed)
+                    db.session.commit()
+                    project = Project(makeProjectForm.project_name.data,company.id,image.id)
+                    db.session.add(project)
+                    db.session.commit()
+                    project_has_feed = Project_has_feed(project.id,feed.id)
+                    db.session.add(project_has_feed)
+                    db.session.commit()
+
+                    session['project_id'] = project.id
+                    return redirect(url_for('make_project'))
+        elif project_id != 0:
+            if not writeFeedForm.validate():
+                print 'not validate'
+                return render_template('make_project.html',writeFeedForm=writeFeedForm,makeProjectForm=makeProjectForm,project_id=project_id)
+            else :
+                if writeFeedForm.validate_on_submit():
+                    user = User.query.filter_by(email=session['email'].lower()).first()
+                    company = Company.query.filter_by(user_id=user.id).first()
+
+                    filename = secure_filename(writeFeedForm.filename.data.filename)
+                    if utils.allowedFile(filename):
+                        directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
+                        utils.createDirectory(directory_url)
+                        file_path = os.path.join(directory_url,filename)
+                        writeFeedForm.filename.data.save(file_path)
+                        image = Image(file_path)
+                        image.user_id = user.id
+                        db.session.add(image)
+                        db.session.commit()
+                    feed = Feed(writeFeedForm.title.data, writeFeedForm.body.data, datetime.utcnow())
+                    feed.user_id = user.id
+                    feed.image_id = image.id
+                    db.session.add(feed)
+                    db.session.commit()
+                    project_has_feed = Project_has_feed(project_id,feed.id)
+                    db.session.add(project_has_feed)
+                    db.session.commit()
+
+                    return redirect(url_for('make_project'))
+
+#            return render_template('make_project.html',makeProjectForm=makeProjectForm,project_id=project_id)
+    elif request.method == 'GET':
+        return render_template('make_project.html',writeFeedForm=writeFeedForm,makeProjectForm=makeProjectForm,project_id=project_id)
+
+
 
 @app.route('/feed_detail/<int:feed_id>',methods=['GET','POST'])
 def feed_detail(feed_id):

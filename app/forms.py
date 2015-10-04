@@ -84,6 +84,20 @@ class WriteFeedForm(Form):
             return False
         return True
 
+class MakeProjectForm(Form):
+    project_name    = TextField('project_name', [validators.Required('please enter project name')])
+    title       = TextField('title', [validators.Required('please enter this feed title')])
+    body        = TextAreaField('body', [validators.Required('please enter this feed body')])
+    filename    = FileField('filename', [validators.Required('please enter this feed image file')])
+
+    def __init__(self, *args, **kargs):
+        Form.__init__(self, *args, **kargs)
+
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        return True
+
 class CommentForm(Form):
     body        = TextField('body', [validators.Required('please enter your comment')])
 

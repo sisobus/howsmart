@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="{{  url_for('static',filename='bootstrap/css/bootstrap.css') }}" />
+    <link rel="stylesheet" href="{{  url_for('static',filename='css/style_feed_detail.css') }}" />
+    <script>
+        paceOptions = {
+            elements: true
+        };
+    </script>
+    <style type="text/css">
+
+        body {
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+        #image-container {
+            position: absolute;
+            width: 70%;
+            height: 100%;
+            left: 0;
+            padding: 0;
+            margin: 5px 5px 5px 5px;
+            background: #f5f5f5;
+            display: table;
+        }
+        #image-real-container {
+            display: table-cell;
+            width: 100%;
+            margin: 0;
+            vertical-align: middle;
+        }
+        #content-container {
+            position: absolute;
+            width: 30%;
+            right: 0;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            background: #f5f5f5;
+
+        }
+        #content-form-container {
+            height: inherit;
+            overflow-y: scroll;
+            padding-bottom: 45px;
+            -ms-overflow-style: none;
+            border-color: #DDDDDD;
+            border-style: solid;
+            border-width: 1px 1px 1px 1px;
+
+            margin: 10px 10px 10px 10px;
+            background: #ffffff;
+        }
+        #content-form-container::-webkit-scrollbar {
+            display: none;
+        }
+        form input#title,
+        form textarea#body,
+        form input#uploadImageContainer,
+        form input#project_name {
+            border-color: #DDDDDD;
+            -webkit-border-radius: 3px 0 0 3px;
+            -moz-border-radius: 3px 0 0 3px;
+            border-radius: 3px 0 0 3px;
+            border-style: solid;
+            border-width: 2px 1px 1px 2px;
+            color: #888888;
+            font-size: 14px;
+            height: 36px;
+            width: 100%;
+        }
+        form input#title {
+            margin-top: 100px;
+        }
+        form textarea#body {
+            height: 300px;
+        }
+        form input#uploadImageContainer {
+            margin-bottom: 10px;
+        }
+        form input#title:hover,
+        form textarea#body:hover,
+        form input#uploadImageContainer:hover,
+        form input#project_name:hover {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+        form input#title:focus,
+        form textarea#body:focus,
+        form input#uploadImageContainer:focus,
+        form input#project_name:focus {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+        img#uploadImagePreview {
+            width: 100%;
+        }
+
+	</style>
+
+    <script src="{{  url_for('static',filename='js/pace.min.js') }} "></script>
+</head>
+<body>
+<div id="container" >
+    <div id="content-container">
+        <div id="content-form-container">
+            <div id="content-form-header">
+                <a href="javascript:history.go(-1)"><p align="right">X</p></a>
+            </div>
+            <div>
+            <form action="{{ url_for('make_project') }}" method="post" enctype="multipart/form-data">
+                {% if project_id == 0 %}
+                {{ makeProjectForm.hidden_tag() }}
+                    {{ makeProjectForm.project_name(placeholder='enter project name') }}
+                    {% for message in makeProjectForm.project_name.errors %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                <div>
+                {{ makeProjectForm.title(placeholder="enter feed title") }}
+                    {% for message in makeProjectForm.title.errors %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                <div>
+                {% for message in makeProjectForm.body.errors %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+                {{ makeProjectForm.body(placeholder="enter feed body") }}
+                </div>
+                <div>
+                {% for message in makeProjectForm.filename.errors %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+                {{ makeProjectForm.filename(id="uploadImageContainer") }}
+                </div>
+                {% endif %}
+
+                {% if project_id != 0 %}
+                {{ writeFeedForm.hidden_tag() }}
+                <div>
+                {{ writeFeedForm.title(placeholder="enter feed title") }}
+                    {% for message in writeFeedForm.title.errors %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                <div>
+                {% for message in writeFeedForm.body.errors %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+                {{ writeFeedForm.body(placeholder="enter feed body") }}
+                </div>
+                <div>
+                {% for message in writeFeedForm.filename.errors %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+                {{ writeFeedForm.filename(id="uploadImageContainer") }}
+                </div>
+                {% endif %}
+                <div>
+                    <input name="submit" class="btn  btn-block btn-lg btn-primary" value="저장" type="submit">
+                </div>
+            </form>
+            <a href="/"><button class="btn btn-default">프로젝트 나가기</button></a>
+            </div>
+        </div>
+    </div>
+    <div id="image-container">
+        <div id="image-real-container">
+            <img id="uploadImagePreview" src="" class="img-responsive parallaximg sliderImg"/>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
+</script>
+<script src="{{  url_for('static',filename='bootstrap/js/bootstrap.min.js') }}"></script>
+
+<!-- include jqueryCycle plugin -->
+<script src="{{  url_for('static',filename='js/jquery.cycle2.min.js') }}"></script>
+<!-- include easing plugin -->
+<script src="{{  url_for('static',filename='js/jquery.easing.1.3.js') }}"></script>
+
+<!-- include  parallax plugin -->
+<script src="{{  url_for('static',filename='js/jquery/parallax-1.1.js') }}"></script>
+
+<!-- optionally include helper plugins -->
+<script src="{{  url_for('static',filename='js/helper-plugins/jquery.mousewheel.min.js') }}"></script>
+
+<!-- include mCustomScrollbar plugin //Custom Scrollbar  -->
+
+<script src="{{  url_for('static',filename='js/jquery.mCustomScrollbar.js') }}"></script>
+
+<!-- include checkRadio plugin //Custom check & Radio  -->
+<script src="{{  url_for('static',filename='js/ion-checkRadio/ion.checkRadio.min.js') }}"></script>
+
+<!-- include grid.js // for equal Div height  -->
+<script src="{{  url_for('static',filename='js/grids.js') }}"></script>
+
+<!-- include carousel slider plugin  -->
+<script src="{{  url_for('static',filename='js/owl.carousel.min.js') }}"></script>
+
+<!-- jQuery minimalect // custom select   -->
+<script src="{{  url_for('static',filename='js/jquery.minimalect.min.js') }}"></script>
+
+<!-- include touchspin.js // touch friendly input spinner component   -->
+<script src="{{  url_for('static',filename='js/bootstrap.touchspin.js') }}"></script>
+
+<!-- include custom script for only homepage  -->
+<script src="{{  url_for('static',filename='js/home.js') }}"></script>
+<!-- include custom script for site  -->
+<script src="{{  url_for('static',filename='js/script.js') }}"></script>
+<script>
+function readURL(input){
+    if ( input.files && input.files[0] ) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $('#uploadImagePreview').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+$('#uploadImageContainer').change(function() {
+    readURL(this);
+});
+
+</script>
+</body>
+</html>

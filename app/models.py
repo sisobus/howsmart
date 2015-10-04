@@ -110,10 +110,19 @@ class Project(db.Model):
     company_id      = db.Column(db.Integer, db.ForeignKey('company.id'))
     image_id        = db.Column(db.Integer, db.ForeignKey('image.id'))
 
+    def __init__(self, project_name, company_id, image_id):
+        self.project_name = project_name
+        self.company_id = company_id
+        self.image_id = image_id
+
 class Project_has_feed(db.Model):
     __tablename__ = 'project_has_feed'
     project_id  = db.Column(db.Integer, primary_key=True)
     feed_id     = db.Column(db.Integer, primary_key=True)
+
+    def __init__(self, project_id, feed_id):
+        self.project_id = project_id
+        self.feed_id = feed_id
 
 class Pros_category(db.Model):
     __tablename__ = 'pros_category'
