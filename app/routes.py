@@ -209,6 +209,8 @@ def write_feed():
         if not writeFeedForm.validate():
             return render_template('write_feed.html', writeFeedForm=writeFeedForm)
         else :
+            print int(writeFeedForm.feed_category.data)
+            return redirect(url_for('main'))
             user = User.query.filter_by(email=session['email'].lower()).first()
             if writeFeedForm.validate_on_submit():
                 filename = secure_filename(writeFeedForm.filename.data.filename)
