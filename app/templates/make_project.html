@@ -133,6 +133,12 @@
                 {% endfor %}
                 {{ makeProjectForm.body(placeholder="enter feed body") }}
                 </div>
+                <div style="margin-left: 20px;">
+                    {% for message in makeProjectForm.feed_category.errors %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ makeProjectForm.feed_category }}
+                </div>
                 <div>
                 {% for message in makeProjectForm.filename.errors %}
                     <div class="flash">{{ message }}</div>
@@ -154,6 +160,12 @@
                     <div class="flash">{{ message }}</div>
                 {% endfor %}
                 {{ writeFeedForm.body(placeholder="enter feed body") }}
+                </div>
+                <div style="margin-left: 20px;">
+                    {% for message in writeFeedForm.feed_category.errors %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ writeFeedForm.feed_category }}
                 </div>
                 <div>
                 {% for message in writeFeedForm.filename.errors %}

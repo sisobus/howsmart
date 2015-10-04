@@ -209,7 +209,6 @@ def write_feed():
         if not writeFeedForm.validate():
             return render_template('write_feed.html', writeFeedForm=writeFeedForm)
         else :
-            print int(writeFeedForm.feed_category.data)
             user = User.query.filter_by(email=session['email'].lower()).first()
             if writeFeedForm.validate_on_submit():
                 filename = secure_filename(writeFeedForm.filename.data.filename)
@@ -262,6 +261,7 @@ def make_project():
                     feed = Feed(writeFeedForm.title.data, writeFeedForm.body.data, datetime.utcnow())
                     feed.user_id = user.id
                     feed.image_id = image.id
+                    feed.feed_category_id = int(writeFeedForm.feed_category.data)
                     db.session.add(feed)
                     db.session.commit()
                     project = Project(makeProjectForm.project_name.data,company.id,image.id)
@@ -295,6 +295,7 @@ def make_project():
                     feed = Feed(writeFeedForm.title.data, writeFeedForm.body.data, datetime.utcnow())
                     feed.user_id = user.id
                     feed.image_id = image.id
+                    feed.feed_category_id = int(writeFeedForm.feed_category.data)
                     db.session.add(feed)
                     db.session.commit()
                     project_has_feed = Project_has_feed(project_id,feed.id)
