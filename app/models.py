@@ -33,6 +33,7 @@ class Feed(db.Model):
     created_at = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     image_id = db.Column(db.Integer, db.ForeignKey('image.id'))
+    feed_category_id = db.Column(db.Integer, db.ForeignKey('feed_category.id'))
 
     def __init__(self, title, body, created_at):
         self.title = title

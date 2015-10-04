@@ -71,10 +71,27 @@ class SigninForm(Form):
             self.email.errors.append('invalid email or password')
             return False
 
+def get_feed_category_list():
+    l = [
+        ('1','주방'),
+        ('2','화장실'),
+        ('3','방'),
+        ('4','거실'),
+        ('5','현관'),
+        ('6','주거공간_기타'),
+        ('7','카페'),
+        ('8','식당'),
+        ('9','사무실'),
+        ('10','상업공간_기타'),
+    ]
+    return l
+
 class WriteFeedForm(Form):
     title       = TextField('title', [validators.Required('please enter this feed title')])
     body        = TextAreaField('body', [validators.Required('please enter this feed body')])
     filename    = FileField('filename', [validators.Required('please enter this feed image file')])
+    feed_category = RadioField('feed_category', choices=get_feed_category_list())
+    #feed_category = RadioField('feed_category', choices=[('1','option1'),('2','option2'),('value_3','option3')])
 
     def __init__(self, *args, **kargs):
         Form.__init__(self, *args, **kargs)
@@ -89,6 +106,7 @@ class MakeProjectForm(Form):
     title       = TextField('title', [validators.Required('please enter this feed title')])
     body        = TextAreaField('body', [validators.Required('please enter this feed body')])
     filename    = FileField('filename', [validators.Required('please enter this feed image file')])
+    feed_category = RadioField('feed_category', choices=get_feed_category_list())
 
     def __init__(self, *args, **kargs):
         Form.__init__(self, *args, **kargs)

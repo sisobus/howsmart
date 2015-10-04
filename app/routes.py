@@ -224,6 +224,7 @@ def write_feed():
                 feed = Feed(writeFeedForm.title.data, writeFeedForm.body.data, datetime.utcnow())
                 feed.user_id = user.id
                 feed.image_id = image.id
+                feed.feed_category_id = int(writeFeedForm.feed_category.data)
                 db.session.add(feed)
                 db.session.commit()
             return redirect(url_for('main'))
