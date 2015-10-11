@@ -37,7 +37,7 @@ card_header {
 .bg {
   border-bottom: 0px solid #5cc0ff;
   max-width: 100%;
-  height:200px;
+  height:250px;
 }
 
 .bio:hover > .card_desc {
@@ -175,7 +175,7 @@ card_header {
                         <card_header>
                             <div class="bio">
                                 <a href="/company_feed_detail/{{ feed.feed.id }}">
-                                    <div id="photos_background_image" style="background: url({{ '/static/'+feed.image_path }});
+                                    <div class="bg" style="background: url({{ '/static/'+feed.image_path }});
                                             background-repeat: no-repeat;
                                             background-size: cover;
                                             background-position: center;
