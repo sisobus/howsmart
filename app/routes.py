@@ -375,7 +375,7 @@ def company_feed_detail(feed_id):
             comment.feed_id = feed.id
             db.session.add(comment)
             db.session.commit()
-            all_comments = Comment.query.filter_by(feed_id=feed.id).irder_by(Comment.created_at.desc()).all()
+            ret['all_comments'] = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
         return redirect(url_for('company_feed_detail',feed_id=feed.id))
 
 @app.route('/upload_file',methods=['GET','POST'])
