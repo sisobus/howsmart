@@ -16,6 +16,7 @@
                  data-cycle-prev=".prevControl"
                  data-cycle-next=".nextControl" data-cycle-loader="wait">
                 <div class="slider-item slider-item-img1">
+                    {% if not session.logged_in %}
                     <div class="sliderInfo">
                         <div class="container">
                             <div class="col-lg-12 col-md-12 col-sm-12 sliderTextFull ">
@@ -34,9 +35,11 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                     <img src="{{ url_for('static',filename='images/wide_image1.jpg') }}" class="img-responsive parallaximg sliderImg" alt="img">
                 </div>
                 <div class="slider-item slider-item-img1">
+                    {% if not session.logged_in %}
                     <div class="sliderInfo">
                         <div class="container">
                             <div class="col-lg-12 col-md-12 col-sm-12 sliderTextFull ">
@@ -55,6 +58,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                     <img src="{{ url_for('static',filename='images/wide_image2.jpg') }}" class="img-responsive parallaximg sliderImg" alt="img">
                 </div>
                 <!--/.slider-item-->

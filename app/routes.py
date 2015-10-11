@@ -484,11 +484,16 @@ def project_detail(project_id):
             "number_of_comment": len(all_comments)
         }
         feeds.append(d)
+    feed_introduction = ''
+    if len(feeds) != 0:
+        feed_introduction = feeds[0]['feed'].body
     ret = {
         'user': user,
         'company': company,
+        'project': project,
         'projects': projects,
         'feeds': feeds,
+        'feed_introduction': feed_introduction,
         'image_path': company_image_path
     }
     return render_template('project_detail.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
