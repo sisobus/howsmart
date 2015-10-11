@@ -435,7 +435,16 @@ def company_portfolio(user_id):
         companySignupForm = CompanySignupForm()
     user = User.query.filter_by(id=user_id).first()
     company = Company.query.filter_by(user_id=user.id).first()
-    projects = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
+    t_projects = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
+    projects = []
+    for project in t_projects:
+        cur_image = Image.query.filter_by(id=project.image_id).first()
+        cur_image_path = utils.get_image_path(cur_image.image_path)
+        d = {
+            'project': project,
+            'image_path': cur_image_path
+        }
+        projects.append(d)
     image   = Image.query.filter_by(id=company.image_id).first()
     image_path = utils.get_image_path(image.image_path)
     ret = {

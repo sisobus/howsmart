@@ -179,8 +179,8 @@ card_header {
                 <div class="card_container ">
                     <card_header>
                         <div class="bio">
-                            <a href="/project_detail/{{ project.id }}">
-                                <div class="bg" style="background:  url({{ '/static/'+ret.image_path }});
+                            <a href="/project_detail/{{ project.project.id }}">
+                                <div class="bg" style="background:  url({{ '/static/'+project.image_path }});
                                         background-repeat:no-repeat;
                                         background-size: cover;
                                         background-position: center;
@@ -189,7 +189,7 @@ card_header {
                                 <div class="container" style="margin-top:10px;margin-left:10px;">
                                     <div class="row">
                                         <div calss="card_custom_body">
-                                            <h4>{{ project.project_name }}</h4>
+                                            <h4>{{ project.project.project_name }}</h4>
                                         </div>
                                     </div>
                                 </div>
