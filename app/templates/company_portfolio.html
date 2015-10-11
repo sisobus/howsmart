@@ -137,8 +137,8 @@ card_header {
                                     class="badge pull-right">{{ ret.projects | length }}</span> Projects</a>
                                 <ul class="category-level-2 dropdown-menu-tree">
                                     {% for project in ret.projects %}
-                                    <li class="dropdown-tree"><a class="dropdown-tree-a" href="/project_detail/{{ project.id }}">
-                                        {{ project.project_name }}
+                                    <li class="dropdown-tree"><a class="dropdown-tree-a" href="/project_detail/{{ project.project.id }}">
+                                        {{ project.project.project_name }}
                                     </a></li>
                                     {% endfor %}
                                 </ul>
