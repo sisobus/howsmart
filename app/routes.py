@@ -264,7 +264,7 @@ def make_project():
                     feed.feed_category_id = int(writeFeedForm.feed_category.data)
                     db.session.add(feed)
                     db.session.commit()
-                    project = Project(makeProjectForm.project_name.data,company.id,image.id)
+                    project = Project(makeProjectForm.project_name.data,company.id,image.id, datetime.utcnow())
                     db.session.add(project)
                     db.session.commit()
                     project_has_feed = Project_has_feed(project.id,feed.id)
@@ -342,6 +342,42 @@ def feed_detail(feed_id):
             all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
         return redirect(url_for('feed_detail', feed_id=feed.id))
 
+@app.route('/company_feed_detail/<int:feed_id>',methods=['GET','POST'])
+def company_feed_detail(feed_id):
+    with app.app_context():
+        commentForm = CommentForm()
+    feed = Feed.query.filter_by(id=feed_id).first()
+    image = Image.query.filter_by(id=feed.image_id).first()
+    image_path = utils.get_image_path(image.image_path)
+    project_id = Project_has_feed.query.filter_by(feed_id=feed.id).first().project_id
+    project = Project.query.filter_by(id=project_id).first()
+    company = Company.query.filter_by(id=project.company_id).first()
+    user = User.query.filter_by(id=company.user_id).first()
+    all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+
+    ret = {
+        'feed': feed,
+        'project': project,
+        'user': user,
+        'all_comments': all_comments,
+        'image_path': image_path,
+        'company': company
+    }
+    if request.method == 'GET':
+        return render_template('company_feed_detail.html',commentForm=commentForm,ret=ret)
+    elif request.method == 'POST':
+        if not commentForm.validate():
+            return render_template('company_feed_detail.html',commentForm=commentForm,ret=ret)
+        if commentForm.validate_on_submit():
+            comment = Comment(commentForm.body.data, datetime.utcnow())
+            comment_user = User.query.filter_by(email=session['email'].lower()).first()
+            comment.user_id = comment_user.id
+            comment.feed_id = feed.id
+            db.session.add(comment)
+            db.session.commit()
+            all_comments = Comment.query.filter_by(feed_id=feed.id).irder_by(Comment.created_at.desc()).all()
+        return redirect(url_for('company_feed_detail',feed_id=feed.id))
+
 @app.route('/upload_file',methods=['GET','POST'])
 def uploadFile():
     if request.method == 'POST':
@@ -390,6 +426,65 @@ def user_portfolio(user_id):
         d['number_of_comment'] = len(all_comments)
         ret_feeds.append(d)
     return render_template('user_portfolio.html',user=user,signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,feeds=ret_feeds)
+
+@app.route('/company_portfolio/<int:user_id>')
+def company_portfolio(user_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    user = User.query.filter_by(id=user_id).first()
+    company = Company.query.filter_by(user_id=user.id).first()
+    projects = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
+    image   = Image.query.filter_by(id=company.image_id).first()
+    image_path = utils.get_image_path(image.image_path)
+    ret = {
+        'user': user,
+        'company': company,
+        'projects': projects,
+        'image_path': image_path
+    }
+
+    return render_template('company_portfolio.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
+                           ret=ret)
+
+@app.route('/project_detail/<int:project_id>')
+def project_detail(project_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+
+    project = Project.query.filter_by(id=project_id).first()
+    company = Company.query.filter_by(id=project.company_id).first()
+    company_image   = Image.query.filter_by(id=company.image_id).first()
+    company_image_path = utils.get_image_path(company_image.image_path)
+    projects = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
+    user = User.query.filter_by(id=company.user_id).first()
+    project_has_feeds = Project_has_feed.query.filter_by(project_id=project_id).all()
+    feeds = []
+    for project_has_feed in project_has_feeds:
+        cur_feed_id = project_has_feed.feed_id
+        cur_feed = Feed.query.filter_by(id=cur_feed_id).first()
+        image = Image.query.filter_by(id=cur_feed.image_id).first()
+        image_path = utils.get_image_path(image.image_path)
+        all_comments = Comment.query.filter_by(feed_id=cur_feed.id).order_by(Comment.created_at.desc()).all()
+        d = {
+            "feed": cur_feed,
+            "image_path": image_path,
+            "number_of_comment": len(all_comments)
+        }
+        feeds.append(d)
+    ret = {
+        'user': user,
+        'company': company,
+        'projects': projects,
+        'feeds': feeds,
+        'image_path': company_image_path
+    }
+    return render_template('project_detail.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
+                           ret=ret)
+
 
 @app.route('/product_detail/<int:product_id>')
 def product_detail(product_id):

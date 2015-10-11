@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="{{  url_for('static',filename='bootstrap/css/bootstrap.css') }}" />
+    <link rel="stylesheet" href="{{  url_for('static',filename='css/style_feed_detail.css') }}" />
+    <script>
+        paceOptions = {
+            elements: true
+        };
+    </script>
+    <style type="text/css">
+
+        body {
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+        #image-container {
+            position: absolute;
+            width: 70%;
+            height: 100%;
+            left: 0;
+            padding: 0;
+            margin: 5px 5px 5px 5px;
+            background: #f5f5f5;
+            display: table;
+        }
+        #image-real-container {
+            display: table-cell;
+            width: 100%;
+            margin: 0;
+            vertical-align: middle;
+        }
+        #content-container {
+            position: absolute;
+            width: 30%;
+            right: 0;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            background: #f5f5f5;
+
+        }
+        #content-form-container {
+            height: inherit;
+            overflow-y: scroll;
+            padding-bottom: 45px;
+            -ms-overflow-style: none;
+            border-color: #DDDDDD;
+            border-style: solid;
+            border-width: 1px 1px 1px 1px;
+
+            margin: 10px 10px 10px 10px;
+            background: #ffffff;
+        }
+        #content-form-container::-webkit-scrollbar {
+            display: none;
+        }
+        #content-form-body {
+            white-space: normal;
+            word-break: break-all;
+            margin: 10px 10px 10px 10px;
+        }
+
+        form input#title,
+        form textarea#body,
+        form input#uploadImageContainer {
+            border-color: #DDDDDD;
+            -webkit-border-radius: 3px 0 0 3px;
+            -moz-border-radius: 3px 0 0 3px;
+            border-radius: 3px 0 0 3px;
+            border-style: solid;
+            border-width: 2px 1px 1px 2px;
+            color: #888888;
+            font-size: 14px;
+            height: 36px;
+            width: 100%;
+        }
+        form input#title {
+            margin-top: 100px;
+        }
+        form textarea#body {
+            height: 300px;
+        }
+        form input#uploadImageContainer {
+            margin-bottom: 10px;
+        }
+        form input#title:hover,
+        form textarea#body:hover,
+        form input#uploadImageContainer:hover {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+        form input#title:focus,
+        form textarea#body:focus,
+        form input#uploadImageContainer:focus {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+        img#uploadImagePreview {
+            width: 100%;
+        }
+
+        form input#body {
+            width: 100%;
+        }
+        form input#body:hover {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+        form input#body:focus {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+        #comment-container {
+            margin-left: 10px;
+        }
+
+
+
+	</style>
+
+    <script src="{{  url_for('static',filename='js/pace.min.js') }} "></script>
+</head>
+<body>
+<div id="container" >
+    <div id="content-container">
+        <div id="content-form-container">
+            <div id="content-form-header">
+                <a href="javascript:history.go(-1)"><p align="right">X</p></a>
+            </div>
+            <div id="content-form-body">
+                <a href="/company_portfolio/{{ ret.company.id }}"><h1>{{ ret.user.username }}</h1></a>
+                <h3>{{ ret.project.project_name }}</h3>
+                <h2>{{ ret.feed.body }}</h2>
+                <h2>Other Photos in project {{ ret.project.project_name }}</h2>
+                <h2>이 회사의 다른 프로젝트 보기</h2>
+            </div>
+        <form action="{{ url_for('feed_detail',feed_id=ret.feed.id) }}" method="post">
+            {{ commentForm.hidden_tag() }}
+            <div class="form-group login-username">
+                <div>
+                    {% for message in commentForm.body.errors %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ commentForm.body(placeholder="Enter your comment",autofocus=true) }}
+                </div>
+                <input name="submit" class="btn btn-block btn-lg btn-primary" value="comment" type="submit">
+            </div>
+        </form>
+        <div id="comment-container">
+        {% for comment in ret.all_comments %}
+            {{ comment.body }} | {{ comment.created_at }}
+            <br>
+        {% endfor %}
+        </div>
+        </div>
+    </div>
+    <div id="image-container">
+        <div id="image-real-container">
+            <img id="uploadImagePreview" src="{{ url_for('static',filename=ret.image_path) }}" class="img-responsive parallaximg sliderImg"/>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
+</script>
+<script src="{{  url_for('static',filename='bootstrap/js/bootstrap.min.js') }}"></script>
+
+<!-- include jqueryCycle plugin -->
+<script src="{{  url_for('static',filename='js/jquery.cycle2.min.js') }}"></script>
+<!-- include easing plugin -->
+<script src="{{  url_for('static',filename='js/jquery.easing.1.3.js') }}"></script>
+
+<!-- include  parallax plugin -->
+<script src="{{  url_for('static',filename='js/jquery/parallax-1.1.js') }}"></script>
+
+<!-- optionally include helper plugins -->
+<script src="{{  url_for('static',filename='js/helper-plugins/jquery.mousewheel.min.js') }}"></script>
+
+<!-- include mCustomScrollbar plugin //Custom Scrollbar  -->
+
+<script src="{{  url_for('static',filename='js/jquery.mCustomScrollbar.js') }}"></script>
+
+<!-- include checkRadio plugin //Custom check & Radio  -->
+<script src="{{  url_for('static',filename='js/ion-checkRadio/ion.checkRadio.min.js') }}"></script>
+
+<!-- include grid.js // for equal Div height  -->
+<script src="{{  url_for('static',filename='js/grids.js') }}"></script>
+
+<!-- include carousel slider plugin  -->
+<script src="{{  url_for('static',filename='js/owl.carousel.min.js') }}"></script>
+
+<!-- jQuery minimalect // custom select   -->
+<script src="{{  url_for('static',filename='js/jquery.minimalect.min.js') }}"></script>
+
+<!-- include touchspin.js // touch friendly input spinner component   -->
+<script src="{{  url_for('static',filename='js/bootstrap.touchspin.js') }}"></script>
+
+<!-- include custom script for only homepage  -->
+<script src="{{  url_for('static',filename='js/home.js') }}"></script>
+<!-- include custom script for site  -->
+<script src="{{  url_for('static',filename='js/script.js') }}"></script>
+<script>
+function readURL(input){
+    if ( input.files && input.files[0] ) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $('#uploadImagePreview').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+$('#uploadImageContainer').change(function() {
+    readURL(this);
+});
+
+</script>
+</body>
+</html>

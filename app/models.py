@@ -115,11 +115,13 @@ class Project(db.Model):
     project_name    = db.Column(db.String(500))
     company_id      = db.Column(db.Integer, db.ForeignKey('company.id'))
     image_id        = db.Column(db.Integer, db.ForeignKey('image.id'))
+    created_at = db.Column(db.DateTime)
 
-    def __init__(self, project_name, company_id, image_id):
+    def __init__(self, project_name, company_id, image_id, created_at):
         self.project_name = project_name
         self.company_id = company_id
         self.image_id = image_id
+        self.created_at = created_at
 
 class Project_has_feed(db.Model):
     __tablename__ = 'project_has_feed'
