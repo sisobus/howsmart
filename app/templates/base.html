@@ -337,7 +337,12 @@
                         <ul class="userMenu">
                             <li><a href="{{ url_for('write_feed') }}">글쓰기
                             <i class="glyphicon glyphicon-log-in hide visible-xs "></i> </a></li>
+                            {% if session['is_company'] %}
+                                <li><a href="/company_portfolio/{{ session['user_id'] }}"><span class="hidden-xs">{{ session['username'] }}님 환영합니다</span>
+                            {% endif %}
+                            {% if not session['is_company'] %}
                             <li><a href="/user_portfolio/{{ session['user_id'] }}"><span class="hidden-xs">{{ session['username'] }}님 환영합니다</span>
+                            {% endif %}
                             <i class="glyphicon glyphicon-log-in hide visible-xs "></i> </a></li>
                             <li><a href="{{ url_for('signout') }}">Sign out</a></li>
                         </ul>

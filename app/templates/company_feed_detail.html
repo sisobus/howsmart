@@ -140,7 +140,8 @@
                 <h2>Other Photos in project {{ ret.project.project_name }}</h2>
                 <h2>이 회사의 다른 프로젝트 보기</h2>
             </div>
-        <form action="{{ url_for('feed_detail',feed_id=ret.feed.id) }}" method="post">
+        {% if session.logged_in %}
+        <form action="{{ url_for('company_feed_detail',feed_id=ret.feed.id) }}" method="post">
             {{ commentForm.hidden_tag() }}
             <div class="form-group login-username">
                 <div>
@@ -152,6 +153,7 @@
                 <input name="submit" class="btn btn-block btn-lg btn-primary" value="comment" type="submit">
             </div>
         </form>
+        {% endif %}
         <div id="comment-container">
         {% for comment in ret.all_comments %}
             {{ comment.body }} | {{ comment.created_at }}

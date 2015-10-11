@@ -139,6 +139,7 @@
             <h3>{{ ret.user.username }}</h3>
             <h2>{{ ret.feed.body }}</h2>
             </div>
+        {% if session.logged_in %}
         <form action="{{ url_for('feed_detail',feed_id=ret.feed.id) }}" method="post">
             {{ commentForm.hidden_tag() }}
             <div class="form-group login-username">
@@ -151,6 +152,7 @@
                 <input name="submit" class="btn btn-block btn-lg btn-primary" value="comment" type="submit">
             </div>
         </form>
+        {% endif %}
         <div id="comment-container">
         {% for comment in all_comments %}
             {{ comment.body }} | {{ comment.created_at }}
