@@ -245,6 +245,8 @@ def create_project():
                                    createProjectForm=createProjectForm)
         if request.files:
             file = request.files['file']
+            #if file and utils.allowedFile(file.filename):
+                # exception
             filename = secure_filename(file.filename)
 
             user = User.query.filter_by(email=session['email'].lower()).first()
@@ -253,7 +255,7 @@ def create_project():
                 directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
                 utils.createDirectory(directory_url)
                 file_path = os.path.join(directory_url,filename)
-                file.filename.data.save(file_path)
+                file.save(file_path)
                 image = Image(file_path)
                 image.user_id = user.id
                 db.session.add(image)
