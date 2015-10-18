@@ -238,7 +238,7 @@ def merge_feed_for_project(project_credit):
     one_minute_ago = current_time - timedelta(minutes=2)
     feeds = Feed.query.filter_by(user_id=user.id).filter(Feed.created_at > one_minute_ago).order_by(Feed.created_at.asc()).all()
     if len(feeds) == 0:
-        return redirect(url_for('company_portfolio',company_id=company.id))
+        return redirect(url_for('company_portfolio',user_id=user.id))
 
     not_merged_feeds = []
     for feed in feeds:
