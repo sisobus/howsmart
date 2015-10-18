@@ -264,6 +264,7 @@ def create_project():
                 feed = Feed(createProjectForm.project_name.data,createProjectForm.project_body.data,datetime.utcnow())
                 feed.user_id = user.id
                 feed.image_id = image.id
+                feed.feed_category_id = 0
                 db.session.add(feed)
                 db.session.commit()
 
