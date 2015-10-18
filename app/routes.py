@@ -3,6 +3,7 @@ from flask import Flask, url_for
 from werkzeug import secure_filename
 import utils
 import os
+import time
 
 from config import UPLOAD_FOLDER, HOWSMART_DATABASE_URI, HOWSMART_SECRET_KEY
 
@@ -294,6 +295,7 @@ def create_project():
                 feed.feed_category_id = 0
                 db.session.add(feed)
                 db.session.commit()
+                time.sleep(2)
                 """
                 project = Project(createProjectForm.project_name.data,company.id,image.id, datetime.utcnow(),createProjectForm.project_body.data, createProjectForm.project_credit.data)
                 db.session.add(project)
@@ -306,6 +308,10 @@ def create_project():
         return redirect(url_for('merge_feed_for_project',project_credit=createProjectForm.project_credit.data))
     elif request.method == 'GET':
         print 'method = GET'
+        project_credit=createProjectForm.project_credit.data
+        if project_credit == None:
+            project_credit = 'asdf'
+#        return redirect(url_for('merge_feed_for_project',project_credit=project_credit))
         return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
                            createProjectForm=createProjectForm)
 
