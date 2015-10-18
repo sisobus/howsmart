@@ -295,7 +295,6 @@ def create_project():
                 feed.feed_category_id = 0
                 db.session.add(feed)
                 db.session.commit()
-                time.sleep(5)
                 """
                 project = Project(createProjectForm.project_name.data,company.id,image.id, datetime.utcnow(),createProjectForm.project_body.data, createProjectForm.project_credit.data)
                 db.session.add(project)
@@ -305,7 +304,8 @@ def create_project():
                 db.session.add(project_has_feed)
                 db.session.commit()
                 """
-        return redirect(url_for('merge_feed_for_project',project_credit=createProjectForm.project_credit.data))
+        return redirect(url_for('create_project'))
+        #return redirect(url_for('merge_feed_for_project',project_credit=createProjectForm.project_credit.data))
     elif request.method == 'GET':
         print 'method = GET'
         project_credit=createProjectForm.project_credit.data
