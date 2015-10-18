@@ -303,12 +303,10 @@ def create_project():
                 db.session.add(project_has_feed)
                 db.session.commit()
                 """
-
-                return redirect(url_for('merge_feed_for_project',project_credit=createProjectForm.project_credit.data))
+        return redirect(url_for('merge_feed_for_project',project_credit=createProjectForm.project_credit.data))
     elif request.method == 'GET':
         print 'method = GET'
-
-    return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
+        return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
                            createProjectForm=createProjectForm)
 
 @app.route('/make_project',methods=['GET','POST'])
