@@ -483,7 +483,6 @@ def user_portfolio(user_id):
 
 @app.route('/company_portfolio/<int:user_id>')
 def company_portfolio(user_id):
-    session['project_id'] = 0
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
