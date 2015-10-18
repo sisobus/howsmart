@@ -101,12 +101,27 @@ class WriteFeedForm(Form):
             return False
         return True
 
+class CreateProjectForm(Form):
+    project_name    = TextField('project_name', [validators.Required('please enter project name')])
+    project_body    = TextAreaField('body', [validators.Required('please enter this project body')])
+    project_credit  = TextField('project_credit', [validators.Required('please enter project credit')])
+
+    def __init__(self, *args, **kargs):
+        Form.__init__(self, *args, **kargs)
+
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        return True
+
 class MakeProjectForm(Form):
     project_name    = TextField('project_name', [validators.Required('please enter project name')])
     title       = TextField('title', [validators.Required('please enter this feed title')])
     body        = TextAreaField('body', [validators.Required('please enter this feed body')])
     filename    = FileField('filename', [validators.Required('please enter this feed image file')])
     feed_category = RadioField('feed_category', choices=get_feed_category_list())
+    project_body    = TextAreaField('body', [validators.Required('please enter this project body')])
+    project_credit  = TextField('project_credit', [validators.Required('please enter project credit')])
 
     def __init__(self, *args, **kargs):
         Form.__init__(self, *args, **kargs)

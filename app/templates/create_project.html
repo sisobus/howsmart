@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+    <style type="text/css">
+    #create_project_form {
+        background-color: #FFFFFF;
+        border: 1px gray solid;
+    }
+    input#project_name,
+    input#project_credit,
+    textarea#project_body {
+        border-color: #DDDDDD;
+        -webkit-border-radius: 3px 0 0 3px;
+        -moz-border-radius: 3px 0 0 3px;
+        border-radius: 3px 0 0 3px;
+        border-style: solid;
+        border-width: 2px 1px 1px 2px;
+        color: #888888;
+        font-size: 14px;
+        height: 36px;
+        width: 96%;
+        margin: 10px 2% 10px 2%;
+        vertical-align: middle;
+        display: block;
+    }
+    textarea#project_body {
+        height: 300px;
+    }
+    </style>
+<div class="container main-container">
+<h1>Step 1: project information & photos</h1>
+    <div id="create_project_form">
+        <form action="{{ url_for('create_project') }}" method="POST" enctype="multipart/form-data" class="dropzone" >
+            {{ createProjectForm.hidden_tag() }}
+            {{ createProjectForm.project_name(placeholder='enter project name') }}
+            {% for message in createProjectForm.project_name.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <hr/>
+            {{ createProjectForm.project_body(placeholder='enter project body') }}
+            {% for message in createProjectForm.project_body.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <hr/>
+            {{ createProjectForm.project_credit(placeholder="사진 저작권이 누구에게 있나요? (ex. "+session['username']+")") }}
+            {% for message in createProjectForm.project_credit.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <hr/>
+
+            <div class="fallback">
+                <input name="file" type="file" multiple="">
+            </div>
+            <div>
+                <input name="submit" class="btn   btn-lg btn-primary" style="background-color:#ffffff; border:1px solid gray;" value="저장" type="submit">
+            </div>
+        </form>
+    </div>
+</div>
+    <br>
+    <br>
+    <br>
+    <br>
+{% endblock %}

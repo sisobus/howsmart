@@ -18,14 +18,13 @@ db.init_app(app)
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask import get_flashed_messages
 from flask.ext.login import LoginManager, UserMixin, current_user, login_user, logout_user
-from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm, MakeProjectForm
+from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm, MakeProjectForm, CreateProjectForm
 from datetime import datetime
 from bs4 import BeautifulSoup
 
 
 @app.route('/',methods=['GET','POST'])
 def main():
-
     session['project_id'] = 0
 
     with app.app_context():
@@ -231,6 +230,58 @@ def write_feed():
     elif request.method == 'GET':
         return render_template('write_feed.html',writeFeedForm=writeFeedForm)
 
+@app.route('/create_project',methods=['GET','POST'])
+def create_project():
+    project_id = session['project_id']
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+        createProjectForm = CreateProjectForm()
+
+    if request.method == 'POST':
+        if not createProjectForm.validate():
+            return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm, \
+                                   createProjectForm=createProjectForm)
+        if request.files:
+            file = request.files['file']
+            filename = secure_filename(file.filename)
+
+            user = User.query.filter_by(email=session['email'].lower()).first()
+            company = Company.query.filter_by(user_id=user.id).first()
+            if utils.allowedFile(filename):
+                directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
+                utils.createDirectory(directory_url)
+                file_path = os.path.join(directory_url,filename)
+                file.filename.data.save(file_path)
+                image = Image(file_path)
+                image.user_id = user.id
+                db.session.add(image)
+                db.session.commit()
+
+                feed = Feed(createProjectForm.project_name.data,createProjectForm.project_body.data,datetime.utcnow())
+                feed.user_id = user.id
+                feed.image_id = image.id
+                db.session.add(feed)
+                db.session.commit()
+
+                if project_id == 0:
+                    project = Project(createProjectForm.project_name.data,company.id,image.id, datetime.utcnow(),createProjectForm.project_body.data, createProjectForm.project_credit.data)
+                    db.session.add(project)
+                    db.session.commit()
+                    session['project_id'] = project.id
+                    project_id = project.id
+
+                project_has_feed = Project_has_feed(project_id,feed.id)
+                db.session.add(project_has_feed)
+                db.session.commit()
+        return redirect(url_for('project_detail', project_id=project_id))
+    elif request.method == 'GET':
+        print 'method = GET'
+
+    return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
+                           createProjectForm=createProjectForm)
+
 @app.route('/make_project',methods=['GET','POST'])
 def make_project():
     project_id = session['project_id']
@@ -264,7 +315,7 @@ def make_project():
                     feed.feed_category_id = int(writeFeedForm.feed_category.data)
                     db.session.add(feed)
                     db.session.commit()
-                    project = Project(makeProjectForm.project_name.data,company.id,image.id, datetime.utcnow())
+                    project = Project(makeProjectForm.project_name.data,company.id,image.id, datetime.utcnow(),makeProjectForm.project_body, makeProjectForm.project_credit)
                     db.session.add(project)
                     db.session.commit()
                     project_has_feed = Project_has_feed(project.id,feed.id)
@@ -429,6 +480,7 @@ def user_portfolio(user_id):
 
 @app.route('/company_portfolio/<int:user_id>')
 def company_portfolio(user_id):
+    session['project_id'] = 0
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
