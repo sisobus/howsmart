@@ -19,7 +19,7 @@ from flask import render_template, flash, redirect, session, url_for, request, g
 from flask import get_flashed_messages
 from flask.ext.login import LoginManager, UserMixin, current_user, login_user, logout_user
 from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm, MakeProjectForm, CreateProjectForm
-from datetime import datetime
+from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
 
@@ -230,87 +230,60 @@ def write_feed():
     elif request.method == 'GET':
         return render_template('write_feed.html',writeFeedForm=writeFeedForm)
 
+@app.route('/merge_feed_for_project')
+def merge_feed_for_project():
+    user = User.query.filter_by(email=session['email'].lower()).first()
+    current_time = datetime.utcnow()
+    one_minute_ago = current_time - timedelta(minutes=1)
+    feeds = Feed.query.filter_by(user_id=user.id).filter_by(Feed.created_at > one_minute_ago).order_by(Feed.created_at.desc()).all()
+    print feeds
+    return redirect(url_for('main'))
+
 @app.route('/create_project',methods=['GET','POST'])
 def create_project():
-    project_id = session['project_id']
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
         createProjectForm = CreateProjectForm()
 
+
     if request.method == 'POST':
-        if project_id == 0:
-            if not createProjectForm.validate():
-                return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm, \
-                                       createProjectForm=createProjectForm)
-            if request.files:
-                file = request.files['file']
-                #if file and utils.allowedFile(file.filename):
-                    # exception
-                filename = secure_filename(file.filename)
+        if not createProjectForm.validate():
+            return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm, \
+                                   createProjectForm=createProjectForm)
+        if request.files:
+            file = request.files['file']
+            filename = secure_filename(file.filename)
 
-                user = User.query.filter_by(email=session['email'].lower()).first()
-                company = Company.query.filter_by(user_id=user.id).first()
-                if utils.allowedFile(filename):
-                    directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
-                    utils.createDirectory(directory_url)
-                    file_path = os.path.join(directory_url,filename)
-                    file.save(file_path)
-                    image = Image(file_path)
-                    image.user_id = user.id
-                    db.session.add(image)
-                    db.session.commit()
-                    feed = Feed(createProjectForm.project_name.data,createProjectForm.project_body.data,datetime.utcnow())
-                    feed.user_id = user.id
-                    feed.image_id = image.id
-                    feed.feed_category_id = 0
-                    db.session.add(feed)
-                    db.session.commit()
-                    project = Project(createProjectForm.project_name.data,company.id,image.id, datetime.utcnow(),createProjectForm.project_body.data, createProjectForm.project_credit.data)
-                    db.session.add(project)
-                    db.session.commit()
-                    project_id = project.id
-                    project_has_feed = Project_has_feed(project_id,feed.id)
-                    db.session.add(project_has_feed)
-                    db.session.commit()
+            user = User.query.filter_by(email=session['email'].lower()).first()
+            company = Company.query.filter_by(user_id=user.id).first()
+            if utils.allowedFile(filename):
+                directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
+                utils.createDirectory(directory_url)
+                file_path = os.path.join(directory_url,filename)
+                file.save(file_path)
+                image = Image(file_path)
+                image.user_id = user.id
+                db.session.add(image)
+                db.session.commit()
+                feed = Feed(createProjectForm.project_name.data,createProjectForm.project_body.data,datetime.utcnow())
+                feed.user_id = user.id
+                feed.image_id = image.id
+                feed.feed_category_id = 0
+                db.session.add(feed)
+                db.session.commit()
+                """
+                project = Project(createProjectForm.project_name.data,company.id,image.id, datetime.utcnow(),createProjectForm.project_body.data, createProjectForm.project_credit.data)
+                db.session.add(project)
+                db.session.commit()
+                project_id = project.id
+                project_has_feed = Project_has_feed(project_id,feed.id)
+                db.session.add(project_has_feed)
+                db.session.commit()
+                """
 
-                    if session['project_id'] == 0:
-                        session['project_id'] = project.id
-                return redirect(url_for('project_detail', project_id=project_id))
-        elif project_id != 0:
-            if not createProjectForm.validate():
-                return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm, \
-                                       createProjectForm=createProjectForm)
-            if request.files:
-                file = request.files['file']
-                #if file and utils.allowedFile(file.filename):
-                    # exception
-                filename = secure_filename(file.filename)
-
-                user = User.query.filter_by(email=session['email'].lower()).first()
-                company = Company.query.filter_by(user_id=user.id).first()
-                if utils.allowedFile(filename):
-                    directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
-                    utils.createDirectory(directory_url)
-                    file_path = os.path.join(directory_url,filename)
-                    file.save(file_path)
-                    image = Image(file_path)
-                    image.user_id = user.id
-                    db.session.add(image)
-                    db.session.commit()
-                    feed = Feed(createProjectForm.project_name.data,createProjectForm.project_body.data,datetime.utcnow())
-                    feed.user_id = user.id
-                    feed.image_id = image.id
-                    feed.feed_category_id = 0
-                    db.session.add(feed)
-                    db.session.commit()
-                    project_has_feed = Project_has_feed(project_id,feed.id)
-                    db.session.add(project_has_feed)
-                    db.session.commit()
-
-                return redirect(url_for('project_detail', project_id=project_id))
-
+                return redirect(url_for('merge_feed_for_project'))
     elif request.method == 'GET':
         print 'method = GET'
 
