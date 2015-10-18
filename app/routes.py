@@ -295,7 +295,9 @@ def create_project():
                 return redirect(url_for('create_project'))
         else:
             project_id = merge_feed_for_project(createProjectForm)
-            return redirect(url_for('project_detail',project_id=project_id))
+            feeds_id = Project_has_feed.query.filter_by(project_id=project_id).order_by(Project_has_feed.feed_id.asc()).all()
+            return redirect(url_for('project_edit',feed_id=feeds_id[0]))
+#            return redirect(url_for('project_detail',project_id=project_id))
     elif request.method == 'GET':
         return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
                            createProjectForm=createProjectForm)
@@ -310,6 +312,7 @@ def project_edit(feed_id):
     writeFeedForm.body.data = feed.body
     image = Image.query.filter_by(id=feed.image_id).first()
     image_path = utils.get_image_path(image.image_path)
+
     project_has_feed = Project_has_feed.query.filter_by(feed_id=feed.id).first()
     project = Project.query.filter_by(id=project_has_feed.project_id).first()
     project_has_feeds = Project_has_feed.query.filter_by(project_id=project.id).order_by(Project_has_feed.feed_id.asc()).all()
