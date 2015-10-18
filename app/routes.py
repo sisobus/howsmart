@@ -19,7 +19,7 @@ db.init_app(app)
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask import get_flashed_messages
 from flask.ext.login import LoginManager, UserMixin, current_user, login_user, logout_user
-from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm, MakeProjectForm, CreateProjectForm
+from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm, MakeProjectForm, CreateProjectForm, ProjectEditForm
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
@@ -300,6 +300,43 @@ def create_project():
         return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
                            createProjectForm=createProjectForm)
     return redirect(url_for('create_project'))
+
+@app.route('/project_edit/<int:feed_id>',methods=['GET','POST'])
+def project_edit(feed_id):
+    with app.app_context():
+        writeFeedForm = ProjectEditForm()
+
+    feed = Feed.query.filter_by(id=feed_id).first()
+    writeFeedForm.body.data = feed.body
+    image = Image.query.filter_by(id=feed.image_id).first()
+    image_path = utils.get_image_path(image.image_path)
+    project_has_feed = Project_has_feed.query.filter_by(feed_id=feed.id).first()
+    project = Project.query.filter_by(id=project_has_feed.project_id).first()
+    project_has_feeds = Project_has_feed.query.filter_by(project_id=project.id).order_by(Project_has_feed.feed_id.asc()).all()
+    feeds_id = []
+    for project_has_feed in project_has_feeds:
+        feeds_id.append(project_has_feed.feed_id)
+    prev = -1
+    next = -1
+    idx = 0
+    for i in xrange(len(feeds_id)):
+        if feeds_id[i] == feed_id:
+            idx = i
+    if idx != 0 :
+        prev = feeds_id[idx-1]
+    if idx != len(feeds_id)-1:
+        next = feeds_id[idx+1]
+    ret = {
+        'feed': feed,
+        'prev': prev,
+        'next': next,
+        'image_path': image_path,
+        'project_id': project.id
+    }
+    if request.method == 'POST':
+        return render_template('project_edit.html',writeFeedForm=writeFeedForm,ret=ret)
+    elif request.method == 'GET':
+        return render_template('project_edit.html',writeFeedForm=writeFeedForm,ret=ret)
 
 @app.route('/make_project',methods=['GET','POST'])
 def make_project():

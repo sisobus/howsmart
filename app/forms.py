@@ -101,6 +101,21 @@ class WriteFeedForm(Form):
             return False
         return True
 
+
+class ProjectEditForm(Form):
+    title       = TextField('title', [validators.Required('please enter this feed title')])
+    body        = TextAreaField('body', [validators.Required('please enter this feed body')])
+    feed_category = RadioField('feed_category', choices=get_feed_category_list())
+    #feed_category = RadioField('feed_category', choices=[('1','option1'),('2','option2'),('value_3','option3')])
+
+    def __init__(self, *args, **kargs):
+        Form.__init__(self, *args, **kargs)
+
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        return True
+
 class CreateProjectForm(Form):
     project_name    = TextField('project_name', [validators.Required('please enter project name')])
     project_body    = TextAreaField('body', [validators.Required('please enter this project body')])
