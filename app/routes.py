@@ -295,7 +295,7 @@ def create_project():
                 feed.feed_category_id = 0
                 db.session.add(feed)
                 db.session.commit()
-                time.sleep(2)
+                time.sleep(5)
                 """
                 project = Project(createProjectForm.project_name.data,company.id,image.id, datetime.utcnow(),createProjectForm.project_body.data, createProjectForm.project_credit.data)
                 db.session.add(project)
