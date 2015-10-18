@@ -231,15 +231,14 @@ def write_feed():
     elif request.method == 'GET':
         return render_template('write_feed.html',writeFeedForm=writeFeedForm)
 
-@app.route('/merge_feed_for_project/<string:project_credit>')
-def merge_feed_for_project(project_credit):
+def merge_feed_for_project(createProjectForm):
     user = User.query.filter_by(email=session['email'].lower()).first()
     company = Company.query.filter_by(user_id=user.id).first()
     current_time = datetime.utcnow()
     one_minute_ago = current_time - timedelta(minutes=2)
     feeds = Feed.query.filter_by(user_id=user.id).filter(Feed.created_at > one_minute_ago).order_by(Feed.created_at.asc()).all()
     if len(feeds) == 0:
-        return redirect(url_for('company_portfolio',user_id=user.id))
+        return -1
 
     not_merged_feeds = []
     for feed in feeds:
@@ -249,16 +248,14 @@ def merge_feed_for_project(project_credit):
 
     if len(not_merged_feeds) != 0:
         cur_feed = not_merged_feeds[0]
-        project = Project(cur_feed.title,company.id,cur_feed.image_id, datetime.utcnow(),cur_feed.body, project_credit)
+        project = Project(cur_feed.title,company.id,cur_feed.image_id, datetime.utcnow(),cur_feed.body,createProjectForm.project_credit.data)
         db.session.add(project)
         db.session.commit()
         for feed in not_merged_feeds:
             project_has_feed = Project_has_feed(project.id,feed.id)
             db.session.add(project_has_feed)
             db.session.commit()
-        return redirect(url_for('project_detail',project_id=project.id))
-
-    return redirect(url_for('create_project'))
+        return project.id
 
 
 @app.route('/create_project',methods=['GET','POST'])
@@ -295,25 +292,14 @@ def create_project():
                 feed.feed_category_id = 0
                 db.session.add(feed)
                 db.session.commit()
-                """
-                project = Project(createProjectForm.project_name.data,company.id,image.id, datetime.utcnow(),createProjectForm.project_body.data, createProjectForm.project_credit.data)
-                db.session.add(project)
-                db.session.commit()
-                project_id = project.id
-                project_has_feed = Project_has_feed(project_id,feed.id)
-                db.session.add(project_has_feed)
-                db.session.commit()
-                """
-        return redirect(url_for('create_project'))
-        #return redirect(url_for('merge_feed_for_project',project_credit=createProjectForm.project_credit.data))
+                return redirect(url_for('create_project'))
+        else:
+            project_id = merge_feed_for_project(createProjectForm)
+            return redirect(url_for('project_detail',project_id=project_id))
     elif request.method == 'GET':
-        print 'method = GET'
-        project_credit=createProjectForm.project_credit.data
-        if project_credit == None:
-            project_credit = 'asdf'
-#        return redirect(url_for('merge_feed_for_project',project_credit=project_credit))
         return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
                            createProjectForm=createProjectForm)
+    return redirect(url_for('create_project'))
 
 @app.route('/make_project',methods=['GET','POST'])
 def make_project():
