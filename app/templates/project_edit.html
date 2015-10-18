@@ -156,7 +156,7 @@
     </div>
     <div id="image-container">
         <div id="image-real-container">
-            <img id="uploadImagePreview" src="{{ ret.image_path }}" class="img-responsive parallaximg sliderImg"/>
+            <img id="uploadImagePreview" src="{{ url_for('static',filename=ret.image_path) }}" class="img-responsive parallaximg sliderImg"/>
         </div>
     </div>
 </div>
