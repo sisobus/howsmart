@@ -296,8 +296,8 @@ def create_project():
         else:
             project_id = merge_feed_for_project(createProjectForm)
             feeds_id = Project_has_feed.query.filter_by(project_id=project_id).order_by(Project_has_feed.feed_id.asc()).all()
-            return redirect(url_for('project_edit',feed_id=feeds_id[0]))
-#            return redirect(url_for('project_detail',project_id=project_id))
+            return redirect(url_for('project_edit',feed_id=feeds_id[0].feed_id))
+            #return redirect(url_for('project_detail',project_id=project_id))
     elif request.method == 'GET':
         return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
                            createProjectForm=createProjectForm)
