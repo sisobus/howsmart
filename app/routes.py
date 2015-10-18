@@ -275,7 +275,8 @@ def create_project():
                     db.session.add(project_has_feed)
                     db.session.commit()
 
-                    session['project_id'] = project.id
+                    if session['project_id'] == 0:
+                        session['project_id'] = project.id
                 return redirect(url_for('project_detail', project_id=project_id))
         elif project_id != 0:
             if not createProjectForm.validate():
