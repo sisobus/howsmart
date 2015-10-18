@@ -230,14 +230,35 @@ def write_feed():
     elif request.method == 'GET':
         return render_template('write_feed.html',writeFeedForm=writeFeedForm)
 
-@app.route('/merge_feed_for_project')
-def merge_feed_for_project():
+@app.route('/merge_feed_for_project/<string:project_credit>')
+def merge_feed_for_project(project_credit):
     user = User.query.filter_by(email=session['email'].lower()).first()
+    company = Company.query.filter_by(user_id=user.id).first()
     current_time = datetime.utcnow()
-    one_minute_ago = current_time - timedelta(minutes=1)
-    feeds = Feed.query.filter_by(user_id=user.id).filter_by(Feed.created_at > one_minute_ago).order_by(Feed.created_at.desc()).all()
-    print feeds
-    return redirect(url_for('main'))
+    one_minute_ago = current_time - timedelta(minutes=2)
+    feeds = Feed.query.filter_by(user_id=user.id).filter(Feed.created_at > one_minute_ago).order_by(Feed.created_at.asc()).all()
+    if len(feeds) == 0:
+        return redirect(url_for('create_project'))
+
+    not_merged_feeds = []
+    for feed in feeds:
+        project_has_feed = Project_has_feed.query.filter_by(feed_id=feed.id).all()
+        if len(project_has_feed) == 0:
+            not_merged_feeds.append(feed)
+
+    if len(not_merged_feeds) != 0:
+        cur_feed = not_merged_feeds[0]
+        project = Project(cur_feed.title,company.id,cur_feed.image_id, datetime.utcnow(),cur_feed.body, project_credit)
+        db.session.add(project)
+        db.session.commit()
+        for feed in not_merged_feeds:
+            project_has_feed = Project_has_feed(project.id,feed.id)
+            db.session.add(project_has_feed)
+            db.session.commit()
+        return redirect(url_for('project_detail',project_id=project.id))
+
+    return redirect(url_for('create_project'))
+
 
 @app.route('/create_project',methods=['GET','POST'])
 def create_project():
@@ -283,7 +304,7 @@ def create_project():
                 db.session.commit()
                 """
 
-                return redirect(url_for('merge_feed_for_project'))
+                return redirect(url_for('merge_feed_for_project'),createProjectForm=createProjectForm)
     elif request.method == 'GET':
         print 'method = GET'
 
