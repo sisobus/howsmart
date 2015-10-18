@@ -304,7 +304,7 @@ def create_project():
                 db.session.commit()
                 """
 
-                return redirect(url_for('merge_feed_for_project'),project_credit=createProjectForm.project_credit.data)
+                return redirect(url_for('merge_feed_for_project',project_credit=createProjectForm.project_credit.data))
     elif request.method == 'GET':
         print 'method = GET'
 
