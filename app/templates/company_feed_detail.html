@@ -155,6 +155,9 @@ div#image-container:hover .bar {
 #content-form-header a:nth-of-type(2){
     right: 15px;
 }
+        #other-image-container {
+            height: 50px;
+        }
 
 
 	</style>
@@ -176,21 +179,25 @@ div#image-container:hover .bar {
                 <h5>카테고리: <a href="/photos/{{ ret.feed.feed_category_id }}">{{ ret.feed_category_name }}</a></h5>
                 <h5>주소: </h5>
                 <h5>Other Photos in project {{ ret.project.project_name }}</h5>
+                <div id="other-image-container">
                 {% for other_feed in ret.other_feeds_in_same_project %}
-                    <div class="col-xs-6 col-sm-3">
+                    <div class="col-xs-6 col-sm-3" style="height:50px;">
                         <a href="/company_feed_detail/{{ other_feed.feed.id }}">
                             <img src="{{ url_for('static',filename=other_feed.image_path) }}">
                         </a>
                     </div>
                 {% endfor %}
+                </div>
                 <h5>이 회사의 다른 프로젝트 보기</h5>
+                <div id="other-image-container">
                 {% for other_project in ret.other_projects %}
-                    <div class="col-xs-6 col-sm-3">
+                    <div class="col-xs-6 col-sm-3" style="height:50px;">
                         <a href="/project_detail/{{ other_project.project.id }}">
                             <img src="{{ url_for('static',filename=other_project.image_path) }}">
                         </a>
                     </div>
                 {% endfor %}
+                </div>
                 <h5>0 Likes    {{ ret.all_comments | length }} Comments</h5>
             </div>
         {% if session.logged_in %}
