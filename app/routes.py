@@ -12,7 +12,7 @@ app.config['SQLALCHEMY_DATABASE_URI']   = HOWSMART_DATABASE_URI
 app.config['SECRET_KEY']                = HOWSMART_SECRET_KEY
 app.config['UPLOAD_FOLDER']             = UPLOAD_FOLDER
 
-from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed, Pros_category, Company_has_pros_category
+from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed, Pros_category, Company_has_pros_category, Feed_category
 
 db.init_app(app)
 
@@ -671,11 +671,13 @@ def find_pros_detail(pros_category_id):
 @app.route('/photos/',methods=['GET','POST'])
 def photos():
     feed_category_id = 0
+    feed_category_name = '전체'
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
 
+    feed_count = Feed.query.count()
     if request.method == 'GET':
         offset = 10
         feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
@@ -692,7 +694,7 @@ def photos():
             d['number_of_comment'] = len(all_comments)
             ret_feeds.append(d)
 
-        return render_template('photos.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id)
+        return render_template('photos.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name, feed_count=feed_count)
     elif request.method == 'POST':
         offset = int(request.form['offset'])
         feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
@@ -709,7 +711,7 @@ def photos():
             d['number_of_comment'] = len(all_comments)
             ret_feeds.append(d)
 
-        html_code = render_template('photos.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id)
+        html_code = render_template('photos.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name,feed_count=feed_count)
         return html_code
 
 @app.route('/photos/<int:feed_category_id>')
@@ -719,6 +721,10 @@ def photos_detail(feed_category_id):
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
 
+
+    feed_category = Feed_category.query.filter_by(id=feed_category_id).first()
+    feed_category_name = feed_category.category_name
+    feed_count = Feed.query.filter_by(feed_category_id=feed_category_id).count()
     if request.method == 'GET':
         offset = 10
         feeds = Feed.query.filter_by(feed_category_id=feed_category_id).order_by(Feed.created_at.desc()).limit(offset).all()
@@ -735,7 +741,7 @@ def photos_detail(feed_category_id):
             d['number_of_comment'] = len(all_comments)
             ret_feeds.append(d)
 
-        return render_template('photos.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id)
+        return render_template('photos.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id, feed_category_name=feed_category_name, feed_count=feed_count)
 
     elif request.method == 'POST':
         offset = int(request.form['offset'])
@@ -753,6 +759,6 @@ def photos_detail(feed_category_id):
             d['number_of_comment'] = len(all_comments)
             ret_feeds.append(d)
 
-        html_code = render_template('photos.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id)
+        html_code = render_template('photos.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name,feed_count=feed_count)
         return html_code
 
