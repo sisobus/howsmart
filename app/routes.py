@@ -667,6 +667,8 @@ def product_detail(product_id):
 
 @app.route('/find_pros/')
 def find_pros():
+    pros_category_id = 0
+    pros_category_name = '전체'
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
@@ -677,22 +679,33 @@ def find_pros():
     for user in users:
         d = {}
         company = Company.query.filter_by(user_id=user.id).first()
+        project = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
         image = Image.query.filter_by(id=company.image_id).first()
         image_path = utils.get_image_path(image.image_path)
+        if len(project) == 0:
+            d['last_project_created'] = user.created_at
+        else :
+            d['last_project_created'] = project[0].created_at
+            image = Image.query.filter_by(id=project[0].image_id).first()
+            image_path = utils.get_image_path(image.image_path)
         d['user'] = user
         d['company'] = company
         d['image_path'] = image_path
         ret_pros.append(d)
 
-    return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros))
+    ret_pros = sorted(ret_pros, key=lambda k: k['last_project_created'], reverse=True)
+
+    return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros),pros_category_name=pros_category_name)
 
 @app.route('/find_pros/<int:pros_category_id>')
 def find_pros_detail(pros_category_id):
+
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
 
+    pros_category_name = Pros_category.query.filter_by(id=pros_category_id).first().category_name
     ret_pros = []
     users = User.query.filter_by(level=2).order_by(User.created_at.desc()).all()
     for user in users:
@@ -707,12 +720,21 @@ def find_pros_detail(pros_category_id):
             continue
         image = Image.query.filter_by(id=company.image_id).first()
         image_path = utils.get_image_path(image.image_path)
+        project = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
+        if len(project) == 0:
+            d['last_project_created'] = user.created_at
+        else :
+            d['last_project_created'] = project[0].created_at
+            image = Image.query.filter_by(id=project[0].image_id).first()
+            image_path = utils.get_image_path(image.image_path)
+
         d['user'] = user
         d['company'] = company
         d['image_path'] = image_path
         ret_pros.append(d)
 
-    return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros))
+    ret_pros = sorted(ret_pros, key=lambda k: k['last_project_created'], reverse=True)
+    return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros),pros_category_name=pros_category_name)
 
 
 @app.route('/photos/',methods=['GET','POST'])
