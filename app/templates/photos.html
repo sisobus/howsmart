@@ -103,7 +103,7 @@
                 <div id="all_photos_container">
                     {% for feed in feeds %}
                     <div id="photos_container">
-                    <a href="/feed_detail/{{ feed.feed.id }}">
+                    <a href="/company_feed_detail/{{ feed.feed.id }}">
                         <div id="photos_background_image" style="background: url({{ '/static/'+feed.image_path }});
                             background-repeat: no-repeat;
                             background-size: cover;
@@ -112,7 +112,7 @@
                         </div>
                     </a>
                         <div id="photos_body">
-                            <a href="/feed_detail/{{ feed.feed.id }}">
+                            <a href="/company_feed_detail/{{ feed.feed.id }}">
                             <h4>{{ feed.feed.title }}</h4>
                             </a>
                             <a href="/company_portfolio/{{ feed.user.id }}"><h5>{{ feed.user.username }}</h5></a>

@@ -120,6 +120,41 @@
             margin-left: 10px;
         }
 
+        .bar {
+    opacity: 0;
+    background: rgba(255,255,255,.0);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    transition: opacity 1s;
+}
+
+div#image-container:hover .bar {
+    opacity: 1;
+}
+
+#image-container a {
+    position: absolute;
+}
+
+#image-container a:nth-of-type(1) {
+    left: 0;
+}
+
+#image-container a:nth-of-type(2) {
+    right: 0;
+}
+#content-form-header a {
+    position: absolute;
+}
+#content-form-header a:nth-of-type(1) {
+    left: 15px;
+}
+#content-form-header a:nth-of-type(2){
+    right: 15px;
+}
 
 
 	</style>
@@ -131,14 +166,32 @@
     <div id="content-container">
         <div id="content-form-container">
             <div id="content-form-header">
-                <a href="javascript:history.go(-1)"><p align="right">X</p></a>
+                <h1><a href="/">LOGO</a><a href="javascript:history.go(-1)">X</a></h1>
             </div>
+        <hr>
             <div id="content-form-body">
                 <a href="/company_portfolio/{{ ret.user.id }}"><h1>{{ ret.user.username }}</h1></a>
-                <h3>{{ ret.project.project_name }}</h3>
-                <h2>{{ ret.feed.body }}</h2>
-                <h2>Other Photos in project {{ ret.project.project_name }}</h2>
-                <h2>이 회사의 다른 프로젝트 보기</h2>
+                <h3>{{ ret.feed.title }}</h3>
+                <h4>{{ ret.feed.body }}</h4>
+                <h5>카테고리: <a href="/photos/{{ ret.feed.feed_category_id }}">{{ ret.feed_category_name }}</a></h5>
+                <h5>주소: </h5>
+                <h5>Other Photos in project {{ ret.project.project_name }}</h5>
+                {% for other_feed in ret.other_feeds_in_same_project %}
+                    <div class="col-xs-6 col-sm-3">
+                        <a href="/company_feed_detail/{{ other_feed.feed.id }}">
+                            <img src="{{ url_for('static',filename=other_feed.image_path) }}">
+                        </a>
+                    </div>
+                {% endfor %}
+                <h5>이 회사의 다른 프로젝트 보기</h5>
+                {% for other_project in ret.other_projects %}
+                    <div class="col-xs-6 col-sm-3">
+                        <a href="/project_detail/{{ other_project.project.id }}">
+                            <img src="{{ url_for('static',filename=other_project.image_path) }}">
+                        </a>
+                    </div>
+                {% endfor %}
+                <h5>0 Likes    {{ ret.all_comments | length }} Comments</h5>
             </div>
         {% if session.logged_in %}
         <form action="{{ url_for('company_feed_detail',feed_id=ret.feed.id) }}" method="post">
@@ -164,6 +217,7 @@
     </div>
     <div id="image-container">
         <div id="image-real-container">
+            <div class="inner text-center bar"><a href="/company_feed_detail/{{ ret.prev_feed_id }}"><</a><a href="/company_feed_detail/{{ ret.next_feed_id }}">> </a></div>
             <img id="uploadImagePreview" src="{{ url_for('static',filename=ret.image_path) }}" class="img-responsive parallaximg sliderImg"/>
         </div>
     </div>

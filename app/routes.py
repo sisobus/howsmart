@@ -431,6 +431,9 @@ def feed_detail(feed_id):
     image_path = utils.get_image_path(image.image_path)
 
     all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+
+
+
     ret = {}
     ret['feed'] = feed
     ret['user'] = user
@@ -457,6 +460,8 @@ def company_feed_detail(feed_id):
     with app.app_context():
         commentForm = CommentForm()
     feed = Feed.query.filter_by(id=feed_id).first()
+    feed_category = Feed_category.query.filter_by(id=feed.feed_category_id).first()
+    feed_category_name = feed_category.category_name
     image = Image.query.filter_by(id=feed.image_id).first()
     image_path = utils.get_image_path(image.image_path)
     project_id = Project_has_feed.query.filter_by(feed_id=feed.id).first().project_id
@@ -465,13 +470,55 @@ def company_feed_detail(feed_id):
     user = User.query.filter_by(id=company.user_id).first()
     all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
 
+    project_has_feeds = Project_has_feed.query.filter_by(project_id=project.id).order_by(Project_has_feed.feed_id.asc()).all()
+    feeds_id = []
+    other_feeds_in_same_project = []
+    for project_has_feed in project_has_feeds:
+        feeds_id.append(project_has_feed.feed_id)
+        if len(other_feeds_in_same_project) < 4:
+            cur_feed = Feed.query.filter_by(id=project_has_feed.feed_id).first()
+            cur_image = Image.query.filter_by(id=cur_feed.image_id).first()
+            cur_image_path = utils.get_image_path(cur_image.image_path)
+            d = {
+                'feed': cur_feed,
+                'image_path': cur_image_path
+            }
+            other_feeds_in_same_project.append(d)
+    other_projects = []
+    for cur_project in Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).limit(4).all():
+        cur_image = Image.query.filter_by(id=cur_project.image_id).first()
+        cur_image_path = utils.get_image_path(cur_image.image_path)
+        d = {
+            'project': cur_project,
+            'image_path': cur_image_path
+        }
+        other_projects.append(d)
+    prev = -1
+    next = -1
+    idx = 0
+    for i in xrange(len(feeds_id)):
+        if feeds_id[i] == feed_id:
+            idx = i
+    if idx != 0 :
+        prev = feeds_id[idx-1]
+    elif idx == 0 :
+        prev = feeds_id[-1]
+    if idx != len(feeds_id)-1:
+        next = feeds_id[idx+1]
+    elif idx == len(feeds_id)-1:
+        next = feeds_id[0]
     ret = {
         'feed': feed,
         'project': project,
         'user': user,
         'all_comments': all_comments,
         'image_path': image_path,
-        'company': company
+        'company': company,
+        'next_feed_id': next,
+        'prev_feed_id': prev,
+        'feed_category_name': feed_category_name,
+        'other_feeds_in_same_project': other_feeds_in_same_project,
+        'other_projects': other_projects
     }
     if request.method == 'GET':
         return render_template('company_feed_detail.html',commentForm=commentForm,ret=ret)
