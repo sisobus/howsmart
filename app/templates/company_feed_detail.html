@@ -146,6 +146,10 @@ div#image-container:hover .bar {
 #image-container a:nth-of-type(2) {
     right: 0;
 }
+/*
+#content-form-header {
+    z-index: 3;
+}
 #content-form-header a {
     position: absolute;
 }
@@ -158,8 +162,13 @@ div#image-container:hover .bar {
         #other-image-container {
             height: 50px;
         }
+        */
 
 
+hr.photos {
+    margin: 10px 10px 10px 10px;
+    color: #f5f5f5; border: thin solid #f5f5f5;
+}
 	</style>
 
     <script src="{{  url_for('static',filename='js/pace.min.js') }} "></script>
@@ -168,10 +177,15 @@ div#image-container:hover .bar {
 <div id="container" >
     <div id="content-container">
         <div id="content-form-container">
-            <div id="content-form-header">
-                <h1><a href="/">LOGO</a><a href="javascript:history.go(-1)">X</a></h1>
+            <div id="content-form-header" style="margin-bottom:50px;">
+                <div class="pull-left">
+                    <h1><a href="/">LOGO</a></h1>
+                </div>
+                <div class="pull-right">
+                    <h1><a href="javascript:history.go(-1)">X</a></h1>
+                </div>
             </div>
-        <hr>
+            <hr class="photos">
             <div id="content-form-body">
                 <a href="/company_portfolio/{{ ret.user.id }}"><h1>{{ ret.user.username }}</h1></a>
                 <h3>{{ ret.feed.title }}</h3>
@@ -181,9 +195,9 @@ div#image-container:hover .bar {
                 <h5>Other Photos in project {{ ret.project.project_name }}</h5>
                 <div id="other-image-container">
                 {% for other_feed in ret.other_feeds_in_same_project %}
-                    <div class="col-xs-6 col-sm-3" style="height:50px;">
+                    <div class="col-xs-6 col-sm-3" style="height:70px;">
                         <a href="/company_feed_detail/{{ other_feed.feed.id }}">
-                            <img src="{{ url_for('static',filename=other_feed.image_path) }}">
+                            <img src="{{ url_for('static',filename=other_feed.image_path) }}" style="height:100px;width:100px;max-height:60px;max-width:60px;">
                         </a>
                     </div>
                 {% endfor %}
@@ -191,9 +205,9 @@ div#image-container:hover .bar {
                 <h5>이 회사의 다른 프로젝트 보기</h5>
                 <div id="other-image-container">
                 {% for other_project in ret.other_projects %}
-                    <div class="col-xs-6 col-sm-3" style="height:50px;">
+                    <div class="col-xs-6 col-sm-3" style="height:70px;">
                         <a href="/project_detail/{{ other_project.project.id }}">
-                            <img src="{{ url_for('static',filename=other_project.image_path) }}">
+                            <img src="{{ url_for('static',filename=other_project.image_path) }}" style="height:100px;width:100px;max-height:60px;max-width:60px;">
                         </a>
                     </div>
                 {% endfor %}
