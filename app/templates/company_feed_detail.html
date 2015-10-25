@@ -192,7 +192,7 @@ hr.photos {
                 <h4>{{ ret.feed.body }}</h4>
                 <h5>카테고리: <a href="/photos/{{ ret.feed.feed_category_id }}" target="_blank">{{ ret.feed_category_name }}</a></h5>
                 <h5>주소: </h5>
-                <h5>Other Photos in project {{ ret.project.project_name }}</h5>
+                <h5>Other Photos in project <a href="/project_detail/{{ ret.project.id }}">{{ ret.project.project_name }}</a></h5>
                 <div id="other-image-container">
                 {% for other_feed in ret.other_feeds_in_same_project %}
                     <div class="col-xs-6 col-sm-3" style="height:70px;">
