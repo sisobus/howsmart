@@ -23,6 +23,20 @@ from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySig
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
+def get_feed_information(feeds):
+    ret = []
+    for feed in feeds:
+        d = {}
+        image = Image.query.filter_by(id=feed.image_id).first()
+        image_path = utils.get_image_path(image.image_path)
+        user = User.query.filter_by(id=feed.user_id).first()
+        all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+        d['image_path'] = image_path
+        d['user'] = user
+        d['feed'] = feed
+        d['number_of_comment'] = len(all_comments)
+        ret.append(d)
+    return ret
 
 @app.route('/',methods=['GET','POST'])
 def main():
@@ -33,49 +47,20 @@ def main():
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
 
-
     if request.method == 'GET':
         offset = 10
         feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
-        ret_feeds = []
-        for feed in feeds:
-            d = {}
-            image = Image.query.filter_by(id=feed.image_id).first()
-            image_path = utils.get_image_path(image.image_path)
-            user = User.query.filter_by(id=feed.user_id).first()
-            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-            d['image_path'] = image_path
-            d['user'] = user
-            d['feed'] = feed
-            d['number_of_comment'] = len(all_comments)
-            ret_feeds.append(d)
+        ret_feeds = get_feed_information(feeds)
+        return render_template('main.html', signupForm=signupForm, signinForm=signinForm, \
+                               companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset)
 
-        return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset)
     elif request.method == 'POST':
         offset = int(request.form['offset'])
         feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
-        ret_feeds = []
-        for feed in feeds:
-            d = {}
-            image = Image.query.filter_by(id=feed.image_id).first()
-            image_path = utils.get_image_path(image.image_path)
-            user = User.query.filter_by(id=feed.user_id).first()
-            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-            d['image_path'] = image_path
-            d['user'] = user
-            d['feed'] = feed
-            d['number_of_comment'] = len(all_comments)
-            ret_feeds.append(d)
-
-        html_code = render_template('main.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset)
+        ret_feeds = get_feed_information(feeds)
+        html_code = render_template('main.html', signupForm=signupForm, signinForm=signinForm,\
+                                    companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset)
         return html_code
-#        soup = BeautifulSoup(html_code,"html.parser")
-#        feed_container = soup.find('div',id='feed_container')
-#        print feed_container
-#        return feed_container
-
-
-
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -101,7 +86,6 @@ def signup():
             session['is_company'] = False
 
             return redirect(url_for('main'))
-
 
     if request.method == 'GET':
         return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
@@ -158,9 +142,6 @@ def company_signup():
                     return redirect(url_for('main'))
     if request.method == 'GET':
         return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
-
-
-
 
 @app.route('/signin',methods=['GET','POST'])
 def signin():

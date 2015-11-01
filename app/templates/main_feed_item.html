@@ -1,0 +1,24 @@
+<div class="card_container">
+    <card_header>
+        <div class="bio">
+            <a href="/feed_detail/{{ feed.feed.id }}">
+                <div class="bg" style="background:  url({{ '/static/'+feed.image_path }});
+                        background-repeat:no-repeat;
+                        background-size: cover;
+                        background-position: center;
+                        ">
+                </div>
+                <div class="container" style="margin-top:20px;margin-left:20px;">
+                    <div class="row">
+                        <div calss="card_custom_body">
+                            <h4>{{ feed.feed.title }}</h4>
+                            <h5>{{ feed.user.username }}</h5>
+                            <h5>0 Likes    {{ feed.number_of_comment }} Comments</h5>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </card_header>
+</div>
+<br>
