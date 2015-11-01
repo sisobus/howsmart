@@ -247,38 +247,46 @@ def create_project():
         companySignupForm = CompanySignupForm()
         createProjectForm = CreateProjectForm()
 
-
     if request.method == 'POST':
+        user = User.query.filter_by(email=session['email'].lower()).first()
+        company = Company.query.filter_by(user_id=user.id).first()
+        if request.files:
+            files = request.files
+            for file_key in files:
+                file = request.files[file_key]
+                filename = secure_filename(file.filename)
+                if utils.allowedFile(filename):
+                    directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
+                    utils.createDirectory(directory_url)
+                    file_path = os.path.join(directory_url,filename)
+                    file.save(file_path)
+                    image = Image(file_path)
+                    image.user_id = user.id
+                    db.session.add(image)
+                    db.session.commit()
+                    feed = Feed('pre','pre',datetime.utcnow())
+                    feed.user_id = user.id
+                    feed.image_id = image.id
+                    feed.feed_category_id = 1
+                    db.session.add(feed)
+                    db.session.commit()
+            return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm, \
+                                   createProjectForm=createProjectForm)
         if not createProjectForm.validate():
             return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm, \
                                    createProjectForm=createProjectForm)
-        if request.files:
-            file = request.files['file']
-            filename = secure_filename(file.filename)
-
-            user = User.query.filter_by(email=session['email'].lower()).first()
-            company = Company.query.filter_by(user_id=user.id).first()
-            if utils.allowedFile(filename):
-                directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
-                utils.createDirectory(directory_url)
-                file_path = os.path.join(directory_url,filename)
-                file.save(file_path)
-                image = Image(file_path)
-                image.user_id = user.id
-                db.session.add(image)
-                db.session.commit()
-                feed = Feed(createProjectForm.project_name.data,createProjectForm.project_body.data,datetime.utcnow())
-                feed.user_id = user.id
-                feed.image_id = image.id
-                feed.feed_category_id = 0
-                db.session.add(feed)
-                db.session.commit()
-                return redirect(url_for('create_project'))
-        else:
-            project_id = merge_feed_for_project(createProjectForm)
-            feeds_id = Project_has_feed.query.filter_by(project_id=project_id).order_by(Project_has_feed.feed_id.asc()).all()
-            return redirect(url_for('project_edit',feed_id=feeds_id[0].feed_id))
-            #return redirect(url_for('project_detail',project_id=project_id))
+        project_id = merge_feed_for_project(createProjectForm)
+        project = Project.query.filter_by(id=project_id).first()
+        project.project_name = createProjectForm.project_name.data
+        project.project_body = createProjectForm.project_body.data
+        db.session.commit()
+        feeds_id = Project_has_feed.query.filter_by(project_id=project_id).order_by(Project_has_feed.feed_id.asc()).all()
+        for feed_id in feeds_id:
+            feed = Feed.query.filter_by(id=feed_id.feed_id).first()
+            feed.title = createProjectForm.project_name.data
+            feed.body = createProjectForm.project_body.data
+            db.session.commit()
+        return redirect(url_for('project_edit',feed_id=feeds_id[0].feed_id))
     elif request.method == 'GET':
         return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
                            createProjectForm=createProjectForm)

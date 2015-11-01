@@ -2,7 +2,7 @@ __author__ = 'sisobus'
 import commands
 import os
 
-ALLOWED_EXTENSIONS = set(['txt','pdf','png','jpg','jpeg','gif','zip'])
+ALLOWED_EXTENSIONS = set(['txt','pdf','png','jpg','JPG','jpeg','JPEG','gif','GIF','zip'])
 
 def allowedFile(filename):
     return '.' in filename and filename.rsplit('.',1)[1] in ALLOWED_EXTENSIONS
