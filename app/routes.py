@@ -12,14 +12,14 @@ app.config['SQLALCHEMY_DATABASE_URI']   = HOWSMART_DATABASE_URI
 app.config['SECRET_KEY']                = HOWSMART_SECRET_KEY
 app.config['UPLOAD_FOLDER']             = UPLOAD_FOLDER
 
-from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed, Pros_category, Company_has_pros_category, Feed_category
+from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed, Pros_category, Company_has_pros_category, Feed_category, Product, Product_has_image, Shop_category
 
 db.init_app(app)
 
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask import get_flashed_messages
 from flask.ext.login import LoginManager, UserMixin, current_user, login_user, logout_user
-from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm, MakeProjectForm, CreateProjectForm, ProjectEditForm
+from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm, MakeProjectForm, CreateProjectForm, ProjectEditForm, CreateProductForm
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
@@ -291,6 +291,70 @@ def create_project():
         return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
                            createProjectForm=createProjectForm)
     return redirect(url_for('create_project'))
+
+def merge_image_for_product(createProductForm):
+    user = User.query.filter_by(email=session['email'].lower()).first()
+    company = Company.query.filter_by(user_id=user.id).first()
+    current_time = datetime.utcnow()
+    #one_minute_ago = current_time - timedelta(minutes=2)
+    images = Image.query_fiter_by(user_id=user.id).all()
+    if len(images) == 0:
+        return -1
+
+    not_merged_images = []
+    for image in images:
+        product_has_image  = Product_has_image.query.filter_by(image_id=image.id).all()
+        if len(product_has_image) == 0:
+            not_merged_images.append(image)
+
+    if len(not_merged_images) != 0:
+        product = Product(createProductForm.product_name.data,createProductForm.product_price.data,createProductForm.product_color.data,\
+                          createProductForm.product_desc.data,createProductForm.product_size.data,createProductForm.product_model_name.data,\
+                          createProductForm.product_meterial.data,int(createProductForm.shop_category.data),user.id,datetime.utcnow())
+        db.session.add(product)
+        for image in not_merged_images:
+            product_has_image = Product_has_image(product.id,image.id)
+            db.session.add(product_has_image)
+            db.session.commit()
+        return product.id
+
+@app.route('/create_product',methods=['GET','POST'])
+def create_product():
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+        createProductForm = CreateProductForm()
+
+    if request.method == 'POST':
+        user = User.query.filter_by(email=session['email'].lower()).first()
+        company = Company.query.filter_by(user_id=user.id).first()
+        if request.files:
+            files = request.files
+            for file_key in files:
+                file = request.files[file_key]
+                filename = secure_filename(file.filename)
+                if utils.allowedFile(filename):
+                    directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
+                    utils.createDirectory(directory_url)
+                    file_path = os.path.join(directory_url,filename)
+                    file.save(file_path)
+                    image = Image(file_path)
+                    image.user_id = user.id
+                    db.session.add(image)
+                    db.session.commit()
+
+            return render_template('create_product.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm, \
+                                   createProductForm=createProductForm)
+        if not createProductForm.validate():
+            return render_template('create_product.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm, \
+                                   createProductForm=createProductForm)
+        product_id = merge_image_for_product(createProductForm)
+        return redirect(url_for('company_portfolio_shop',user_id=user.id))
+    elif request.method == 'GET':
+        return render_template('create_product.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm, \
+                               createProductForm=createProductForm)
+    return redirect(url_for('create_product'))
 
 @app.route('/project_edit/<int:feed_id>',methods=['GET','POST'])
 def project_edit(feed_id):
@@ -602,6 +666,107 @@ def company_portfolio(user_id):
 
     return render_template('company_portfolio.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
                            ret=ret)
+
+@app.route('/company_portfolio/<int:user_id>/project')
+def company_portfolio_project(user_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    user = User.query.filter_by(id=user_id).first()
+    company = Company.query.filter_by(user_id=user.id).first()
+    t_projects = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
+    projects = []
+    for project in t_projects:
+        cur_image = Image.query.filter_by(id=project.image_id).first()
+        cur_image_path = utils.get_image_path(cur_image.image_path)
+        d = {
+            'project': project,
+            'image_path': cur_image_path
+        }
+        projects.append(d)
+    image   = Image.query.filter_by(id=company.image_id).first()
+    image_path = utils.get_image_path(image.image_path)
+    ret = {
+        'user': user,
+        'company': company,
+        'projects': projects,
+        'image_path': image_path
+    }
+
+    return render_template('company_portfolio_project.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
+                           ret=ret)
+
+@app.route('/company_portfolio/<int:user_id>/shop')
+def company_portfolio_shop(user_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    user = User.query.filter_by(id=user_id).first()
+    company = Company.query.filter_by(user_id=user.id).first()
+    image   = Image.query.filter_by(id=company.image_id).first()
+    image_path = utils.get_image_path(image.image_path)
+
+    t_products = Product.query.filter_by(user_id=user.id).order_by(Product.created_at.desc()).all()
+    products = []
+    for t_product in t_products:
+        cur_image_id = Product_has_image.query.filter_by(product_id=t_product.id).first().image_id
+        cur_image = Image.query.filter_by(id=cur_image_id)
+        cur_image_path = utils.get_image_path(cur_image.image_path)
+        d = {
+            'product': t_product,
+            'image_path': cur_image_path
+        }
+        products.append(d)
+    ret = {
+        'user': user,
+        'company': company,
+        'products': products,
+        'image_path': image_path
+    }
+
+    return render_template('company_portfolio_shop.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
+                           ret=ret)
+
+@app.route('/company_portfolio/<int:user_id>/qna')
+def company_portfolio_qna(user_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    user = User.query.filter_by(id=user_id).first()
+    company = Company.query.filter_by(user_id=user.id).first()
+    image   = Image.query.filter_by(id=company.image_id).first()
+    image_path = utils.get_image_path(image.image_path)
+    ret = {
+        'user': user,
+        'company': company,
+        'image_path': image_path
+    }
+
+    return render_template('company_portfolio_qna.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
+                           ret=ret)
+
+@app.route('/company_portfolio/<int:user_id>/review')
+def company_portfolio_review(user_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    user = User.query.filter_by(id=user_id).first()
+    company = Company.query.filter_by(user_id=user.id).first()
+    image   = Image.query.filter_by(id=company.image_id).first()
+    image_path = utils.get_image_path(image.image_path)
+    ret = {
+        'user': user,
+        'company': company,
+        'image_path': image_path
+    }
+
+    return render_template('company_portfolio_review.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
+                           ret=ret)
+
 
 @app.route('/project_detail/<int:project_id>')
 def project_detail(project_id):

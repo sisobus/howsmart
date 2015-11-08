@@ -2,6 +2,7 @@
 from flask.ext.wtf import Form,widgets
 from wtforms import widgets,TextField,TextAreaField, SubmitField, validators, ValidationError, PasswordField, FileField, RadioField, SelectField, SelectMultipleField
 from models import db, User
+import utils
 
 class SignupForm(Form):
     username    = TextField('username', [validators.Required('please enter your username')])
@@ -148,6 +149,25 @@ class MakeProjectForm(Form):
 
 class CommentForm(Form):
     body        = TextField('body', [validators.Required('please enter your comment')])
+
+    def __init__(self, *args, **kargs):
+        Form.__init__(self, *args, **kargs)
+
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        return True
+
+
+class CreateProductForm(Form):
+    product_name = TextField('product_name', [validators.Required('please enter product Name')])
+    product_price = TextField('product_price', [validators.Required('please enter product price')])
+    product_color = TextField('product_color', [validators.Required('please enter product color')])
+    product_desc = TextAreaField('product_desc', [validators.Required('please enter product description')])
+    product_size = TextField('product_size', [validators.Required('please enter product size')])
+    product_model_name = TextField('product_model_name', [validators.Required('please enter product model name')])
+    product_meterial = TextField('product_meterial', [validators.Required('please enter product meterial')])
+    shop_category = SelectField('shop_category', choices=utils.get_shop_category_list())
 
     def __init__(self, *args, **kargs):
         Form.__init__(self, *args, **kargs)

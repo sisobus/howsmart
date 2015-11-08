@@ -104,26 +104,6 @@ card_header {
 {% include "company_portfolio_navbar.html" %}
 
 <div class="container main-container " style="margin-top:20px;">
-    <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12">
-
-        </div>
-        <div class="col-lg-9 col-md-9 col-sm-12">
-                <div class="col-lg-8 col-md-8 col-sm-12">
-                    {{ ret.company.company_introduction }}
-                </div>
-                <div class="col-lg-4 col-md-4 col-sm-12">
-                    회사이름 : {{ ret.user.username }}
-                    <br>
-                    회사주소 : {{ ret.company.company_address }}
-                    <br>
-                    회사번호 : {{ ret.company.company_tel }}
-                    <br>
-                    회사 웹사이트 : {{ ret.company.company_website }}
-                </div>
-        </div>
-    </div>
-    <hr>
 
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-12">
@@ -139,11 +119,11 @@ card_header {
                         <ul class="nav nav-pills nav-stacked tree">
                             <li><a href="/company_portfolio/{{ ret.user.id }}"><strong>Home</strong></a></li>
                             <li class="active dropdown-tree open-tree"><a class="dropdown-tree-a" > <span
-                                    class="badge pull-right">{{ ret.projects | length }}</span> Projects</a>
+                                    class="badge pull-right">{{ ret.products | length }}</span> Products</a>
                                 <ul class="category-level-2 dropdown-menu-tree">
-                                    {% for project in ret.projects %}
-                                    <li class="dropdown-tree"><a class="dropdown-tree-a" href="/project_detail/{{ project.project.id }}">
-                                        {{ project.project.project_name }}
+                                    {% for product in ret.products %}
+                                    <li class="dropdown-tree"><a class="dropdown-tree-a" href="/product_detail/{{ product.product.id }}">
+                                        {{ product.product.product_name }}
                                     </a></li>
                                     {% endfor %}
                                 </ul>
@@ -154,14 +134,14 @@ card_header {
             </div>
         </div>
         <div class="col-lg-9 col-md-9 col-sm-12">
-            {{ ret.projects | length }} Projects
+            {{ ret.products | length }} Products
             <div  id="feed_container" style="margin-top:10px;">
 
                 {% if session['is_company'] %}
                 <div class="card_container ">
                     <card_header>
                         <div class="bio">
-                            <a href="/create_project">
+                            <a href="/create_product">
                                 <div class="bg" style="background:  url('');
                                         background-repeat:no-repeat;
                                         background-size: cover;
@@ -171,7 +151,7 @@ card_header {
                                 <div class="container" style="margin-top:10px;margin-left:10px;">
                                     <div class="row">
                                         <div calss="card_custom_body">
-                                            <h4>프로젝트 생성하기</h4>
+                                            <h4>상품 생성하기</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -180,12 +160,12 @@ card_header {
                     </card_header>
                 </div>
                 {% endif %}
-                {% for project in ret.projects %}
+                {% for product in ret.products %}
                 <div class="card_container ">
                     <card_header>
                         <div class="bio">
-                            <a href="/project_detail/{{ project.project.id }}">
-                                <div class="bg" style="background:  url({{ '/static/'+project.image_path }});
+                            <a href="/product_detail/{{ product.product.id }}">
+                                <div class="bg" style="background:  url({{ '/static/'+product.image_path }});
                                         background-repeat:no-repeat;
                                         background-size: cover;
                                         background-position: center;
@@ -194,7 +174,7 @@ card_header {
                                 <div class="container" style="margin-top:10px;margin-left:10px;">
                                     <div class="row">
                                         <div calss="card_custom_body">
-                                            <h4>{{ project.project.project_name }}</h4>
+                                            <h4>{{ product.product.product_name }}</h4>
                                         </div>
                                     </div>
                                 </div>

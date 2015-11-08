@@ -1,0 +1,36 @@
+<div class="custom_jumbo">
+    <div class="custom_jumbo_container" style="background: url({{ '/static/'+ret.image_path }});
+            background-repeat:no-repeat; background-size: cover; background-position: center;">
+        <div id="leftside_container">
+            <div class="profile_container" ></div>
+        </div>
+        <div id="rightside_container">
+            <h1>{{ ret.user.username }}</h1>
+        </div>
+    </div>
+</div>
+<div class="navbar navbar-tshop custom_jumbo_navbar">
+    <div id="custom_jumbo_navbar_wrapper">
+        <div class="container">
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="/company_portfolio/{{ ret.user.id }}">overview</a>
+                    </li>
+                    <li>
+                        <a href="/company_portfolio/{{ ret.user.id }}/project">project</a>
+                    </li>
+                    <li>
+                        <a href="/company_portfolio/{{ ret.user.id }}/shop">shop</a>
+                    </li>
+                    <li>
+                        <a href="/company_portfolio/{{ ret.user.id }}/qna">qna</a>
+                    </li>
+                    <li>
+                        <a href="/company_portfolio/{{ ret.user.id }}/review">review</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

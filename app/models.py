@@ -68,23 +68,6 @@ class Image(db.Model):
         self.image_path = image_path
 
 
-class Product(db.Model):
-    __tablename__ = 'product'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    price = db.Column(db.Integer)
-    image_id = db.Column(db.Integer, db.ForeignKey('image.id'))
-
-
-class Tag(db.Model):
-    __tablename__ = 'tag'
-    id = db.Column(db.Integer, primary_key=True)
-    x = db.Column(db.Float)
-    y = db.Column(db.Float)
-    image_id = db.Column(db.Integer, db.ForeignKey('image.id'))
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
-
-
 class UserLike(db.Model):
     __tablename__ = 'user_like'
     id = db.Column(db.Integer, primary_key=True)
@@ -152,3 +135,46 @@ class Company_has_pros_category(db.Model):
     def __init__(self, company_id, pros_category_id):
         self.company_id = company_id
         self.pros_category_id = pros_category_id
+
+class Shop_category(db.Model):
+    __tablename__ = 'shop_category'
+    shop_category_id = db.Column(db.Integer, primary_key=True)
+    category_name = db.Column(db.String(200))
+
+    def __init__(self,category_name):
+        self.category_name = category_name
+
+class Product(db.Model):
+    __tablename__ = 'product'
+    id = db.Column(db.Integer, primary_key=True)
+    product_name = db.Column(db.String(200))
+    product_price = db.Column(db.Integer)
+    product_color = db.Column(db.String(200))
+    product_desc = db.Column(db.String(500))
+    product_size = db.Column(db.String(200))
+    product_model_name = db.Column(db.String(200))
+    product_meterial = db.Column(db.String(200))
+    shop_category_id = db.Column(db.Integer, db.ForeignKey('shop_category.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    created_at = db.Column(db.DateTime)
+
+    def __init__(self, product_name, product_price, product_color, product_desc, product_size, product_model_name, product_meterial, shop_category_id, user_id,created_at):
+        self.product_name = product_name
+        self.product_price = product_price
+        self.product_color = product_color
+        self.product_desc = product_desc
+        self.product_size = product_size
+        self.product_model_name = product_model_name
+        self.product_meterial = product_meterial
+        self.shop_category_id = shop_category_id
+        self.user_id = user_id
+        self.created_at = created_at
+
+class Product_has_image(db.Model):
+    __tablename__ = 'product_has_image'
+    product_id = db.Column(db.Integer, primary_key=True)
+    image_id = db.Column(db.Integer, primary_key=True)
+
+    def __init__(self, product_id, image_id):
+        self.product_id = product_id
+        self.image_id = image_id

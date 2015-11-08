@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+    <style type="text/css">
+    #create_product_form {
+        background-color: #FFFFFF;
+        border: 1px gray solid;
+    }
+    input#product_name,
+    input#product_price,
+    input#product_color,
+    input#product_size,
+    input#product_model_name,
+    input#product_meterial,
+    textarea#product_desc {
+        border-color: #DDDDDD;
+        -webkit-border-radius: 3px 0 0 3px;
+        -moz-border-radius: 3px 0 0 3px;
+        border-radius: 3px 0 0 3px;
+        border-style: solid;
+        border-width: 2px 1px 1px 2px;
+        color: #888888;
+        font-size: 14px;
+        height: 36px;
+        width: 96%;
+        margin: 10px 2% 10px 2%;
+        vertical-align: middle;
+        display: block;
+    }
+    textarea#product_desc {
+        height: 300px;
+    }
+    </style>
+<div class="container main-container">
+<h1>Step 1: product information & photos</h1>
+    <div id="create_product_form">
+        <form action="{{ url_for('create_product') }}" method="POST" enctype="multipart/form-data" class="dropzone" >
+            {{ createProductForm.hidden_tag() }}
+            {{ createProductForm.product_name(placeholder='enter product name') }}
+            {% for message in createProductForm.product_name.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <hr/>
+            {{ createProductForm.product_price(placeholder='enter product price') }}
+            {% for message in createProductForm.product_price.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <hr/>
+            {{ createProductForm.product_color(placeholder='enter product color') }}
+            {% for message in createProductForm.product_color.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <hr/>
+            {{ createProductForm.product_desc(placeholder='enter product description') }}
+            {% for message in createProductForm.product_desc.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <hr/>
+            {{ createProductForm.product_size(placeholder='enter product size') }}
+            {% for message in createProductForm.product_size.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <hr/>
+            {{ createProductForm.product_model_name(placeholder='enter product model name') }}
+            {% for message in createProductForm.product_model_name.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <hr/>
+            {{ createProductForm.product_meterial(placeholder='enter product meterial') }}
+            {% for message in createProductForm.product_meterial.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <hr/>
+            {{ createProductForm.shop_category(placeholder='enter product shopcategory') }}
+            {% for message in createProductForm.shop_category.errors %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <hr/>
+
+            <div class="fallback">
+                <input name="file" type="file" multiple>
+            </div>
+            <div>
+                <input name="submit" class="btn   btn-lg btn-primary" style="background-color:#ffffff; border:1px solid gray;" value="저장" type="submit">
+            </div>
+        </form>
+    </div>
+</div>
+    <br>
+    <br>
+    <br>
+    <br>
+{% endblock %}
