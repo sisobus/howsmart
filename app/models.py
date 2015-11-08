@@ -63,6 +63,7 @@ class Image(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     image_path = db.Column(db.String(100))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    created_at = db.Column(db.DateTime)
 
     def __init__(self, image_path):
         self.image_path = image_path
@@ -138,7 +139,7 @@ class Company_has_pros_category(db.Model):
 
 class Shop_category(db.Model):
     __tablename__ = 'shop_category'
-    shop_category_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     category_name = db.Column(db.String(200))
 
     def __init__(self,category_name):

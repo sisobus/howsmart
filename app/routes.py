@@ -119,6 +119,7 @@ def company_signup():
                     companySignupForm.filename.data.save(file_path)
                     image = Image(file_path)
                     image.user_id = newuser.id
+                    image.created_at = datetime.utcnow()
                     db.session.add(image)
                     db.session.commit()
                     newcompany = Company(companySignupForm.introduction.data, companySignupForm.address.data, companySignupForm.tel.data, companySignupForm.website.data, newuser.id)
@@ -200,6 +201,7 @@ def write_feed():
                     writeFeedForm.filename.data.save(file_path)
                     image = Image(file_path)
                     image.user_id = user.id
+                    image.created_at = datetime.utcnow()
                     db.session.add(image)
                     db.session.commit()
                 feed = Feed(writeFeedForm.title.data, writeFeedForm.body.data, datetime.utcnow())
@@ -262,6 +264,7 @@ def create_project():
                     file.save(file_path)
                     image = Image(file_path)
                     image.user_id = user.id
+                    image.created_at = datetime.utcnow()
                     db.session.add(image)
                     db.session.commit()
                     feed = Feed('pre','pre',datetime.utcnow())
@@ -296,8 +299,8 @@ def merge_image_for_product(createProductForm):
     user = User.query.filter_by(email=session['email'].lower()).first()
     company = Company.query.filter_by(user_id=user.id).first()
     current_time = datetime.utcnow()
-    #one_minute_ago = current_time - timedelta(minutes=2)
-    images = Image.query_fiter_by(user_id=user.id).all()
+    one_minute_ago = current_time - timedelta(minutes=1)
+    images = Image.query.filter_by(user_id=user.id).filter(Image.created_at > one_minute_ago).order_by(Image.created_at.asc()).all()
     if len(images) == 0:
         return -1
 
@@ -312,6 +315,7 @@ def merge_image_for_product(createProductForm):
                           createProductForm.product_desc.data,createProductForm.product_size.data,createProductForm.product_model_name.data,\
                           createProductForm.product_meterial.data,int(createProductForm.shop_category.data),user.id,datetime.utcnow())
         db.session.add(product)
+        db.session.commit()
         for image in not_merged_images:
             product_has_image = Product_has_image(product.id,image.id)
             db.session.add(product_has_image)
@@ -341,6 +345,7 @@ def create_product():
                     file.save(file_path)
                     image = Image(file_path)
                     image.user_id = user.id
+                    image.created_at = datetime.utcnow()
                     db.session.add(image)
                     db.session.commit()
 
@@ -419,6 +424,7 @@ def make_project():
                         writeFeedForm.filename.data.save(file_path)
                         image = Image(file_path)
                         image.user_id = user.id
+                        image.created_at = datetime.utcnow()
                         db.session.add(image)
                         db.session.commit()
                     feed = Feed(writeFeedForm.title.data, writeFeedForm.body.data, datetime.utcnow())
@@ -453,6 +459,7 @@ def make_project():
                         writeFeedForm.filename.data.save(file_path)
                         image = Image(file_path)
                         image.user_id = user.id
+                        image.created_at = datetime.utcnow()
                         db.session.add(image)
                         db.session.commit()
                     feed = Feed(writeFeedForm.title.data, writeFeedForm.body.data, datetime.utcnow())
@@ -712,7 +719,7 @@ def company_portfolio_shop(user_id):
     products = []
     for t_product in t_products:
         cur_image_id = Product_has_image.query.filter_by(product_id=t_product.id).first().image_id
-        cur_image = Image.query.filter_by(id=cur_image_id)
+        cur_image = Image.query.filter_by(id=cur_image_id).first()
         cur_image_path = utils.get_image_path(cur_image.image_path)
         d = {
             'product': t_product,
