@@ -308,7 +308,7 @@ def merge_image_for_product(createProductForm):
             not_merged_images.append(image)
 
     if len(not_merged_images) != 0:
-        product = Product(createProductForm.product_name.data,createProductForm.product_price.data,createProductForm.product_color.data,\
+        product = Product(createProductForm.product_name.data,int(createProductForm.product_price.data),createProductForm.product_color.data,\
                           createProductForm.product_desc.data,createProductForm.product_size.data,createProductForm.product_model_name.data,\
                           createProductForm.product_meterial.data,int(createProductForm.shop_category.data),user.id,datetime.utcnow())
         db.session.add(product)
