@@ -2,34 +2,45 @@
 {% block content %}
     <style type="text/css">
 
-    #all_shop_container {
-        background-color: #FFFFFF;
-    }
-    #shop_container {
-        background-color:inherit;
-        width: 100%;
-        float: left;
-        margin:0;
-        height: 250px;
-    }
-    #shop_background_image {
-        position: absolute;
-        width: 400px;
-        height: 240px;
-        margin: 5px 5px 5px 5px;
-    }
-    #shop_body {
-        position: relative;
-        margin: 0px 0px 0px 420px;
-    }
-    hr.shop {
-        margin: 10px 10px 10px 10px;
-        /*
-        width: 98%;
-        */
-        color: #f5f5f5; border: thin solid #f5f5f5;
-    }
+        * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
 
+card_header {
+  display: block;
+  overflow: hidden;
+  position: relative;
+  padding-bottom: 2em;
+
+  }
+
+.card_container {
+    outline: 0; max-width:32%;
+    position: relative;
+    float: left;
+    margin: 1px 1px 1px 1px;
+
+  background-color: #ffffff;
+
+  }
+
+.card_custom_body {
+    padding-left:25px;
+    padding-right:25px;
+    margin-bottom:0px;
+}
+
+.bg {
+  border-bottom: 0px solid #5cc0ff;
+  max-width: 100%;
+  height:200px;
+}
+
+.bio:hover > .card_desc {
+  cursor: pointer;
+  opacity: 1;
+}
     </style>
     <br>
     <div id="main-contents-container">
@@ -38,6 +49,12 @@
         <div class="breadcrumbDiv col-lg-12">
             <ul class="breadcrumb">
                 <li><a href="/shop">shop</a></li>
+                {% if ret.shop_category_id == 0 %}
+                    <li><a href="/shop/#">{{ ret.shop_category_name }}</a></li>
+                {% endif %}
+                {% if ret.shop_category_id != 0 %}
+                    <li><a href="/shop/{{ ret.shop_category_id }}">{{ ret.shop_category_name }}</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>
@@ -64,7 +81,7 @@
         <div class="col-lg-9 col-md-9 col-sm-12">
             <h2>SHOP</h2>
             <div class="w100 productFilter clearfix">
-                <p class="pull-left"> Showing   <strong></strong> products</p>
+                <p class="pull-left"> Showing {{ ret.shop_category_name }}  <strong>{{ ret.cur_category_product_count }}</strong> products</p>
 
                 <div class="pull-right ">
                         <div class="change-view pull-right"><a href="#" title="Grid" class="grid-view"> <i
@@ -73,10 +90,36 @@
                     </div>
             </div>
 
-            <div class="row xsResponse clearfix">
-                <div id="all_shop_container">
-
-                </div>
+            <div class="feed_container" style="margin-top:10px;">
+                {% for product in ret.products %}
+                    <div class="card_container">
+                    <card_header>
+                        <div class="bio">
+                            <a href="/product_detail/{{ product.product.id }}">
+                                <div class="bg" style="background: url({{ '/static/'+product.image_path }});
+                                        background-repeat: no-repeat;
+                                        background-size: cover;
+                                        background-position: center;
+                                        ">
+                                </div>
+                            </a>
+                            <div class="container" style="margin-top:10px;margin-left:10px;">
+                                <div class="row">
+                                    <div calss="card_custom_body">
+                                        <a href="/product_detail/{{ product.product.id }}">
+                                            <h4>{{ product.product.product_name }}</h4>
+                                        </a>
+                                        <h5>{{ product.product.product_price }}</h5>
+                                        <a href="/product_detail/{{ product.product.id }}">
+                                            <h6>more colors</h6>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </card_header>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>

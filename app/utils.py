@@ -71,4 +71,29 @@ def get_shop_category_tree():
     ret[8] = [ i for i in xrange(63,70)]
     ret[9] = [ i for i in xrange(71,79)]
     ret[10] = [ i for i in xrange(80,83)]
+
     return ret
+
+def get_all_category():
+    shop_category_dictionary = get_shop_category_dictionary()
+    shop_category_tree = get_shop_category_tree()
+    ret_category = []
+    for i in xrange(len(shop_category_tree)):
+        first_category_id = i+1
+        first_category_name = shop_category_dictionary[first_category_id]
+        second_categories = []
+        for j in xrange(len(shop_category_tree[i])):
+            second_category_id = shop_category_tree[i][j]
+            second_category_name = shop_category_dictionary[second_category_id]
+            d = {
+                'category_id': str(second_category_id),
+                'category_name': str(second_category_name)
+            }
+            second_categories.append(d)
+        d = {
+            'category_id': first_category_id,
+            'category_name': first_category_name,
+            'child_categories': second_categories
+        }
+        ret_category.append(d)
+    return ret_category

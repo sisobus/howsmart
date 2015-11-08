@@ -999,29 +999,29 @@ def shop():
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
 
-    shop_category_dictionary = utils.get_shop_category_dictionary()
-    shop_category_tree = utils.get_shop_category_tree()
-    ret_category = []
-    for i in xrange(len(shop_category_tree)):
-        first_category_id = i+1
-        first_category_name = shop_category_dictionary[first_category_id]
-        second_categories = []
-        for j in xrange(len(shop_category_tree[i])):
-            second_category_id = shop_category_tree[i][j]
-            second_category_name = shop_category_dictionary[second_category_id]
-            d = {
-                'category_id': str(second_category_id),
-                'category_name': str(second_category_name)
-            }
-            second_categories.append(d)
+    cur_category_product_count = Product.query.count()
+    t_products = Product.query.order_by(Product.created_at.desc()).all()
+    products = []
+    for t_product in t_products:
+        product_has_image = Product_has_image.query.filter_by(product_id=t_product.id).first()
+        image_id = product_has_image.image_id
+        image = Image.query.filter_by(id=image_id).first()
+        image_path = utils.get_image_path(image.image_path)
+        user = User.query.filter_by(id=t_product.user_id).first()
         d = {
-            'category_id': first_category_id,
-            'category_name': first_category_name,
-            'child_categories': second_categories
+            'product': t_product,
+            'user': user,
+            'image_path': image_path
         }
-        ret_category.append(d)
+        products.append(d)
+
+    ret_category = utils.get_all_category()
     ret = {
-        'category': ret_category
+        'cur_category_product_count': cur_category_product_count,
+        'shop_category_id': 0,
+        'shop_category_name': '전체',
+        'category': ret_category,
+        'products': products
     }
 
     return render_template('shop.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm,ret=ret)
@@ -1033,4 +1033,29 @@ def shop_detail(shop_category_id):
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
 
-    return render_template('shop.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm )
+    cur_category_product_count = Product.query.filter_by(shop_category_id=shop_category_id).count()
+    t_products = Product.query.filter_by(shop_category_id=shop_category_id).order_by(Product.created_at.desc()).all()
+    products = []
+    for t_product in t_products:
+        product_has_image = Product_has_image.query.filter_by(product_id=t_product.id).first()
+        image_id = product_has_image.image_id
+        image = Image.query.filter_by(id=image_id).first()
+        image_path = utils.get_image_path(image.image_path)
+        user = User.query.filter_by(id=t_product.user_id).first()
+        d = {
+            'product': t_product,
+            'user': user,
+            'image_path': image_path
+        }
+        products.append(d)
+
+    ret_category = utils.get_all_category()
+    ret = {
+        'cur_category_product_count': cur_category_product_count,
+        'shop_category_id': shop_category_id,
+        'shop_category_name': utils.get_shop_category_dictionary()[shop_category_id],
+        'category': ret_category,
+        'products': products
+    }
+
+    return render_template('shop.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm,ret=ret )
