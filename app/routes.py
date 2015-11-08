@@ -821,10 +821,77 @@ def project_detail(project_id):
 @app.route('/product_detail/<int:product_id>')
 def product_detail(product_id):
     with app.app_context():
-        signupForm = SignupForm()
-        signinForm = SigninForm()
-        companySignupForm = CompanySignupForm()
-    return render_template('product_detail.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm)
+        comment = CommentForm()
+
+    user = User.query.filter_by(email=session['email']).first()
+    company = Company.query.filter_by(user_id=user.id).first()
+    product = Product.query.filter_by(id=product_id).first()
+    product_has_images = Product_has_image.query.filter_by(product_id=product.id).order_by(Product_has_image.image_id.asc()).all()
+    image_paths = []
+    for product_has_image in product_has_images:
+        cur_image_id = product_has_image.image_id
+        image = Image.query.filter_by(id=cur_image_id).first()
+        image_path = utils.get_image_path(image.image_path)
+        image_paths.append(image_path)
+    colors = []
+    for color in product.product_color.split(','):
+        color = color.lstrip().rstrip()
+        colors.append(color)
+
+    other_image_paths = []
+    for i in xrange(1,min(len(image_paths),5)):
+        other_image_paths.append(image_paths[i])
+
+    same_company_other_products = []
+    t_products = Product.query.filter_by(user_id=user.id).order_by(Product.created_at.desc()).all()
+    same_company_other_products_count = Product.query.filter_by(user_id=user.id).count()
+    for t_product in t_products:
+        if t_product.id == product_id:
+            continue
+        cur_product_image = Image.query.filter_by(id=Product_has_image.query.filter_by(product_id=t_product.id).first().image_id).first()
+        cur_product_image_path = utils.get_image_path(cur_product_image.image_path)
+        d = {
+            'product': t_product,
+            'image_path': cur_product_image_path
+        }
+        same_company_other_products.append(d)
+        if len(same_company_other_products) == 4:
+            break
+
+    same_category_other_products = []
+    t_products = Product.query.filter_by(shop_category_id=product.shop_category_id).order_by(Product.created_at.desc()).all()
+    same_category_other_products_count = Product.query.filter_by(shop_category_id=product.shop_category_id).count()
+    for t_product in t_products:
+        if t_product_id == product_id:
+            continue
+        cur_product_image = Image.query.filter_by(id=Product_has_image.query.filter_by(product_id=t_product_id).first().image_id).first()
+        cur_product_image_path = utils.get_image_path(cur_product_image.image_path)
+        d = {
+            'product': t_product,
+            'image_path': cur_product_image_path
+        }
+        same_category_other_products.append(d)
+        if len(same_category_other_products) == 4:
+            break
+
+    shop_category_id = product.shop_category_id
+    shop_category_name = utils.get_shop_category_dictionary()[shop_category_id]
+
+    ret = {
+        'user': user,
+        'company': company,
+        'product': product,
+        'image_paths': image_paths,
+        'colors': colors,
+        'other_image_paths': other_image_paths,
+        'same_company_other_products': same_company_other_products,
+        'same_company_other_products_count': same_company_other_products_count,
+        'same_category_other_products': same_category_other_products,
+        'same_category_other_products_count': same_category_other_products_count,
+        'shop_category_id': shop_category_id,
+        'shop_category_name': shop_category_name
+    }
+    return render_template('product_detail.html',ret=ret)
 
 @app.route('/find_pros/')
 def find_pros():
@@ -1059,3 +1126,4 @@ def shop_detail(shop_category_id):
     }
 
     return render_template('shop.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm,ret=ret )
+
