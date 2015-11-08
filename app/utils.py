@@ -56,3 +56,19 @@ def get_shop_category_2nd_list():
             continue
         ret.append(i)
     return ret
+
+def get_shop_category_tree():
+    shop_category_1st_list = get_shop_category_1st_list()
+    ret = [ [] for i in xrange(len(shop_category_1st_list))]
+    ret[0] = [ i for i in xrange(2,10) ]
+    ret[1] = [ i for i in xrange(11,22)]
+    ret[2] = [ i for i in xrange(23,32)]
+    ret[3] = [ i for i in xrange(33,37)]
+    ret[4] = [ i for i in xrange(38,42)]
+    ret[5] = [ i for i in xrange(43,47)]
+    ret[6] = [ i for i in xrange(48,54)]
+    ret[7] = [ i for i in xrange(55,62)]
+    ret[8] = [ i for i in xrange(63,70)]
+    ret[9] = [ i for i in xrange(71,79)]
+    ret[10] = [ i for i in xrange(80,83)]
+    return ret
