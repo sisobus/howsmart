@@ -862,7 +862,7 @@ def product_detail(product_id):
     t_products = Product.query.filter_by(shop_category_id=product.shop_category_id).order_by(Product.created_at.desc()).all()
     same_category_other_products_count = Product.query.filter_by(shop_category_id=product.shop_category_id).count()
     for t_product in t_products:
-        if t_product_id == product_id:
+        if t_product.id == product_id:
             continue
         cur_product_image = Image.query.filter_by(id=Product_has_image.query.filter_by(product_id=t_product_id).first().image_id).first()
         cur_product_image_path = utils.get_image_path(cur_product_image.image_path)
