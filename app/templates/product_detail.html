@@ -147,6 +147,9 @@ div#image-container:hover .bar {
     right: 0;
 }
 
+#other-image-container {
+    overflow: auto;
+}
 
 hr.photos {
     margin: 10px 10px 10px 10px;
@@ -209,10 +212,6 @@ hr.photos {
                     </div>
                     {% endfor %}
                 </div>
-                <br>
-                <br>
-                <br>
-                <br>
                 <h5><a href="/company_portfolio/{{ ret.user.id }}/shop">{{ ret.user.username }}</a>의 다른 제품 ({{ ret.same_company_other_products_count }}개)</h5>
                 <div id="other-image-container">
                     {% for same_company_other_product in ret.same_company_other_products %}
@@ -223,11 +222,7 @@ hr.photos {
                     </div>
                     {% endfor %}
                 </div>
-                <br>
-                <br>
-                <br>
-                <br>
-                <h5><a href="/shop/{{ ret.shop_category_id }}">{{ ret.shop_category_name }}</a>카테고리의 다른 제품({{ ret.same_category_other_products_count }})</h5>
+                <h5><a href="/shop/{{ ret.shop_category_id }}">{{ ret.shop_category_name }}</a>카테고리의 다른 제품({{ ret.same_category_other_products_count }}개)</h5>
                 <div id="other-image-container">
                     {% for same_category_other_product in same_category_other_products %}
                     <div class="col-xs-6 col-sm-3" style="height:70px;">

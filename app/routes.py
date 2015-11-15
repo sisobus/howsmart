@@ -653,8 +653,15 @@ def company_portfolio(user_id):
     user = User.query.filter_by(id=user_id).first()
     company = Company.query.filter_by(user_id=user.id).first()
     t_projects = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
+    number_of_all_projects = len(t_projects)
     projects = []
     for project in t_projects:
+        if session['is_company']:
+            if len(projects) >= 5:
+                break
+        else :
+            if len(projects) >= 6:
+                break
         cur_image = Image.query.filter_by(id=project.image_id).first()
         cur_image_path = utils.get_image_path(cur_image.image_path)
         d = {
@@ -662,13 +669,36 @@ def company_portfolio(user_id):
             'image_path': cur_image_path
         }
         projects.append(d)
+
+    t_products = Product.query.filter_by(user_id=user.id).order_by(Product.created_at.desc()).all()
+    number_of_all_products = len(t_products)
+    products = []
+    for t_product in t_products:
+        if session['is_company']:
+            if len(products) >= 5:
+                break
+        else:
+            if len(products) >= 6:
+                break
+        cur_image_id = Product_has_image.query.filter_by(product_id=t_product.id).first().image_id
+        cur_image = Image.query.filter_by(id=cur_image_id).first()
+        cur_image_path = utils.get_image_path(cur_image.image_path)
+        d = {
+            'product': t_product,
+            'image_path': cur_image_path
+        }
+        products.append(d)
+
     image   = Image.query.filter_by(id=company.image_id).first()
     image_path = utils.get_image_path(image.image_path)
     ret = {
         'user': user,
         'company': company,
         'projects': projects,
-        'image_path': image_path
+        'products': products,
+        'image_path': image_path,
+        'number_of_projects': number_of_all_projects,
+        'number_of_products': number_of_all_products
     }
 
     return render_template('company_portfolio.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
@@ -717,6 +747,51 @@ def company_portfolio_shop(user_id):
 
     t_products = Product.query.filter_by(user_id=user.id).order_by(Product.created_at.desc()).all()
     products = []
+    used_category = [ False for i in xrange(128) ]
+    for t_product in t_products:
+        used_category[t_product.shop_category_id] = True
+        cur_image_id = Product_has_image.query.filter_by(product_id=t_product.id).first().image_id
+        cur_image = Image.query.filter_by(id=cur_image_id).first()
+        cur_image_path = utils.get_image_path(cur_image.image_path)
+        d = {
+            'product': t_product,
+            'image_path': cur_image_path
+        }
+        products.append(d)
+    ret_category = utils.get_all_category()
+    for category in ret_category:
+        for second_category in category['child_categories']:
+            if used_category[int(second_category['category_id'])]:
+                second_category['used'] = True
+    ret = {
+        'user': user,
+        'company': company,
+        'products': products,
+        'image_path': image_path,
+        'category': ret_category
+    }
+
+    return render_template('company_portfolio_shop.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
+                           ret=ret)
+
+@app.route('/company_portfolio/<int:user_id>/shop/<int:shop_category_id>')
+def company_portfolio_shop_detail(user_id,shop_category_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    user = User.query.filter_by(id=user_id).first()
+    company = Company.query.filter_by(user_id=user.id).first()
+    image   = Image.query.filter_by(id=company.image_id).first()
+    image_path = utils.get_image_path(image.image_path)
+
+
+    used_category = [ False for i in xrange(128) ]
+    t_products = Product.query.filter_by(user_id=user.id).order_by(Product.created_at.desc()).all()
+    for t_product in t_products:
+        used_category[t_product.shop_category_id] = True
+    t_products = Product.query.filter_by(user_id=user.id).filter_by(shop_category_id=shop_category_id).order_by(Product.created_at.desc()).all()
+    products = []
     for t_product in t_products:
         cur_image_id = Product_has_image.query.filter_by(product_id=t_product.id).first().image_id
         cur_image = Image.query.filter_by(id=cur_image_id).first()
@@ -726,11 +801,17 @@ def company_portfolio_shop(user_id):
             'image_path': cur_image_path
         }
         products.append(d)
+    ret_category = utils.get_all_category()
+    for category in ret_category:
+        for second_category in category['child_categories']:
+            if used_category[int(second_category['category_id'])]:
+                second_category['used'] = True
     ret = {
         'user': user,
         'company': company,
         'products': products,
-        'image_path': image_path
+        'image_path': image_path,
+        'category': ret_category
     }
 
     return render_template('company_portfolio_shop.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
@@ -1101,21 +1182,45 @@ def shop_detail(shop_category_id):
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
 
-    cur_category_product_count = Product.query.filter_by(shop_category_id=shop_category_id).count()
-    t_products = Product.query.filter_by(shop_category_id=shop_category_id).order_by(Product.created_at.desc()).all()
     products = []
-    for t_product in t_products:
-        product_has_image = Product_has_image.query.filter_by(product_id=t_product.id).first()
-        image_id = product_has_image.image_id
-        image = Image.query.filter_by(id=image_id).first()
-        image_path = utils.get_image_path(image.image_path)
-        user = User.query.filter_by(id=t_product.user_id).first()
-        d = {
-            'product': t_product,
-            'user': user,
-            'image_path': image_path
-        }
-        products.append(d)
+    cur_category_product_count = 0
+    shop_category_1st_list = utils.get_shop_category_1st_list()
+    if shop_category_id in shop_category_1st_list:
+        for i in xrange(len(shop_category_1st_list)):
+            if shop_category_id == shop_category_1st_list[i]:
+                idx = i
+                break
+        shop_category_2nd_list = utils.get_shop_category_tree()[idx]
+        for cur_shop_category_id in shop_category_2nd_list:
+            cur_category_product_count += Product.query.filter_by(shop_category_id=cur_shop_category_id).count()
+            t_products = Product.query.filter_by(shop_category_id=cur_shop_category_id).order_by(Product.created_at.desc()).all()
+            for t_product in t_products:
+                product_has_image = Product_has_image.query.filter_by(product_id=t_product.id).first()
+                image_id = product_has_image.image_id
+                image = Image.query.filter_by(id=image_id).first()
+                image_path = utils.get_image_path(image.image_path)
+                user = User.query.filter_by(id=t_product.user_id).first()
+                d = {
+                    'product': t_product,
+                    'user': user,
+                    'image_path': image_path
+                }
+                products.append(d)
+    else:
+        cur_category_product_count = Product.query.filter_by(shop_category_id=shop_category_id).count()
+        t_products = Product.query.filter_by(shop_category_id=shop_category_id).order_by(Product.created_at.desc()).all()
+        for t_product in t_products:
+            product_has_image = Product_has_image.query.filter_by(product_id=t_product.id).first()
+            image_id = product_has_image.image_id
+            image = Image.query.filter_by(id=image_id).first()
+            image_path = utils.get_image_path(image.image_path)
+            user = User.query.filter_by(id=t_product.user_id).first()
+            d = {
+                'product': t_product,
+                'user': user,
+                'image_path': image_path
+            }
+            products.append(d)
 
     ret_category = utils.get_all_category()
     ret = {

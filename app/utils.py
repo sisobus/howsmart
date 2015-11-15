@@ -79,7 +79,7 @@ def get_all_category():
     shop_category_tree = get_shop_category_tree()
     ret_category = []
     for i in xrange(len(shop_category_tree)):
-        first_category_id = i+1
+        first_category_id = shop_category_tree[i][0]-1
         first_category_name = shop_category_dictionary[first_category_id]
         second_categories = []
         for j in xrange(len(shop_category_tree[i])):

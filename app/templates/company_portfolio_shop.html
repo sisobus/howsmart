@@ -107,31 +107,7 @@ card_header {
 
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-12">
-            <div class="panel panel-default">
-            <!--
-                <div class="panel-heading">
-                    <h4 class="panel-title"><a data-toggle="collapse" href="#collapseCategory" class="collapseWill">
-                        <span class="pull-left"> <i class="fa fa-caret-right"></i></span> Category </a></h4>
-                </div>
-                -->
-                <div id="collapseCategory" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                        <ul class="nav nav-pills nav-stacked tree">
-                            <li><a href="/company_portfolio/{{ ret.user.id }}"><strong>Home</strong></a></li>
-                            <li class="active dropdown-tree open-tree"><a class="dropdown-tree-a" > <span
-                                    class="badge pull-right">{{ ret.products | length }}</span> Products</a>
-                                <ul class="category-level-2 dropdown-menu-tree">
-                                    {% for product in ret.products %}
-                                    <li class="dropdown-tree"><a class="dropdown-tree-a" href="/product_detail/{{ product.product.id }}">
-                                        {{ product.product.product_name }}
-                                    </a></li>
-                                    {% endfor %}
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            {% include "company_portfolio_shop_category.html" %}
         </div>
         <div class="col-lg-9 col-md-9 col-sm-12">
             {{ ret.products | length }} Products

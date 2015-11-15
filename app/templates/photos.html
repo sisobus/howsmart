@@ -99,15 +99,15 @@
             <div class="row xsResponse clearfix">
                 <div id="all_photos_container">
                     {% for feed in feeds %}
-                    <div id="photos_container">
-                    <a href="/company_feed_detail/{{ feed.feed.id }}">
-                        <div id="photos_background_image" style="background: url({{ '/static/'+feed.image_path }});
-                            background-repeat: no-repeat;
-                            background-size: cover;
-                            background-position: center;
-                        ">
-                        </div>
-                    </a>
+                        <div id="photos_container">
+                            <a href="/company_feed_detail/{{ feed.feed.id }}">
+                                <div class="third-effect" id="photos_background_image" style="background: url({{ '/static/'+feed.image_path }});
+                                        background-repeat: no-repeat;
+                                        background-size: cover;
+                                        background-position: center;
+                                        ">
+                                </div>
+                            </a>
                         <div id="photos_body">
                             <a href="/company_feed_detail/{{ feed.feed.id }}">
                             <h4>{{ feed.feed.title }}</h4>

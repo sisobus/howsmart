@@ -60,23 +60,7 @@ card_header {
     </div>
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-12">
-            <div class="panel panel-default">
-                <div id="collapseCategory" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                        <ul class="nav nav-pills nav-stacked tree">
-                            {% for category in ret.category %}
-                                <li class="active dropdown-tree open-tree"><a class="dropdown-tree-a"> {{ category.category_name }}</a>
-                                    <ul class="category-level-2 dropdown-menu-tree">
-                                        {% for child_category in category.child_categories %}
-                                            <li><a href="/shop/{{ child_category.category_id }}"> {{ child_category.category_name }}</a></li>
-                                        {% endfor %}
-                                    </ul>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            {% include "shop_category.html" %}
         </div>
         <div class="col-lg-9 col-md-9 col-sm-12">
             <h2>SHOP</h2>
