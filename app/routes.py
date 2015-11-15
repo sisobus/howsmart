@@ -823,9 +823,10 @@ def product_detail(product_id):
     with app.app_context():
         comment = CommentForm()
 
-    user = User.query.filter_by(email=session['email']).first()
-    company = Company.query.filter_by(user_id=user.id).first()
     product = Product.query.filter_by(id=product_id).first()
+    user = User.query.filter_by(id=product.user_id).first()
+#    user = User.query.filter_by(email=session['email']).first()
+    company = Company.query.filter_by(user_id=user.id).first()
     product_has_images = Product_has_image.query.filter_by(product_id=product.id).order_by(Product_has_image.image_id.asc()).all()
     image_paths = []
     for product_has_image in product_has_images:
@@ -864,7 +865,7 @@ def product_detail(product_id):
     for t_product in t_products:
         if t_product.id == product_id:
             continue
-        cur_product_image = Image.query.filter_by(id=Product_has_image.query.filter_by(product_id=t_product_id).first().image_id).first()
+        cur_product_image = Image.query.filter_by(id=Product_has_image.query.filter_by(product_id=t_product.id).first().image_id).first()
         cur_product_image_path = utils.get_image_path(cur_product_image.image_path)
         d = {
             'product': t_product,
