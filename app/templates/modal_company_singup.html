@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
-                <h3 class="modal-title-site text-center"> Company REGISTER </h3>
+                <h3 class="modal-title-site text-center"> 기업으로 가입하기 </h3>
             </div>
             <div class="modal-body">
                 <!-- User form start-->
@@ -15,7 +15,7 @@
                         {% for message in companySignupForm.username.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.username(placeholder="Enter your company name") }}
+                        {{ companySignupForm.username(placeholder="회사 이름") }}
                     </div>
                 </div>
                 <div class="form-group reg-email">
@@ -23,7 +23,7 @@
                         {% for message in companySignupForm.email.errors %}
                             <div class="flash">{{  message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.email(placeholder="Enter your company Email") }}
+                        {{ companySignupForm.email(placeholder="이메일") }}
                     </div>
                 </div>
                 <div class="form-group reg-password">
@@ -31,7 +31,7 @@
                         {% for message in companySignupForm.password.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.password(placeholder="Enter your password") }}
+                        {{ companySignupForm.password(placeholder="비밀번호") }}
                     </div>
                 </div>
                 <div class="form-group ">
@@ -39,7 +39,7 @@
                         {% for message in companySignupForm.introduction.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.introduction(placeholder="Enter your company introduction") }}
+                        {{ companySignupForm.introduction(placeholder="회사 소개") }}
                     </div>
                 </div>
                 <div class="form-group">
@@ -47,7 +47,7 @@
                         {% for message in companySignupForm.address.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.address(placeholder="Enter your company address") }}
+                        {{ companySignupForm.address(placeholder="회사 주소 ") }}
                     </div>
                 </div>
                 <div class="form-group">
@@ -55,7 +55,7 @@
                         {% for meesage in companySignupForm.tel.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.tel(placeholder="Enter your company telephon number") }}
+                        {{ companySignupForm.tel(placeholder="전화 번호") }}
                     </div>
                 </div>
                 <div class="form-group">
@@ -63,7 +63,7 @@
                         {% for message in companySignupForm.website.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.website(placeholder="Enter your company website address") }}
+                        {{ companySignupForm.website(placeholder="회사 웹사이트") }}
                     </div>
                 </div>
                 <div class="form-group">
@@ -75,6 +75,7 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    회사 대표 이미지를 올려주세요
                     <div>
                     {% for message in companySignupForm.filename.errors %}
                         <div class="flash">{{ message }}</div>
@@ -85,7 +86,7 @@
 
                 <div>
                     <div>
-                        <input name="submit" class="btn  btn-block btn-lg btn-primary" value="REGISTER" type="submit">
+                        <input name="submit" class="btn  btn-block btn-lg btn-primary" value="가입신청하기" type="submit">
                     </div>
                 </div>
                 </form>
@@ -93,8 +94,8 @@
 
             </div>
             <div class="modal-footer">
-                <p class="text-center"> Already member? <a data-toggle="modal" data-dismiss="modal" href="#ModalLogin">
-                    Sign in </a></p>
+                <p class="text-center"> 이미 하우스마트 회원이세요 ? <a data-toggle="modal" data-dismiss="modal" href="#ModalLogin">
+                    로그인 </a></p>
             </div>
         </div>
         <!-- /.modal-content -->

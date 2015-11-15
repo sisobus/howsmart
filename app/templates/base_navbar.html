@@ -1,23 +1,57 @@
+<style>
+    input#search-bar {
+        border-color: #DDDDDD;
+
+        -webkit-border-radius: 3px 0 0 3px;
+        -moz-border-radius: 3px 0 0 3px;
+        border-radius: 3px 0 0 3px;
+        border-style: solid;
+        border-width: 1px 1px 1px 1px;
+        /*
+        border-width: 2px 1px 1px 2px;
+        */
+        color: #888888;
+        font-size: 14px;
+        line-height: 20px;
+        height: 30px;
+        width: 800px;
+        margin: 10px 0px 10px 0px;
+        vertical-align: middle;
+        display: block;
+    }
+    input#search-bar:hover {
+        border-color: #EEEEEE;
+        outline: 0 none;
+    }
+    input#search-bar:focus {
+        border-color: #EEEEEE;
+        outline: 0 none;
+    }
+</style>
 <!-- Fixed navbar start -->
+
 <div class="navbar navbar-tshop navbar-fixed-top megamenu" role="navigation">
     <div class="navbar-top">
         <div class="container">
             <div class="row">
-                <div class="col-lg-6 col-sm-6 col-xs-6 col-md-6">
+                <div class="col-lg-9 col-sm-9 col-xs-9 col-md-9">
                     <div class="pull-left ">
                         <ul class="userMenu ">
-                            <li><a href="#"> <span class="hidden-xs">Search bar</span><i
-                                    class="glyphicon glyphicon-info-sign hide visible-xs "></i> </a></li>
+                            <li>
+                                <input type="text" id="search-bar" placeholder="검색하기">
+                                <!--
+                                <a href="#"> <span class="hidden-xs">Search bar</span><i
+                                    class="glyphicon glyphicon-info-sign hide visible-xs "></i> </a>
+                                    -->
+                            </li>
                         </ul>
                     </div>
                 </div>
                 <!-- User Menu start -->
                 {% if session.logged_in %}
-                <div class="col-lg-6 col-sm-6 col-xs-6 col-md-6 no-margin no-padding">
+                <div class="col-lg-3 col-sm-3 col-xs-3 col-md-3 no-margin no-padding">
                     <div class="pull-right">
                         <ul class="userMenu">
-                            <li><a href="{{ url_for('write_feed') }}">글쓰기
-                            <i class="glyphicon glyphicon-log-in hide visible-xs "></i> </a></li>
                             {% if session['is_company'] %}
                                 <li><a href="/company_portfolio/{{ session['user_id'] }}"><span class="hidden-xs">{{ session['username'] }}님 환영합니다</span>
                             {% endif %}
@@ -25,17 +59,17 @@
                             <li><a href="/user_portfolio/{{ session['user_id'] }}"><span class="hidden-xs">{{ session['username'] }}님 환영합니다</span>
                             {% endif %}
                             <i class="glyphicon glyphicon-log-in hide visible-xs "></i> </a></li>
-                            <li><a href="{{ url_for('signout') }}">Sign out</a></li>
+                            <li><a href="{{ url_for('signout') }}">로그아웃</a></li>
                         </ul>
                     </div>
                 </div>
                 {% elif not session.logged_in %}
-                <div class="col-lg-6 col-sm-6 col-xs-6 col-md-6 no-margin no-padding">
+                <div class="col-lg-3 col-sm-3 col-xs-3 col-md-3 no-margin no-padding">
                     <div class="pull-right">
                         <ul class="userMenu">
-                            <li><a href="#" data-toggle="modal" data-target="#ModalLogin"> <span class="hidden-xs">Sign In</span>
+                            <li><a href="#" data-toggle="modal" data-target="#ModalLogin"> <span class="hidden-xs">로그인</span>
                                 <i class="glyphicon glyphicon-log-in hide visible-xs "></i> </a></li>
-                            <li class="hidden-xs"><a href="#" data-toggle="modal" data-target="#ModalSignup"> Create Account </a></li>
+                            <li class="hidden-xs"><a href="#" data-toggle="modal" data-target="#ModalSignup"> 회원가입 </a></li>
                         </ul>
                     </div>
                 </div>
@@ -64,72 +98,50 @@
 
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li class="dropdown megamenu-40width"><a class="dropdown-toggle" href="/photos/"> Photos <b class="caret"> </b> </a>
+                <li class="dropdown megamenu-20width"><a class="dropdown-toggle" href="/photos/"> 갤러리 <b class="caret"> </b> </a>
                     <ul class="dropdown-menu">
                         <li class="megamenu-content ">
-                            <ul class="col-lg-6  col-sm-6 col-md-6 unstyled noMarginLeft newCollectionUl">
-                                <li class="no-border">
-                                    <p class="promo-1"><strong> 주거공간 </strong></p>
-                                </li>
-                                <li><a href="/photos/1"> 주방 </a></li>
-                                <li><a href="/photos/2"> 화장실 </a></li>
-                                <li><a href="/photos/3"> 방 </a></li>
-                                <li><a href="/photos/4"> 거실 </a></li>
-                                <li><a href="/photos/5"> 현관 </a></li>
-                                <li><a href="/photos/6"> 기타 </a></li>
-                            </ul>
-                            <ul class="col-lg-6  col-sm-6 col-md-6 unstyled noMarginLeft newCollectionUl">
-                                <li class="no-border">
-                                    <p class="promo-1"><strong> 상업공간 </strong></p>
-                                </li>
-                                <li><a href="/photos/7"> 카페 </a></li>
-                                <li><a href="/photos/8"> 식당 </a></li>
-                                <li><a href="/photos/9"> 사무실 </a></li>
-                                <li><a href="/photos/10"> 기타 </a></li>
+                            <ul class="  unstyled noMarginLeft newCollectionUl">
+                                <li><strong> 주거공간 </strong></li>
+                                <li><a href="/photos/1">&nbsp;  주방 </a></li>
+                                <li><a href="/photos/2">&nbsp; 화장실 </a></li>
+                                <li><a href="/photos/3">&nbsp; 방 </a></li>
+                                <li><a href="/photos/4">&nbsp; 거실 </a></li>
+                                <li><a href="/photos/5">&nbsp; 현관 </a></li>
+                                <li><a href="/photos/6">&nbsp; 기타 </a></li>
+                                <li><strong>상업공간</strong></li>
+                                <li><strong>사무공간</strong></li>
                             </ul>
                         </li>
                     </ul>
                 </li>
-                <li class="dropdown megamenu-40width"><a  class="dropdown-toggle" href="/find_pros/"> Findpros <b class="caret"> </b> </a>
+                <li class="dropdown megamenu-20width"><a  class="dropdown-toggle" href="/find_pros/"> 전문가<b class="caret"> </b> </a>
                     <ul class="dropdown-menu">
                         <li class="megamenu-content ">
-                            <ul class="col-lg-6  col-sm-6 col-md-6 unstyled noMarginLeft newCollectionUl">
-                                <li class="no-border">
-                                    <p class="promo-1"><strong> Find pros </strong></p>
-                                </li>
-                                <li><a href="/find_pros"> 지역별 검색</a></li>
-                                <li><a href="/find_pros/1"> 주거 인테리어</a></li>
-                                <li><a href="/find_pros/2"> 상업 인테리어</a></li>
-                                <li><a href="/find_pros/3"> 가구</a></li>
+                            <ul class="unstyled noMarginLeft newCollectionUl">
+                                <li><a href="/find_pros/1"> 주거 인테리어 회사</a></li>
+                                <li><a href="/find_pros/2"> 상업 인테리어 회사</a></li>
+                                <li><a href="#"> 인테리어 디자이너</a></li>
+                                <li><a href="/find_pros/3"> 가구 회사</a></li>
                             </ul>
                         </li>
                     </ul>
                 </li>
-                <li class="dropdown megamenu-40width"><a  class="dropdown-toggle" href="/shop/">
-                    Shop <b class="caret"> </b> </a>
+                <li class="dropdown megamenu-20width"><a  class="dropdown-toggle" href="/shop/">
+                    스토어<b class="caret"> </b> </a>
                     <ul class="dropdown-menu">
                         <li class="megamenu-content">
-                            <ul class="col-lg-6  col-sm-6 col-md-6 unstyled noMarginLeft newCollectionUl">
-                                <li class="no-border">
-                                    <p><strong>가구</strong></p>
-                                </li>
+                            <ul class="unstyled noMarginLeft newCollectionUl">
                                 <li><a href="/shop/1">거실가구</a></li>
-                                <li><a href="/shop/10">침실가구</a></li>
-                                <li><a href="/shop/22">서재</a></li>
                                 <li><a href="/shop/32">주방가구</a></li>
-                                <li><a href="/shop/37">화장실</a></li>
-                                <li><a href="/shop/42">제작가구(Builtin)</a></li>
-                            </ul>
-                            <ul class="col-lg-6  col-sm-6 col-md-6 unstyled noMarginLeft newCollectionUl">
-                                <li><a href="/shop/47">조명</a></li>
-                                <li><a href="/shop/54">인테리어소품</a></li>
+                                <li><a href="/shop/10">침실가구</a></li>
+                                <li><a href="/shop/22">서재가구</a></li>
                                 <li><a href="/shop/62">유아/주니어가구</a></li>
-                                <hr/>
-                                <li class="no-border">
-                                    <p><strong>사무</strong></p>
-                                </li>
-                                <li><a href="/shop/70">오피스</a></li>
-                                <li><a href="/shop/79">상업</a></li>
+                                <li><a href="/shop/37">욕실</a></li>
+                                <li><a href="/shop/42">제작가구(빌트인)</a></li>
+                                <li><a href="/shop/54">인테리어소품</a></li>
+                                <li><a href="#">상업가구</a></li>
+                                <li><a href="#">사무가구</a></li>
                             </ul>
                         </li>
                     </ul>

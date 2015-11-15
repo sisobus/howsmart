@@ -110,7 +110,7 @@ card_header {
             {% include "company_portfolio_shop_category.html" %}
         </div>
         <div class="col-lg-9 col-md-9 col-sm-12">
-            {{ ret.products | length }} Products
+            전체 {{ ret.products | length }} 제품
             <div  id="feed_container" style="margin-top:10px;">
 
                 {% if session['is_company'] %}

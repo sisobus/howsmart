@@ -37,7 +37,7 @@
     <div class="row">
         <div class="breadcrumbDiv col-lg-12">
             <ul class="breadcrumb">
-                <li><a href="/photos">PHOTOS</a></li>
+                <li><a href="/photos">갤러리</a></li>
                 <li><a href="/photos/{{ feed_category_id }}">{{ feed_category_name }}</a></li>
             </ul>
         </div>
@@ -73,9 +73,9 @@
             </div>
         </div>
         <div class="col-lg-9 col-md-9 col-sm-12">
-            <h2>PHOTOS</h2>
+            <h2>갤러리 </h2>
             <div class="w100 productFilter clearfix">
-                <p class="pull-left"> Showing {{ feed_category_name }}  <strong>{{ feed_count }}</strong> PHOTOS </p>
+                <p class="pull-left"> {{ feed_category_name }}  <strong>{{ feed_count }}</strong> 사진 </p>
 
                 <div class="pull-right ">
                     <!--
@@ -114,7 +114,7 @@
                             </a>
                             <a href="/company_portfolio/{{ feed.user.id }}"><h5>{{ feed.user.username }}</h5></a>
                             <h4>{{ feed.feed.body }}</h4>
-                            <h5>0 Likes    {{ feed.number_of_comment }} Comments</h5>
+                            <h5>0 좋아요 | {{ feed.number_of_comment }} 댓글 </h5>
                         </div>
                     </div>
                     <hr class="photos">

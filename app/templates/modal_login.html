@@ -4,7 +4,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
-                <h3 class="modal-title-site text-center"> Login </h3>
+                <h3 class="modal-title-site text-center"> 로그인 </h3>
             </div>
             <div class="modal-body">
                 <!-- user loginForm -->
@@ -15,11 +15,7 @@
                         {% for message in signinForm.email.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ signinForm.email(placeholder="Enter email") }}
-                        <!--
-                        <input name="log" id="login-user" class="form-control input" size="20"
-                               placeholder="Enter Username" type="text">
-                               -->
+                        {{ signinForm.email(placeholder="이메일 주소") }}
                     </div>
                 </div>
                 <div class="form-group login-password">
@@ -27,27 +23,12 @@
                         {% for message in signinForm.password.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ signinForm.password(placeholder="Enter your password") }}
-                        <!--
-                        <input name="Password" id="login-password" class="form-control input" size="20"
-                               placeholder="Password" type="password">
-                               -->
+                        {{ signinForm.password(placeholder="비밀번호") }}
                     </div>
                 </div>
-                <!--
-                <div class="form-group">
-                    <div>
-                        <div class="checkbox login-remember">
-                            <label>
-                                <input name="rememberme" value="forever" checked="checked" type="checkbox">
-                                Remember Me </label>
-                        </div>
-                    </div>
-                </div>
-                -->
                 <div>
                     <div>
-                        <input name="submit" class="btn  btn-block btn-lg btn-primary" value="LOGIN" type="submit">
+                        <input name="submit" class="btn  btn-block btn-lg btn-primary" value="로그인" type="submit">
                     </div>
                 </div>
                     </form>
@@ -55,9 +36,9 @@
 
             </div>
             <div class="modal-footer">
-                <p class="text-center"> Not here before? <a data-toggle="modal" data-dismiss="modal"
-                                                            href="#ModalSignup"> Sign Up </a> <br>
-                    <a href="forgot-password.html"> Lost your password? </a></p>
+                <p class="text-center"> 하우스마트 계정이 없으세요? <a data-toggle="modal" data-dismiss="modal"
+                                                            href="#ModalSignup"> 회원가입 </a> <br>
+                    <a href="forgot-password.html"> 비밀번호 찾기 </a></p>
             </div>
         </div>
         <!-- /.modal-content -->

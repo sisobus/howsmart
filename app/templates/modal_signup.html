@@ -4,14 +4,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
-                <h3 class="modal-title-site text-center"> REGISTER </h3>
+                <h3 class="modal-title-site text-center"> 회원가입 </h3>
             </div>
             <div class="modal-body">
                 <p class="text-center"> 기업회원으로 가입하시겠습니까? <a data-toggle="modal" data-dismiss="modal" href="#ModalCompanySignup">
                 기업 회원으로 가입하기</a></p>
-                <div class="control-group"><a class="fb_button btn  btn-block btn-lg " href="#"> SIGNUP WITH
-                    FACEBOOK </a></div>
-                <h5 style="padding:10px 0 10px 0;" class="text-center"> OR </h5>
+                <div class="control-group"><a class="fb_button btn  btn-block btn-lg " href="#"> 페이스북으로 로그인 </a></div>
+                <h5 style="padding:10px 0 10px 0;" class="text-center"> 또는 </h5>
 
                 <!-- User form start-->
                 <form action="{{ url_for('signup') }}" method=post>
@@ -21,11 +20,7 @@
                         {% for message in signupForm.username.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ signupForm.username(placeholder="Enter username") }}
-                        <!--
-                        <input name="login" class="form-control input" size="20" placeholder="Enter Username"
-                               type="text">
-                               -->
+                        {{ signupForm.username(placeholder="이름") }}
                     </div>
                 </div>
                 <div class="form-group reg-email">
@@ -33,10 +28,7 @@
                         {% for message in signupForm.email.errors %}
                             <div class="flash">{{  message }}</div>
                         {% endfor %}
-                        {{ signupForm.email(placeholder="Enter your Email") }}
-                        <!--
-                        <input name="reg" class="form-control input" size="20" placeholder="Enter Email" type="text">
-                        -->
+                        {{ signupForm.email(placeholder="이메일 주소") }}
                     </div>
                 </div>
                 <div class="form-group reg-password">
@@ -44,16 +36,12 @@
                         {% for message in signupForm.password.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ signupForm.password(placeholder="Enter your password") }}
-                        <!--
-                        <input name="password" class="form-control input" size="20" placeholder="Password"
-                               type="password">
-                               -->
+                        {{ signupForm.password(placeholder="비밀번호") }}
                     </div>
                 </div>
                 <div>
                     <div>
-                        <input name="submit" class="btn  btn-block btn-lg btn-primary" value="REGISTER" type="submit">
+                        <input name="submit" class="btn  btn-block btn-lg btn-primary" value="이메일로 가입" type="submit">
                     </div>
                 </div>
                 </form>
@@ -61,8 +49,8 @@
 
             </div>
             <div class="modal-footer">
-                <p class="text-center"> Already member? <a data-toggle="modal" data-dismiss="modal" href="#ModalLogin">
-                    Sign in </a></p>
+                <p class="text-center"> 이미 하우스마트 회원이세요 ? <a data-toggle="modal" data-dismiss="modal" href="#ModalLogin">
+                    로그인 </a></p>
             </div>
         </div>
         <!-- /.modal-content -->

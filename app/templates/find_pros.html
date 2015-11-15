@@ -36,7 +36,7 @@
     <div class="row">
         <div class="breadcrumbDiv col-lg-12">
             <ul class="breadcrumb">
-                <li><a href="/find_pros">FIND PROS</a></li>
+                <li><a href="/find_pros">전문가 </a></li>
                 <li>{{ pros_category_name }}</li>
             </ul>
         </div>
@@ -49,16 +49,24 @@
                         <ul class="nav nav-pills nav-stacked tree">
                             <li ><a href="/find_pros/1" >  주거 인테리어</a></li>
                             <li><a href="/find_pros/2">  상업 인테리어</a></li>
-                            <li><a href="/find_pros/3">  가구</a></li>
+                            <li><a href="#"> 인테리어 디자이너</a></li>
+                            <li><a href="/find_pros/3"> 가구 회사</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-lg-9 col-md-9 col-sm-12">
-            <h2>FIND PROS</h2>
+            <h2>전문가 </h2>
             <div class="w100 productFilter clearfix">
-                <p class="pull-left"> Showing {{ pros_category_name }}  <strong>{{ ret_pros|length }}</strong> PROS </p>
+                <p class="pull-left"> {{ pros_category_name }}  <strong>{{ ret_pros|length }}</strong> 전문가
+                <br> 회사 주소로 찾기
+                    <select style="width:50px;">시 </select>
+                    <select style="width:50px;">구 </select>
+                    <select style="width:50px;">동 </select>
+                    <input name="submit" class="btn   btn-lg btn-primary" style="background-color:#ffffff; " value="찾기" type="submit">
+                </p>
+
 
                 <div class="pull-right ">
                     <div class="change-view pull-right"><a href="#" title="Grid" class="grid-view"> <i

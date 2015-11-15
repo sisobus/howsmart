@@ -140,7 +140,7 @@ def company_signup():
                     session['user_id']      = newuser.id
                     session['is_company'] = True
 
-                    return redirect(url_for('main'))
+                    return redirect(url_for('company_portfolio',user_id=newuser.id))
     if request.method == 'GET':
         return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
 
@@ -656,7 +656,7 @@ def company_portfolio(user_id):
     number_of_all_projects = len(t_projects)
     projects = []
     for project in t_projects:
-        if session['is_company']:
+        if 'is_company' in session and session['is_company']:
             if len(projects) >= 5:
                 break
         else :
@@ -674,7 +674,7 @@ def company_portfolio(user_id):
     number_of_all_products = len(t_products)
     products = []
     for t_product in t_products:
-        if session['is_company']:
+        if 'is_company' in session and session['is_company']:
             if len(products) >= 5:
                 break
         else:

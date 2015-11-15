@@ -133,10 +133,10 @@ card_header {
 
         </div>
         <div class="col-lg-9 col-md-9 col-sm-12">
-            {{ ret.number_of_projects }} Projects
+            {{ ret.number_of_projects }} 개의 프로젝트
             <div  id="feed_container" style="margin-top:10px;">
 
-                {% if session['is_company'] %}
+                {% if session and session['is_company'] %}
                 <div class="card_container ">
                     <card_header>
                         <div class="bio">
@@ -149,7 +149,7 @@ card_header {
                                 </div>
                                 <div class="container" style="margin-top:10px;margin-left:10px;">
                                     <div class="row">
-                                        <div calss="card_custom_body">
+                                        <div class="card_custom_body">
                                             <h4>프로젝트 생성하기</h4>
                                         </div>
                                     </div>
@@ -172,7 +172,7 @@ card_header {
                                 </div>
                                 <div class="container" style="margin-top:10px;margin-left:10px;">
                                     <div class="row">
-                                        <div calss="card_custom_body">
+                                        <div class="card_custom_body">
                                             <h4>{{ project.project.project_name }}</h4>
                                         </div>
                                     </div>
@@ -189,10 +189,10 @@ card_header {
             </a>
         </center>
         <hr/>
-            {{ ret.number_of_products }} Products
+            {{ ret.number_of_products }} 개의 상품
             <div  id="feed_container" style="margin-top:10px;">
 
-                {% if session['is_company'] %}
+                {% if session and session['is_company'] %}
                 <div class="card_container ">
                     <card_header>
                         <div class="bio">
@@ -205,7 +205,7 @@ card_header {
                                 </div>
                                 <div class="container" style="margin-top:10px;margin-left:10px;">
                                     <div class="row">
-                                        <div calss="card_custom_body">
+                                        <div class="card_custom_body">
                                             <h4>상품 생성하기</h4>
                                         </div>
                                     </div>
@@ -228,7 +228,7 @@ card_header {
                                 </div>
                                 <div class="container" style="margin-top:10px;margin-left:10px;">
                                     <div class="row">
-                                        <div calss="card_custom_body">
+                                        <div class="card_custom_body">
                                             <h4>{{ product.product.product_name }}</h4>
                                         </div>
                                     </div>

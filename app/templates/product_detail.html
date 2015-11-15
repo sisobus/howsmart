@@ -202,7 +202,7 @@ hr.photos {
                 <h4>제품 소재 : {{ ret.product.product_meterial }}</h4>
                 <input name="submit" class="btn   btn-lg btn-primary" style="background-color:#ffffff; border:1px solid gray;" value="장바구니 담기" type="submit">
 
-                <h5>해당 제품 다른 사진 ({{ ret.image_paths | length }}개)</h5>
+                <h5>{{ ret.product.product_name }}다른 사진 ({{ ret.image_paths | length }}개)</h5>
                 <div id="other-image-container">
                     {% for image_path in ret.other_image_paths %}
                     <div class="col-xs-6 col-sm-3" style="height:70px;">
@@ -222,7 +222,7 @@ hr.photos {
                     </div>
                     {% endfor %}
                 </div>
-                <h5><a href="/shop/{{ ret.shop_category_id }}">{{ ret.shop_category_name }}</a>카테고리의 다른 제품({{ ret.same_category_other_products_count }}개)</h5>
+                <h5><a href="/shop/{{ ret.shop_category_id }}">{{ ret.shop_category_name }}</a> 카테고리의 다른 제품({{ ret.same_category_other_products_count }}개)</h5>
                 <div id="other-image-container">
                     {% for same_category_other_product in same_category_other_products %}
                     <div class="col-xs-6 col-sm-3" style="height:70px;">

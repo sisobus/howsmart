@@ -74,7 +74,7 @@
             -moz-border-radius: 3px 0 0 3px;
             border-radius: 3px 0 0 3px;
             border-style: solid;
-            border-width: 2px 1px 1px 2px;
+            border-width: 1px 1px 1px 1px;
             color: #888888;
             font-size: 14px;
             height: 36px;
@@ -196,7 +196,7 @@ hr.photos {
                 <h5>카테고리: <a href="/photos/{{ ret.feed.feed_category_id }}" target="_blank">{{ ret.feed_category_name }}</a></h5>
                 <h5>주소: </h5>
                 <br>
-                <h5>Other Photos in project <a href="/project_detail/{{ ret.project.id }}" target="_blank">{{ ret.project.project_name }}</a></h5>
+                <h5><a href="/project_detail/{{ ret.project.id }}" target="_blank">{{ ret.project.project_name }}</a>의 다른 사진들 </h5>
                 <div id="other-image-container">
                 {% for other_feed in ret.other_feeds_in_same_project %}
                     <div class="col-xs-6 col-sm-3" style="height:70px;">
@@ -207,7 +207,7 @@ hr.photos {
                 {% endfor %}
                 </div>
             <br>
-                <h5>이 회사의 다른 프로젝트 보기</h5>
+                <h5><a href="/company_portfolio/{{ ret.user.id }}">{{ ret.user.username }}</a>의 다른 프로젝트 </h5>
                 <div id="other-image-container">
                 {% for other_project in ret.other_projects %}
                     <div class="col-xs-6 col-sm-3" style="height:70px;">
@@ -217,7 +217,9 @@ hr.photos {
                     </div>
                 {% endfor %}
                 </div>
-                <h5>0 Likes    {{ ret.all_comments | length }} Comments</h5>
+
+                <h5>다른 <a href="/photos/{{ ret.feed.feed_category_id }}">{{ ret.feed_category_name }}</a> 추천 사진 </h5>
+                <h5>0 좋아요 |    {{ ret.all_comments | length }} 댓글 </h5>
             </div>
         {% if session.logged_in %}
         <form action="{{ url_for('company_feed_detail',feed_id=ret.feed.id) }}" method="post">
@@ -227,9 +229,9 @@ hr.photos {
                     {% for message in commentForm.body.errors %}
                         <div class="flash">{{ message }}</div>
                     {% endfor %}
-                    {{ commentForm.body(placeholder="Enter your comment",autofocus=true) }}
+                    {{ commentForm.body(placeholder="의견을 남겨주세요 !",autofocus=true) }}
                 </div>
-                <input name="submit" class="btn btn-block btn-lg btn-primary" value="comment" type="submit">
+                <input name="submit" class="btn btn-block btn-lg btn-primary" value="댓글 달기 " type="submit">
             </div>
         </form>
         {% endif %}
