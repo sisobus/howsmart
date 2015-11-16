@@ -27,16 +27,16 @@
     }
     </style>
 <div class="container main-container">
-<h1>Step 1: project information & photos</h1>
+<h1>1단계: 프로젝트 정보 및 사진</h1>
     <div id="create_project_form">
         <form action="{{ url_for('create_project') }}" method="POST" enctype="multipart/form-data" class="dropzone" >
             {{ createProjectForm.hidden_tag() }}
-            {{ createProjectForm.project_name(placeholder='enter project name') }}
+            {{ createProjectForm.project_name(placeholder='프로젝트 명') }}
             {% for message in createProjectForm.project_name.errors %}
                 <div class="flash">{{ message }}</div>
             {% endfor %}
             <hr/>
-            {{ createProjectForm.project_body(placeholder='enter project body') }}
+            {{ createProjectForm.project_body(placeholder='이 프로젝트에 대한 설명을 해주세요.') }}
             {% for message in createProjectForm.project_body.errors %}
                 <div class="flash">{{ message }}</div>
             {% endfor %}

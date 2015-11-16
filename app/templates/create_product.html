@@ -31,26 +31,26 @@
     }
     </style>
 <div class="container main-container">
-<h1>Step 1: product information & photos</h1>
+<h1>1단계: 제품 정보 및 사진</h1>
     <div id="create_product_form">
         <form action="{{ url_for('create_product') }}" method="POST" enctype="multipart/form-data" class="dropzone" >
             {{ createProductForm.hidden_tag() }}
-            {{ createProductForm.product_name(placeholder='enter product name') }}
+            {{ createProductForm.product_name(placeholder='제품 명') }}
             {% for message in createProductForm.product_name.errors %}
                 <div class="flash">{{ message }}</div>
             {% endfor %}
             <hr/>
-            {{ createProductForm.product_price(placeholder='enter product price') }}
+            {{ createProductForm.product_price(placeholder='제품 가격 ( 숫자만 입력해주세요. )') }}
             {% for message in createProductForm.product_price.errors %}
                 <div class="flash">{{ message }}</div>
             {% endfor %}
             <hr/>
-            {{ createProductForm.product_color(placeholder='enter product color') }}
+            {{ createProductForm.product_color(placeholder='제품 색상 ( 쉼표( , )로 구분해 주세요. 예시: 빨강, 파랑, 초록 )') }}
             {% for message in createProductForm.product_color.errors %}
                 <div class="flash">{{ message }}</div>
             {% endfor %}
             <hr/>
-            {{ createProductForm.product_desc(placeholder='enter product description') }}
+            {{ createProductForm.product_desc(placeholder='이 제품에 대한 설명을 해주세요.') }}
             {% for message in createProductForm.product_desc.errors %}
                 <div class="flash">{{ message }}</div>
             {% endfor %}
@@ -60,12 +60,12 @@
                 <div class="flash">{{ message }}</div>
             {% endfor %}
             <hr/>
-            {{ createProductForm.product_model_name(placeholder='enter product model name') }}
+            {{ createProductForm.product_model_name(placeholder='제품 모델 번호') }}
             {% for message in createProductForm.product_model_name.errors %}
                 <div class="flash">{{ message }}</div>
             {% endfor %}
             <hr/>
-            {{ createProductForm.product_meterial(placeholder='enter product meterial') }}
+            {{ createProductForm.product_meterial(placeholder='제품 소재') }}
             {% for message in createProductForm.product_meterial.errors %}
                 <div class="flash">{{ message }}</div>
             {% endfor %}

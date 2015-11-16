@@ -113,7 +113,7 @@
             <form action="{{ url_for('project_edit',feed_id=ret.feed.id) }}" method="post" enctype="multipart/form-data">
                 {{ writeFeedForm.hidden_tag() }}
                 <div>
-                {{ writeFeedForm.title(value=ret.feed.title,placeholder="enter feed title") }}
+                {{ writeFeedForm.title(value=ret.feed.title,placeholder="사진 명") }}
                     {% for message in writeFeedForm.title.errors %}
                         <div class="flash">{{ message }}</div>
                     {% endfor %}
@@ -122,7 +122,7 @@
                 {% for message in writeFeedForm.body.errors %}
                     <div class="flash">{{ message }}</div>
                 {% endfor %}
-                {{ writeFeedForm.body(placeholder="enter feed body") }}
+                {{ writeFeedForm.body(placeholder="사진에 대한 설명을 해주세요.") }}
                 </div>
                 <div style="margin-left: 20px;">
                     {% for message in writeFeedForm.feed_category.errors %}

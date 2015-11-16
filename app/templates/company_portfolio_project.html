@@ -117,7 +117,7 @@ card_header {
                     <div class="panel-body">
                         <ul class="nav nav-pills nav-stacked tree">
                             <li class="active dropdown-tree open-tree"><a class="dropdown-tree-a" > <span
-                                    class="badge pull-right">{{ ret.projects | length }}</span> Projects</a>
+                                    class="badge pull-right">{{ ret.projects | length }}</span> 프로젝트</a>
                                 <ul class="category-level-2 dropdown-menu-tree">
                                     {% for project in ret.projects %}
                                     <li class="dropdown-tree"><a class="dropdown-tree-a" href="/project_detail/{{ project.project.id }}">
@@ -132,7 +132,7 @@ card_header {
             </div>
         </div>
         <div class="col-lg-9 col-md-9 col-sm-12">
-            {{ ret.projects | length }} Projects
+            전체 {{ ret.projects | length }} 프로젝트
             <div  id="feed_container" style="margin-top:10px;">
 
                 {% if session['is_company'] %}
