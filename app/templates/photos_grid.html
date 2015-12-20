@@ -13,17 +13,6 @@
         height: 300px;
         border-bottom: 1px solid #DDDDDD;
     }
-    #photos_background_image {
-        position: absolute;
-        width: 500px;
-        height: 290px;
-        margin: 0px 5px 0px 5px;
-    }
-    #photos_body {
-        position: relative;
-        margin: 5px 0px 5px 520px;
-        height: 290px;
-    }
     hr.photos {
         /*
         width: 98%;
@@ -42,6 +31,37 @@
     .photos-contents-list-container-item {
         margin: 5px 5px 5px 5px;
     }
+card_header {
+  display: block;
+  overflow: hidden;
+  position: relative;
+
+  }
+
+.card_container {
+    outline: 0; 
+    width: 100%;
+    position: relative;
+    float: left;
+    margin: 1px 1px 1px 1px;
+
+  background-color: #ffffff;
+    border: 1px solid #dddddd;
+
+  }
+
+.card_custom_body {
+    padding-top: 15px;
+    padding-left:25px;
+    padding-right:25px;
+    height: 70px;
+}
+
+.bg {
+  border-bottom: 0px solid #5cc0ff;
+  max-width: 100%;
+  height:200px;
+} 
 
     </style>
 <div class="container main-container ">
@@ -49,12 +69,12 @@
         <div class="breadcrumbDiv col-lg-12">
             <ul class="breadcrumb" style="margin-bottom:10px;background-color:#FFFFFF;margin-top:10px;">
                 <li><a href="/photos">갤러리</a></li>
-                {% if feed_category_id %}
-                <li><a href="/photos/{{ feed_category_id }}">{{ feed_category_name }}</a></li>
-                {% endif %}
                 {% if not feed_category_id %}
                 <li><a href="/photos/">{{ feed_category_name }}</a></li>
                 {% endif %}
+                {% if feed_category_id %}
+                <li><a href="/photos/{{ feed_category_id }}">{{ feed_category_name }}</a></li>
+                {% endif %} 
             </ul>
         </div>
     </div>
@@ -107,16 +127,18 @@
                                 <a href="/photos" title="List" class=""><i class="fa fa-th-list"></i></a>
                             </div>
                             {% endif %}
+
                         </div>
                     </div>
 
                     <div class="xsResponse clearfix">
-                        <div id="all_photos_container">
+                        <div id="all_photos_container" style="padding-top:10px;">
                             {% for feed in feeds %}
-                            <div id="photos_container">
-                                <div class="photos-contents-list-container-item" >
+                            <div class="col-lg-4 col-md-4 col-sm-12" style="padding:1px 1px 1px 1px;">
+                                <div class="card_container"> 
+                                    <div class="card_header">
                                     <a href="/company_feed_detail/{{ feed.feed.id }}">
-                                        <div class="third-effect" id="photos_background_image" style="background: url({{ '/static/'+feed.image_path }});
+                                        <div class="bg" id="photos_background_image" style="background: url({{ '/static/'+feed.image_path }});
                                             background-repeat: no-repeat;
                                             background-size: cover;
                                             background-position: center;
@@ -124,27 +146,17 @@
                                         </div>
                                     </a>
                                     <div id="photos_body">
-                                        <div style="background-color:#dddddd; border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
-                                        <div style="display:table-cell;vertical-align:middle;padding-left:10px;">
-                                        <a href="/company_portfolio/{{ feed.user.id }}"><h5 style="vertical-align:middle; padding-bottom:0px;">{{ feed.user.username }}</h5></a>
-                                    </div>
-                                    <br>
                                         <a href="/company_feed_detail/{{ feed.feed.id }}">
-                                            <h4>{{ feed.feed.title }}</h4>
+                                            <h4 style="padding: 3px 0px 2px 10px;">{{ feed.feed.title }}</h4>
                                         </a>
-                                        <h5>{{ feed.feed.body }}</h5>
-                <span class="fa-stack " style="display:table-cell;padding-right:15px;">
-                    <i class="fa  fa-circle-thin fa-stack-2x" style="color:#777777;top:0;" > </i>
-                    <i class="fa   fa-thumbs-o-up fa-stack-1x" style="color:#777777;top:0;" > </i>
-                </span>
-                <h5 style="vertical-align:middle;display:table-cell;padding-bottom:0px;padding-left:4px;padding-right:8px;"> 0 좋아요</h5>
-                <span class="fa-stack " style="display:table-cell;padding-right:15px;">
-                    <i class="fa  fa-circle-thin fa-stack-2x" style="color:#777777;top:0;" > </i>
-                    <i class="fa   fa-comment fa-stack-1x" style="color:#777777;top:0;" > </i>
-                </span>
-                <h5 style="vertical-align:middle;display:table-cell;padding-bottom:0px;padding-left:4px;">{{ feed.number_of_comment }} 댓글</h5>
+                                        <div style="display:table-cell;vertical-align:middle;padding-left:10px;">
+                                            <strong>
+                                            <a href="/company_portfolio/{{ feed.user.id }}"><h5 style="vertical-align:middle; padding-bottom:3px;font-weight:700;">{{ feed.user.username }}</h5></a>
+                                            </strong>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
                             </div>
                             {% endfor %}
                         </div>

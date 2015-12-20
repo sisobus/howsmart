@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{  url_for('static',filename='bootstrap/css/bootstrap.css') }}" />
     <link rel="stylesheet" href="{{  url_for('static',filename='css/style.css') }}" />
     <link rel="stylesheet" href="{{  url_for('static',filename='css/twitter_card.css') }}" />
+    <link rel="stylesheet" href="{{  url_for('static',filename='css/style-add-20151122.css') }}" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
     </script>
     <script src="{{  url_for('static',filename='js/dropzone.js') }}"></script>
@@ -24,6 +25,7 @@
         form input#username,
         form input#email,
         form input#password,
+        form input#password_check,
         form textarea#introduction,
         form input#address,
         form input#tel,
@@ -48,6 +50,7 @@
         form input#username:hover,
         form input#email:hover,
         form input#password:hover,
+        form input#password_check:hover,
         form input#address:hover,
         form textarea#introduction:hover,
         form input#tel:hover,
@@ -59,6 +62,7 @@
         form input#username:focus,
         form input#email:focus,
         form input#password:focus,
+        form input#password_check:focus,
         form textarea#introduction:focus,
         form input#address:focus,
         form input#tel:focus,
@@ -69,7 +73,7 @@
     </style>
     <script src="{{  url_for('static',filename='js/pace.min.js') }} "></script>
 </head>
-<body>
+<body oncontextmenu="return false;" style="padding-right:0px;padding-left:0px;">
 
 {% include "modal_login.html" %}
 {% include "modal_company_singup.html" %}
@@ -87,6 +91,13 @@
         $('#modalAds').modal('show');
         $('#modalAds').removeClass('hide');
     });
+/*
+    $('#ModalCompanySignup').on('shown', function () {
+    $('body').on('wheel.modal mousewheel.modal', function () {return false;});
+}).on('hidden', function () {
+    $('body').off('wheel.modal mousewheel.modal');
+});
+*/
 
 </script>
 

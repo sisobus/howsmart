@@ -4,6 +4,7 @@ from werkzeug import secure_filename
 import utils
 import os
 import time
+from sqlalchemy import func
 
 from config import UPLOAD_FOLDER, HOWSMART_DATABASE_URI, HOWSMART_SECRET_KEY
 
@@ -16,6 +17,7 @@ from models import db, User, Feed, Image, Comment, Company, Project, Project_has
 
 db.init_app(app)
 
+import json
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask import get_flashed_messages
 from flask.ext.login import LoginManager, UserMixin, current_user, login_user, logout_user
@@ -47,19 +49,38 @@ def main():
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
 
+    banner_feeds = []
+    projects = Project.query.order_by(Project.created_at.desc()).all()
+    for project in projects:
+        project_has_feed = Project_has_feed.query.filter_by(project_id=project.id).order_by(Project_has_feed.feed_id.asc()).first()
+        feed = Feed.query.filter_by(id=project_has_feed.feed_id).first()
+        banner_feeds.append(feed)
+    ret_banner_feeds = get_feed_information(banner_feeds)
+    all_feed_count = Feed.query.count()
     if request.method == 'GET':
         offset = 10
-        feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
+        companies = Company.query.order_by(Company.id.desc()).all()
+        feeds = []
+        for company in companies:
+            cur_project = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).first()
+            if not cur_project:
+                continue
+            cur_feed_id = Project_has_feed.query.filter_by(project_id=cur_project.id).order_by(Project_has_feed.feed_id.asc()).first().feed_id
+            cur_feed = Feed.query.filter_by(id=cur_feed_id).first()
+            feeds.append(cur_feed)
+        #feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
         ret_feeds = get_feed_information(feeds)
+        ret_feeds = sorted(ret_feeds, key=lambda k: k['feed'].created_at, reverse=True)
+#        ret_pros = sorted(ret_pros, key=lambda k: k['last_project_created'], reverse=True)
         return render_template('main.html', signupForm=signupForm, signinForm=signinForm, \
-                               companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset)
+                               companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset,ret_banner_feeds=ret_banner_feeds)
 
     elif request.method == 'POST':
         offset = int(request.form['offset'])
         feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
         ret_feeds = get_feed_information(feeds)
         html_code = render_template('main.html', signupForm=signupForm, signinForm=signinForm,\
-                                    companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset)
+                                    companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset,all_feed_count=all_feed_count,ret_banner_feeds=ret_banner_feeds)
         return html_code
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -72,7 +93,7 @@ def signup():
 
     if request.method == 'POST':
         if not signupForm.validate():
-            return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
+            return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm,offset=10)
         else:
             newuser = User(signupForm.username.data, signupForm.email.data, signupForm.password.data)
             newuser.created_at = datetime.utcnow()
@@ -88,7 +109,7 @@ def signup():
             return redirect(url_for('main'))
 
     if request.method == 'GET':
-        return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
+        return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm,offset=10)
 
 @app.route('/company_signup', methods=['GET','POST'])
 def company_signup():
@@ -98,8 +119,10 @@ def company_signup():
         companySignupForm = CompanySignupForm()
 
     if request.method == 'POST':
+
+        print request.form
         if not companySignupForm.validate():
-            return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
+            return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm,offset=10)
         else :
             if companySignupForm.validate_on_submit():
 
@@ -122,7 +145,7 @@ def company_signup():
                     image.created_at = datetime.utcnow()
                     db.session.add(image)
                     db.session.commit()
-                    newcompany = Company(companySignupForm.introduction.data, companySignupForm.address.data, companySignupForm.tel.data, companySignupForm.website.data, newuser.id)
+                    newcompany = Company(companySignupForm.introduction.data, companySignupForm.address.data, companySignupForm.tel.data, companySignupForm.website.data, newuser.id, companySignupForm.company_si.data, companySignupForm.company_gu.data, companySignupForm.company_dong.data)
                     newcompany.image_id = image.id
                     db.session.add(newcompany)
                     db.session.commit()
@@ -142,7 +165,7 @@ def company_signup():
 
                     return redirect(url_for('company_portfolio',user_id=newuser.id))
     if request.method == 'GET':
-        return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
+        return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm,offset=10)
 
 @app.route('/signin',methods=['GET','POST'])
 def signin():
@@ -153,7 +176,7 @@ def signin():
 
     if request.method == 'POST':
         if not signinForm.validate():
-            return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
+            return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm,offset=10)
         else :
             user = User.query.filter_by(email=signinForm.email.data.lower()).first()
             session['email'] = signinForm.email.data
@@ -167,7 +190,7 @@ def signin():
 
             return redirect(url_for('main'))
     elif request.method == 'GET':
-        return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
+        return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm,offset=10)
 
 
 @app.route('/signout')
@@ -365,11 +388,12 @@ def create_product():
 def project_edit(feed_id):
     with app.app_context():
         writeFeedForm = ProjectEditForm()
-
+    
     feed = Feed.query.filter_by(id=feed_id).first()
-    writeFeedForm.body.data = feed.body
     image = Image.query.filter_by(id=feed.image_id).first()
     image_path = utils.get_image_path(image.image_path)
+    if request.method == 'GET':
+        writeFeedForm.body.data = feed.body
 
     project_has_feed = Project_has_feed.query.filter_by(feed_id=feed.id).first()
     project = Project.query.filter_by(id=project_has_feed.project_id).first()
@@ -395,6 +419,11 @@ def project_edit(feed_id):
         'project_id': project.id
     }
     if request.method == 'POST':
+        cur_feed = Feed.query.filter_by(id=feed_id).first()
+        cur_feed.title = writeFeedForm.title.data
+        cur_feed.body = writeFeedForm.body.data
+        cur_feed.feed_category_id = writeFeedForm.feed_category.data
+        db.session.commit()
         return render_template('project_edit.html',writeFeedForm=writeFeedForm,ret=ret)
     elif request.method == 'GET':
         return render_template('project_edit.html',writeFeedForm=writeFeedForm,ret=ret)
@@ -934,6 +963,7 @@ def product_detail(product_id):
         cur_product_image_path = utils.get_image_path(cur_product_image.image_path)
         d = {
             'product': t_product,
+            'product_real_price': utils.convert_price_to_won(t_product.product_price),
             'image_path': cur_product_image_path
         }
         same_company_other_products.append(d)
@@ -950,6 +980,7 @@ def product_detail(product_id):
         cur_product_image_path = utils.get_image_path(cur_product_image.image_path)
         d = {
             'product': t_product,
+            'product_real_price': utils.convert_price_to_won(t_product.product_price),
             'image_path': cur_product_image_path
         }
         same_category_other_products.append(d)
@@ -963,6 +994,7 @@ def product_detail(product_id):
         'user': user,
         'company': company,
         'product': product,
+        'product_real_price': utils.convert_price_to_won(product.product_price),
         'image_paths': image_paths,
         'colors': colors,
         'other_image_paths': other_image_paths,
@@ -999,6 +1031,10 @@ def find_pros():
             image = Image.query.filter_by(id=project[0].image_id).first()
             image_path = utils.get_image_path(image.image_path)
         d['user'] = user
+        d['over_introduction'] = False
+        if len(company.company_introduction) > 250:
+            company.company_introduction = company.company_introduction[:250]
+            d['over_introduction'] = True
         d['company'] = company
         d['image_path'] = image_path
         ret_pros.append(d)
@@ -1039,6 +1075,11 @@ def find_pros_detail(pros_category_id):
             image_path = utils.get_image_path(image.image_path)
 
         d['user'] = user
+        d['over_introduction'] = False
+        if len(company.company_introduction) > 250:
+            company.company_introduction = company.company_introduction[:250]
+            d['over_introduction'] = True
+
         d['company'] = company
         d['image_path'] = image_path
         ret_pros.append(d)
@@ -1058,10 +1099,12 @@ def photos():
 
     feed_count = Feed.query.count()
     if request.method == 'GET':
-        offset = 10
-        feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
+        offset = 15
+        projects = Project.query.order_by(Project.created_at.desc())
         ret_feeds = []
-        for feed in feeds:
+        for project in projects:
+            project_has_feed = Project_has_feed.query.filter_by(project_id=project.id).first()
+            feed = Feed.query.filter_by(id=project_has_feed.feed_id).first()
             d = {}
             image = Image.query.filter_by(id=feed.image_id).first()
             image_path = utils.get_image_path(image.image_path)
@@ -1072,6 +1115,20 @@ def photos():
             d['feed'] = feed
             d['number_of_comment'] = len(all_comments)
             ret_feeds.append(d)
+
+        #feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
+        #ret_feeds = []
+        #for feed in feeds:
+        #    d = {}
+        #    image = Image.query.filter_by(id=feed.image_id).first()
+        #    image_path = utils.get_image_path(image.image_path)
+        #    user = User.query.filter_by(id=feed.user_id).first()
+        #    all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+        #    d['image_path'] = image_path
+        #    d['user'] = user
+        #    d['feed'] = feed
+        #    d['number_of_comment'] = len(all_comments)
+        #    ret_feeds.append(d)
 
         return render_template('photos.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name, feed_count=feed_count)
     elif request.method == 'POST':
@@ -1105,10 +1162,20 @@ def photos_detail(feed_category_id):
     feed_category_name = feed_category.category_name
     feed_count = Feed.query.filter_by(feed_category_id=feed_category_id).count()
     if request.method == 'GET':
-        offset = 10
-        feeds = Feed.query.filter_by(feed_category_id=feed_category_id).order_by(Feed.created_at.desc()).limit(offset).all()
+        offset = 15
+        projects = Project.query.order_by(Project.created_at.desc())
         ret_feeds = []
-        for feed in feeds:
+        for project in projects:
+            project_has_feeds = Project_has_feed.query.filter_by(project_id=project.id).all()
+            feed = None
+            for project_has_feed in project_has_feeds:
+                cur_feed = Feed.query.filter_by(id=project_has_feed.feed_id).first()
+                if cur_feed.feed_category_id == feed_category_id:
+                    feed = cur_feed
+                    break
+            if feed == None:
+                continue
+#            feed = Feed.query.filter_by(id=project_has_feed.feed_id).first()
             d = {}
             image = Image.query.filter_by(id=feed.image_id).first()
             image_path = utils.get_image_path(image.image_path)
@@ -1119,6 +1186,22 @@ def photos_detail(feed_category_id):
             d['feed'] = feed
             d['number_of_comment'] = len(all_comments)
             ret_feeds.append(d)
+
+
+        #offset = 10
+        #feeds = Feed.query.filter_by(feed_category_id=feed_category_id).order_by(Feed.created_at.desc()).limit(offset).all()
+        #ret_feeds = []
+        #for feed in feeds:
+        #    d = {}
+        #    image = Image.query.filter_by(id=feed.image_id).first()
+        #    image_path = utils.get_image_path(image.image_path)
+        #    user = User.query.filter_by(id=feed.user_id).first()
+        #    all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+        #    d['image_path'] = image_path
+        #    d['user'] = user
+        #    d['feed'] = feed
+        #    d['number_of_comment'] = len(all_comments)
+        #    ret_feeds.append(d)
 
         return render_template('photos.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id, feed_category_name=feed_category_name, feed_count=feed_count)
 
@@ -1141,6 +1224,143 @@ def photos_detail(feed_category_id):
         html_code = render_template('photos.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name,feed_count=feed_count)
         return html_code
 
+@app.route('/photos/grid/',methods=['GET','POST'])
+def photos_grid():
+    feed_category_id = 0
+    feed_category_name = '전체'
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+
+    feed_count = Feed.query.count()
+    if request.method == 'GET':
+        offset = 15
+        projects = Project.query.order_by(Project.created_at.desc())
+        ret_feeds = []
+        for project in projects:
+            project_has_feed = Project_has_feed.query.filter_by(project_id=project.id).first()
+            feed = Feed.query.filter_by(id=project_has_feed.feed_id).first()
+            d = {}
+            image = Image.query.filter_by(id=feed.image_id).first()
+            image_path = utils.get_image_path(image.image_path)
+            user = User.query.filter_by(id=feed.user_id).first()
+            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+            d['image_path'] = image_path
+            d['user'] = user
+            d['feed'] = feed
+            d['number_of_comment'] = len(all_comments)
+            ret_feeds.append(d)
+
+        #feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
+        #ret_feeds = []
+        #for feed in feeds:
+        #    d = {}
+        #    image = Image.query.filter_by(id=feed.image_id).first()
+        #    image_path = utils.get_image_path(image.image_path)
+        #    user = User.query.filter_by(id=feed.user_id).first()
+        #    all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+        #    d['image_path'] = image_path
+        #    d['user'] = user
+        #    d['feed'] = feed
+        #    d['number_of_comment'] = len(all_comments)
+        #    ret_feeds.append(d)
+
+        return render_template('photos_grid.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name, feed_count=feed_count)
+    elif request.method == 'POST':
+        offset = int(request.form['offset'])
+        feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
+        ret_feeds = []
+        for feed in feeds:
+            d = {}
+            image = Image.query.filter_by(id=feed.image_id).first()
+            image_path = utils.get_image_path(image.image_path)
+            user = User.query.filter_by(id=feed.user_id).first()
+            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+            d['image_path'] = image_path
+            d['user'] = user
+            d['feed'] = feed
+            d['number_of_comment'] = len(all_comments)
+            ret_feeds.append(d)
+
+        html_code = render_template('photos_grid.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name,feed_count=feed_count)
+        return html_code
+
+@app.route('/photos/<int:feed_category_id>/grid')
+def photos_detail_grid(feed_category_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+
+
+    feed_category = Feed_category.query.filter_by(id=feed_category_id).first()
+    feed_category_name = feed_category.category_name
+    feed_count = Feed.query.filter_by(feed_category_id=feed_category_id).count()
+    if request.method == 'GET':
+        offset = 15
+        projects = Project.query.order_by(Project.created_at.desc())
+        ret_feeds = []
+        for project in projects:
+            project_has_feeds = Project_has_feed.query.filter_by(project_id=project.id).all()
+            feed = None
+            for project_has_feed in project_has_feeds:
+                cur_feed = Feed.query.filter_by(id=project_has_feed.feed_id).first()
+                if cur_feed.feed_category_id == feed_category_id:
+                    feed = cur_feed
+                    break
+            if feed == None:
+                continue
+#            feed = Feed.query.filter_by(id=project_has_feed.feed_id).first()
+            d = {}
+            image = Image.query.filter_by(id=feed.image_id).first()
+            image_path = utils.get_image_path(image.image_path)
+            user = User.query.filter_by(id=feed.user_id).first()
+            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+            d['image_path'] = image_path
+            d['user'] = user
+            d['feed'] = feed
+            d['number_of_comment'] = len(all_comments)
+            ret_feeds.append(d)
+
+
+        #offset = 10
+        #feeds = Feed.query.filter_by(feed_category_id=feed_category_id).order_by(Feed.created_at.desc()).limit(offset).all()
+        #ret_feeds = []
+        #for feed in feeds:
+        #    d = {}
+        #    image = Image.query.filter_by(id=feed.image_id).first()
+        #    image_path = utils.get_image_path(image.image_path)
+        #    user = User.query.filter_by(id=feed.user_id).first()
+        #    all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+        #    d['image_path'] = image_path
+        #    d['user'] = user
+        #    d['feed'] = feed
+        #    d['number_of_comment'] = len(all_comments)
+        #    ret_feeds.append(d)
+
+        return render_template('photos_grid.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id, feed_category_name=feed_category_name, feed_count=feed_count)
+
+    elif request.method == 'POST':
+        offset = int(request.form['offset'])
+        feeds = Feed.query.filter_by(feed_category_id=feed_category_id).order_by(Feed.created_at.desc()).limit(offset).all()
+        ret_feeds = []
+        for feed in feeds:
+            d = {}
+            image = Image.query.filter_by(id=feed.image_id).first()
+            image_path = utils.get_image_path(image.image_path)
+            user = User.query.filter_by(id=feed.user_id).first()
+            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+            d['image_path'] = image_path
+            d['user'] = user
+            d['feed'] = feed
+            d['number_of_comment'] = len(all_comments)
+            ret_feeds.append(d)
+
+        html_code = render_template('photos_grid.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name,feed_count=feed_count)
+        return html_code
+
+
 @app.route('/shop/',methods=['GET','POST'])
 def shop():
     with app.app_context():
@@ -1159,6 +1379,7 @@ def shop():
         user = User.query.filter_by(id=t_product.user_id).first()
         d = {
             'product': t_product,
+            'product_real_price': utils.convert_price_to_won(t_product.product_price),
             'user': user,
             'image_path': image_path
         }
@@ -1202,6 +1423,7 @@ def shop_detail(shop_category_id):
                 user = User.query.filter_by(id=t_product.user_id).first()
                 d = {
                     'product': t_product,
+                    'product_real_price': utils.convert_price_to_won(t_product.product_price),
                     'user': user,
                     'image_path': image_path
                 }
@@ -1217,6 +1439,7 @@ def shop_detail(shop_category_id):
             user = User.query.filter_by(id=t_product.user_id).first()
             d = {
                 'product': t_product,
+                'product_real_price': utils.convert_price_to_won(t_product.product_price),
                 'user': user,
                 'image_path': image_path
             }
@@ -1233,3 +1456,12 @@ def shop_detail(shop_category_id):
 
     return render_template('shop.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm,ret=ret )
 
+@app.route('/test')
+def test():
+    return render_template('test.html')
+
+@app.route('/json/address')
+def address():
+    with open('/home/howsmart/howsmart/app/address.json','r') as fp:
+        r = json.loads(fp.read())
+    return jsonify(results=r)

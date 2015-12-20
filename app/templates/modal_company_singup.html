@@ -1,8 +1,56 @@
 <!-- Company Modal Signup Start-->
+<style>
+#company_si,
+#company_gu,
+#company_dong {
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    width: 80px;
+    border-radius: 3px;
+    overflow: hidden;
+    background-color: #fff;
+    padding-left: 10px;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+
+    background: #fff url( {{ url_for('static',filename='img/arrowdown.gif') }} ) no-repeat 90% 50%;
+}
+
+#company_si select,
+#company_gu select,
+#company_dong select {
+    padding: 5px 8px;
+    width: 130%;
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+    background-image: none;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+}
+
+#company_si:disabled,
+#company_gu:disabled,
+#company_dong:disabled {
+    border: 1px solid #987654;
+}
+
+#company_si:focus,
+#company_gu:focus,
+#company_dong:focus {
+    outline: none;
+}
+.select-style select:focus {
+    outline: none;
+}
+</style>
 <div class="modal signUpContent fade" id="ModalCompanySignup" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="margin-bottom:0px;">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
                 <h3 class="modal-title-site text-center"> 기업으로 가입하기 </h3>
             </div>
@@ -10,7 +58,7 @@
                 <!-- User form start-->
                 <form action="{{ url_for('company_signup') }}" method=post enctype="multipart/form-data">
                     {{ companySignupForm.hidden_tag() }}
-                <div class="form-group reg-username">
+                <div class="form-group reg-username" style="margin-bottom:0px;">
                     <div>
                         {% for message in companySignupForm.username.errors %}
                             <div class="flash">{{ message }}</div>
@@ -18,7 +66,7 @@
                         {{ companySignupForm.username(placeholder="회사 이름") }}
                     </div>
                 </div>
-                <div class="form-group reg-email">
+                <div class="form-group reg-email"style="margin-bottom:0px;">
                     <div>
                         {% for message in companySignupForm.email.errors %}
                             <div class="flash">{{  message }}</div>
@@ -26,7 +74,7 @@
                         {{ companySignupForm.email(placeholder="이메일") }}
                     </div>
                 </div>
-                <div class="form-group reg-password">
+                <div class="form-group reg-password" style="margin-bottom:0px;">
                     <div>
                         {% for message in companySignupForm.password.errors %}
                             <div class="flash">{{ message }}</div>
@@ -34,7 +82,16 @@
                         {{ companySignupForm.password(placeholder="비밀번호") }}
                     </div>
                 </div>
-                <div class="form-group ">
+                <div class="form-group reg-password" style="margin-bottom:0px;">
+                    <div>
+                        {% for message in companySignupForm.password_check.errors %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                        {{ companySignupForm.password_check(placeholder="비밀번호 확인") }}
+                    </div>
+                </div>
+
+                <div class="form-group " style="margin-bottom:5px;">
                     <div>
                         {% for message in companySignupForm.introduction.errors %}
                             <div class="flash">{{ message }}</div>
@@ -42,15 +99,29 @@
                         {{ companySignupForm.introduction(placeholder="회사 소개") }}
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="modal-item-region" style="display:table-cell;padding-bottom:10px;">
+                    {% for message in companySignupForm.company_si.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ companySignupForm.company_si }}
+                    {% for message in companySignupForm.company_gu.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ companySignupForm.company_gu }}
+                    {% for message in companySignupForm.company_dong.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ companySignupForm.company_dong }}
+                </div>
+                <div class="form-group" style="margin-bottom:0px;">
                     <div>
                         {% for message in companySignupForm.address.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.address(placeholder="회사 주소 ") }}
+                        {{ companySignupForm.address(placeholder="나머지 주소 ") }}
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom:0px;">
                     <div>
                         {% for meesage in companySignupForm.tel.errors %}
                             <div class="flash">{{ message }}</div>
@@ -58,7 +129,7 @@
                         {{ companySignupForm.tel(placeholder="전화 번호") }}
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom:0px;">
                     <div>
                         {% for message in companySignupForm.website.errors %}
                             <div class="flash">{{ message }}</div>
@@ -66,7 +137,7 @@
                         {{ companySignupForm.website(placeholder="회사 웹사이트") }}
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom:0px;">
                     <div>
                         {% for message in companySignupForm.pros_category.errors %}
                             <div class="flash">{{ message }}</div>
@@ -104,4 +175,208 @@
     <!-- /.modal-dialog -->
 
 </div>
+<script type="text/javascript">
+    window.state = {};
+function modalBindLocal1(obj) {
+        var map = window.state.map;
+        var selects = $(obj + " select");
+        var local1 = $(selects[0]);
+        var local2 = $(selects[1]);
+        var local3 = $(selects[2]);
+
+        local1.attr("disabled", false);
+        local2.attr("disabled", true);
+        local3.attr("disabled", true);
+
+        local1.children().remove();
+        var items = window.state.addresses;       
+        $(items).each(function (i, item) {
+            local1.append($("<option />").text(item.name).val(item.name));
+        });
+        
+    }
+
+    function modalBindLocal2(obj) {
+        var selects = $(obj + " select");
+        var local1 = $(selects[0]);
+        var local2 = $(selects[1]);
+        var local3 = $(selects[2]);
+
+        var v1 = local1.val();
+        var node = findNode(v1);
+
+        var option = $("<option />").text("전체");
+        local2.children().remove();
+        local2.append(option);
+
+        if (node && node.items) {
+            for (var j = 0; j < node.items.length; j++) {
+                var item2 = node.items[j];
+                var option = $("<option />").text(item2.name);
+                local2.append(option);
+
+                local2.attr("disabled", false);
+            }
+        } else {
+            local2.attr("disabled", true);
+        }
+    }
+
+    function modalBindLocal3(obj) {
+        var selects = $(obj + " select");
+        var local1 = $(selects[0]);
+        var local2 = $(selects[1]);
+        var local3 = $(selects[2]);
+
+        var v1 = local1.val();
+        var v2 = local2.val();
+        var node = findNode(v1, v2);
+
+        if (node) {
+            var option = $("<option />").text("전체");
+            local3.children().remove();
+            local3.append(option);
+        }
+
+        if (node && node.items) {
+            for (var j = 0; j < node.items.length; j++) {
+                var item2 = node.items[j];
+                var option = $("<option />").text(item2.name);
+                local3.append(option);
+
+                local3.attr("disabled", false);
+            }
+        } else {
+            local3.attr("disabled", true);
+        }
+
+        
+    }
+
+function findNode(v1, v2, v3) {
+        if (v1) {
+            var local1s = window.state.addresses;
+            for (var i = 0; i < local1s.length; i++) {
+                var local1 = local1s[i];
+
+                if (local1.name == v1) {
+                    if (v2) {
+                        var local2s = local1.items;
+                        for (var j = 0; j < local2s.length; j++) {
+                            var local2 = local2s[j];
+
+                            if (local2.name == v2) {
+                                if (v3) {
+                                    var local3s = local2.items;
+                                    for (var k = 0; k < local3s.items; k++) {
+                                        var local3 = local3s[k];
+
+                                        if (local3 == v3) {
+                                            return local3;
+                                        }
+                                    }
+                                    return null;
+                                }
+                                return local2;
+                            }
+                        }
+                        return null;
+                    }
+                    return local1;
+                }
+            }
+        }
+        return null;
+    }
+
+
+function modal_initLocalSearch() {
+    var items = $(".modal-item-region select");
+        var local1 = $(items[0]);
+        local1.children().remove();
+        local1.append($("<option />").text("로딩 중"))
+        local1.attr("disabled", true);
+        local1.change(function () {
+            modalBindLocal2(".modal-item-region");
+            modalBindLocal3(".modal-item-region");
+        });
+
+        var local2 = $(items[1]);
+        local2.attr("disabled", true);
+        local2.change(function () {
+            modalBindLocal3(".modal-item-region");
+        });
+
+        var local3 = $(items[2]);
+        local3.attr("disabled", true);
+
+        $.when(
+             $.ajax({
+                 url: "//hausmart.co.kr/json/address"
+             })
+        ).done(function (data) {
+            data = data.results;
+            var new_data = [];
+            new_data.push(data[8]);
+            new_data.push(data[1]);
+            new_data.push(data[11]);
+            new_data.push(data[7]);
+            new_data.push(data[5]);
+            new_data.push(data[6]);
+            new_data.push(data[10]);
+            new_data.push(data[9]);
+            new_data.push(data[4]);
+            new_data.push(data[0]);
+            new_data.push(data[16]);
+            new_data.push(data[15]);
+            new_data.push(data[3]);
+            new_data.push(data[2]);
+            new_data.push(data[13]);
+            new_data.push(data[12]);
+            new_data.push(data[14]);
+            window.state.addresses = new_data
+
+            modalBindLocal1(".modal-item-region");
+            modalBindLocal2(".modal-item-region");
+            modalBindLocal3(".modal-item-region");
+
+            $(".item_submit").removeAttr("disabled");
+
+        });
+    $(".modal-item-region button").click(function () {
+            var selects = $(".modal-item-region select");
+
+            var local1 = $(selects[0]);
+            var local2 = $(selects[1]);
+            var local3 = $(selects[2]);
+
+            var selected = !local3.is(":disabled") ? local3.find("option:selected") : local2.find("option:selected");
+            var lat = selected.data("lat");
+            var lng = selected.data("lng");
+            var zoom = 20 - parseInt(selected.data("zoom"));
+
+            location.href = "/search/map?lat=" + lat + "&lng=" + lng + "&zoom="+ zoom;
+        });
+
+}
+$(document).ready(function () {
+        modal_initLocalSearch();
+        $(".item-title").click(function () {
+            alert('a');
+            $(".type-select").toggleClass("on");
+        });
+        $("h5").click(function () {
+            alert('b');
+            var idx = $("h5").index($(this));
+
+            $(".type-select").removeClass("on");
+            $(".item-box").removeClass("on");
+            $("h5").removeClass("on");
+            $(".type-select .item-title").text($(this).text());
+            $(".item-box").eq(idx).addClass("on");
+            $(this).addClass("on");
+        });
+
+        });
+</script>
 <!-- /.CompanyModalSignup End -->

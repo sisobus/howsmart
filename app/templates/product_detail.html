@@ -6,6 +6,7 @@
     <title></title>
     <link rel="stylesheet" href="{{  url_for('static',filename='bootstrap/css/bootstrap.css') }}" />
     <link rel="stylesheet" href="{{  url_for('static',filename='css/style_feed_detail.css') }}" />
+     <link rel="stylesheet" href="{{  url_for('static',filename='css/style-add-20151122.css') }}" />
     <script>
         paceOptions = {
             elements: true
@@ -63,7 +64,6 @@
         #content-form-body {
             white-space: normal;
             word-break: break-all;
-            margin: 10px 10px 10px 10px;
         }
 
         form input#title,
@@ -74,7 +74,7 @@
             -moz-border-radius: 3px 0 0 3px;
             border-radius: 3px 0 0 3px;
             border-style: solid;
-            border-width: 2px 1px 1px 2px;
+            border-width: 1px 1px 1px 1px;
             color: #888888;
             font-size: 14px;
             height: 36px;
@@ -102,11 +102,20 @@
             outline: 0 none;
         }
         img#uploadImagePreview {
-            width: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            position: absolute;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
         }
 
         form input#body {
             width: 100%;
+            border: 1px solid #DDDDDD;
         }
         form input#body:hover {
             border-color: #EEEEEE;
@@ -150,6 +159,33 @@ div#image-container:hover .bar {
 #other-image-container {
     overflow: auto;
 }
+.select-style {
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    width: 120px;
+    border-radius: 3px;
+    overflow: hidden;
+    background-color: #fff;
+
+    background: #fff url( {{ url_for('static',filename='img/arrowdown.gif') }} ) no-repeat 90% 50%;
+}
+
+.select-style select {
+    padding: 5px 8px;
+    width: 130%;
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+    background-image: none;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+}
+
+.select-style select:focus {
+    outline: none;
+}
 
 hr.photos {
     margin: 10px 10px 10px 10px;
@@ -163,45 +199,64 @@ hr.photos {
 <div id="container" >
     <div id="content-container">
         <div id="content-form-container">
-            <div id="content-form-header" style="margin-bottom:50px;">
+            <div id="content-form-header" style="height:50px;border-bottom:1px solid #dddddd;">
                 <div class="pull-left">
-                    <h1><a href="/">LOGO</a></h1>
+                    <div style="margin-left: 4px;margin-top:4px;">
+                        <a href="/"><img src="{{ url_for('static',filename='img/logo_40.png') }}"></a>
+                    </div>
                 </div>
-                <div class="pull-right">
-                    <h1><a href="javascript:history.go(-1)">X</a></h1>
-                </div>
+                <a href="javascript:history.go(-1)">
+                    <div class="pull-right" style="width:50px; height:50px;border-left:1px solid #dddddd;">
+                        <div style="background: url({{ url_for('static',filename='img/icons/remove11.png') }});background-repeat:no-repeat;background-size:cover;background-position:center;height:30px;margin-top:10px;">
+                        </div>
+                    </div>
+                </a>
             </div>
-            <hr class="photos">
             <div id="content-form-body">
-                <a href="/company_portfolio/{{ ret.user.id }}" target="_blank"><h1>{{ ret.user.username }}</h1></a>
+                <div class="content-margin-container">
+                    <h1 style="padding-bottom:0px;display:table-cell;padding-left:5px;">
+                        <div style="background-color:#dddddd; border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
+                        <div style="display:table-cell;vertical-align:middle;padding-left:10px;">
+
+                            <a href="/company_portfolio/{{ ret.user.id }}" target="_blank">
+                                {{ ret.user.username }}
+                            </a>
+                        </div>
+                </h1>
+            </div>
+            <hr style="margin: 0;">
+            <div class="content-margin-container">
                 <div class="pull-left">
                     <h3>제품 명 : {{ ret.product.product_name }}</h3>
                 </div>
                 <div class="pull-right">
-                    <select name="product_color" >
+                    <select name="product_color" class="select-style" style="width:70px;">
                         {% for color in ret.colors %}
                         <option value="{{ color }}">{{ color }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <br>
-                <br>
-                <br>
+            </div>
+            <br><br>
+            <div class="content-margin-container">
                 <div class="pull-left">
-                    <h5>가격 : {{ ret.product.product_price }} 원</h5>
+                    <h4>가격 : {{ ret.product_real_price }} 원</h4>
                 </div>
                 <div class="pull-right">
-                    수량 : <input type="text" name="quantity" placeholder="ex)1" value="1" style="width:30px;">개
+                    수량 : <input type="text" name="quantity" placeholder="ex)1" value="1" style="width:30px;height:30px;">개
                 </div>
-                <br>
-                <br>
-                <br>
-                <h4>제품 설명 : {{ ret.product.product_desc }}</h4>
-                <h4>제품 크기 : {{ ret.product.product_size }}</h4>
-                <h4>제품 모델명 : {{ ret.product.product_model_name }}</h4>
-                <h4>제품 소재 : {{ ret.product.product_meterial }}</h4>
-                <input name="submit" class="btn   btn-lg btn-primary" style="background-color:#ffffff; border:1px solid gray;" value="장바구니 담기" type="submit">
+            </div>
+            <br><br>
+            <hr style="margin:0px 0px 0px 0px;">
+            <div class="content-margin-container">
+                <h5>제품 설명 : {{ ret.product.product_desc }}</h5>
+                <h5>제품 크기 : {{ ret.product.product_size }}</h5>
+                <h5>제품 모델명 : {{ ret.product.product_model_name }}</h5>
+                <h5>제품 소재 : {{ ret.product.product_meterial }}</h5>
+            </div>
+                <input name="submit" class="btn   btn-lg btn-primary" style="width:100%;" value="장바구니 담기" type="submit">
 
+                <hr style="margin: 10px 0px 10px 0px;">
                 <h5>{{ ret.product.product_name }}다른 사진 ({{ ret.image_paths | length }}개)</h5>
                 <div id="other-image-container">
                     {% for image_path in ret.other_image_paths %}

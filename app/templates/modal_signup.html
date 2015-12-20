@@ -7,15 +7,18 @@
                 <h3 class="modal-title-site text-center"> 회원가입 </h3>
             </div>
             <div class="modal-body">
-                <p class="text-center"> 기업회원으로 가입하시겠습니까? <a data-toggle="modal" data-dismiss="modal" href="#ModalCompanySignup">
+                <p class="text-center"> 기업회원으로 가입하시겠습니까? <a data-toggle="modal" data-dismiss="modal" href="#ModalCompanySignup" class="btn btn-block btn-primary btn-lg" style="background-color:#123456;">
                 기업 회원으로 가입하기</a></p>
+                <h5 style="padding:10px 0 10px 0;" class="text-center"> 또는 </h5>
+                <!--
                 <div class="control-group"><a class="fb_button btn  btn-block btn-lg " href="#"> 페이스북으로 로그인 </a></div>
                 <h5 style="padding:10px 0 10px 0;" class="text-center"> 또는 </h5>
+                -->
 
                 <!-- User form start-->
                 <form action="{{ url_for('signup') }}" method=post>
                     {{ signupForm.hidden_tag() }}
-                <div class="form-group reg-username">
+                <div class="form-group reg-username" style="margin-bottom:0px;">
                     <div>
                         {% for message in signupForm.username.errors %}
                             <div class="flash">{{ message }}</div>
@@ -23,7 +26,7 @@
                         {{ signupForm.username(placeholder="이름") }}
                     </div>
                 </div>
-                <div class="form-group reg-email">
+                <div class="form-group reg-email" style="margin-bottom:0px;">
                     <div>
                         {% for message in signupForm.email.errors %}
                             <div class="flash">{{  message }}</div>
@@ -31,7 +34,7 @@
                         {{ signupForm.email(placeholder="이메일 주소") }}
                     </div>
                 </div>
-                <div class="form-group reg-password">
+                <div class="form-group reg-password" style="margin-bottom:0px;">
                     <div>
                         {% for message in signupForm.password.errors %}
                             <div class="flash">{{ message }}</div>
@@ -39,6 +42,15 @@
                         {{ signupForm.password(placeholder="비밀번호") }}
                     </div>
                 </div>
+                <div class="form-group reg-password" style="margin-bottom:0px;">
+                    <div>
+                        {% for message in signupForm.password_check.errors %}
+                            <div class="flash">{{ message }}</div>
+                        {% endfor %}
+                        {{ signupForm.password_check(placeholder="비밀번호 확인") }}
+                    </div>
+                </div>
+
                 <div>
                     <div>
                         <input name="submit" class="btn  btn-block btn-lg btn-primary" value="이메일로 가입" type="submit">

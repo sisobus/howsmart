@@ -8,6 +8,7 @@ class SignupForm(Form):
     username    = TextField('username', [validators.Required('please enter your username')])
     email       = TextField('email', [validators.Required('please enter your email'), validators.Email('please enter your email address')])
     password    = PasswordField('password', [validators.Required('please enter your password')])
+    password_check = PasswordField('password_check', [validators.Required('please enter your password more')])
     submit      = SubmitField('create account')
 
     def __init__(self, *args, **kargs):
@@ -15,6 +16,9 @@ class SignupForm(Form):
 
     def validate(self):
         if not Form.validate(self):
+            return False
+        if self.password != self.password_check:
+            self.password_check.errors.append('password is not same')
             return False
 
         user = User.query.filter_by(email = self.email.data.lower()).first()
@@ -32,19 +36,27 @@ class CompanySignupForm(Form):
     username    = TextField('username', [validators.Required('please enter your company name')])
     email       = TextField('email', [validators.Required('please enter your company email'), validators.Email('please enter your company email')])
     password    = PasswordField('password', [validators.Required('please enter your password')])
+    password_check = PasswordField('password_check', [validators.Required('please enter your password more')])
     introduction = TextAreaField('introduction', [validators.Required('please enter your company introduction')])
     address     = TextField('address', [validators.Required('please enter your company address')])
     tel         = TextField('tel', [validators.Required('please enter your company tel')])
     website     = TextField('website', [validators.Required('please enter your company website address')])
     filename    = FileField('filename', [validators.Required('please enter this feed image file')])
     #pros_category = RadioField('pros_category', choices=[('value_1','option1'),('value_2','option2'),('value_3','option3')])
-    pros_category = MultiCheckboxField('pros_category', choices=[('1','주거 인테리어'),('2','상업 인테리어'),('3','가구')])
+    pros_category = MultiCheckboxField('pros_category', choices=[('1','주거 인테리어'),('2','상업 인테리어'),('4','인테리어 디자이너'),('3','가구 회사')])
+    company_si  = SelectField('company_si', choices=[('전체','전체')])
+    company_gu  = SelectField('company_gu', choices=[('전체','전체')])
+    company_dong  = SelectField('company_dong', choices=[('전체','전체')])
+#     shop_category = SelectField('shop_category', choices=utils.get_shop_category_list())
 
     def __init__(self, *args, **kargs):
         Form.__init__(self, *args, **kargs)
 
     def validate(self):
         if not Form.validate(self):
+            return False
+        if self.password != self.password_check:
+            self.password_check.errors.append('password is not same')
             return False
 
         user = User.query.filter_by(email = self.email.data.lower()).first()

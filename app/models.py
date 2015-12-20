@@ -28,8 +28,8 @@ class User(db.Model):
 class Feed(db.Model):
     __tablename__ = 'feed'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100))
-    body = db.Column(db.String(120))
+    title = db.Column(db.String(1000))
+    body = db.Column(db.String(5000))
     created_at = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     image_id = db.Column(db.Integer, db.ForeignKey('image.id'))
@@ -43,13 +43,13 @@ class Feed(db.Model):
 class Feed_category(db.Model):
     __tablename__ = 'feed_category'
     id = db.Column(db.Integer, primary_key=True)
-    category_name = db.Column(db.String(100))
+    category_name = db.Column(db.String(500))
 
 
 class Comment(db.Model):
     __tablename__ = 'comment'
     id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.String(500))
+    body = db.Column(db.String(2000))
     created_at = db.Column(db.DateTime)
     feed_id = db.Column(db.Integer, db.ForeignKey('feed.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -61,7 +61,7 @@ class Comment(db.Model):
 class Image(db.Model):
     __tablename__ = 'image'
     id = db.Column(db.Integer, primary_key=True)
-    image_path = db.Column(db.String(100))
+    image_path = db.Column(db.String(500))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     created_at = db.Column(db.DateTime)
 
@@ -79,29 +79,35 @@ class UserLike(db.Model):
 class Company(db.Model):
     __tablename__ = 'company'
     id = db.Column(db.Integer, primary_key=True)
-    company_introduction    = db.Column(db.String(1000))
+    company_introduction    = db.Column(db.String(5000))
     company_address         = db.Column(db.String(500))
     company_tel             = db.Column(db.String(100))
     company_website         = db.Column(db.String(500))
     user_id                 = db.Column(db.Integer, db.ForeignKey('user.id'))
     image_id                = db.Column(db.Integer, db.ForeignKey('image.id'))
+    company_si              = db.Column(db.String(500))
+    company_gu              = db.Column(db.String(500))
+    company_dong            = db.Column(db.String(500))
 
-    def __init__(self, company_introduction, company_address, company_tel, company_website, user_id):
+    def __init__(self, company_introduction, company_address, company_tel, company_website, user_id,company_si,company_gu,company_dong):
         self.company_introduction   = company_introduction
         self.company_address        = company_address
         self.company_tel            = company_tel
         self.company_website        = company_website
         self.user_id                = user_id
+        self.company_si             = company_si
+        self.company_gu             = company_gu
+        self.company_dong           = company_dong
 
 class Project(db.Model):
     __tablename__ = 'project'
     id              = db.Column(db.Integer, primary_key=True)
-    project_name    = db.Column(db.String(500))
+    project_name    = db.Column(db.String(1500))
     company_id      = db.Column(db.Integer, db.ForeignKey('company.id'))
     image_id        = db.Column(db.Integer, db.ForeignKey('image.id'))
     created_at = db.Column(db.DateTime)
-    project_body    = db.Column(db.String(500))
-    project_credit  = db.Column(db.String(100))
+    project_body    = db.Column(db.String(5000))
+    project_credit  = db.Column(db.String(500))
 
     def __init__(self, project_name, company_id, image_id, created_at, project_body, project_credit):
         self.project_name = project_name
@@ -148,10 +154,10 @@ class Shop_category(db.Model):
 class Product(db.Model):
     __tablename__ = 'product'
     id = db.Column(db.Integer, primary_key=True)
-    product_name = db.Column(db.String(200))
+    product_name = db.Column(db.String(1000))
     product_price = db.Column(db.Integer)
     product_color = db.Column(db.String(200))
-    product_desc = db.Column(db.String(500))
+    product_desc = db.Column(db.String(5000))
     product_size = db.Column(db.String(200))
     product_model_name = db.Column(db.String(200))
     product_meterial = db.Column(db.String(200))

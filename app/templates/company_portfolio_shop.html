@@ -10,7 +10,6 @@ card_header {
   display: block;
   overflow: hidden;
   position: relative;
-  padding-bottom: 2em;
 
   }
 
@@ -25,6 +24,7 @@ card_header {
   }
 
 .card_custom_body {
+    padding-top: 15px;
     padding-left:25px;
     padding-right:25px;
 }
@@ -110,7 +110,9 @@ card_header {
             {% include "company_portfolio_shop_category.html" %}
         </div>
         <div class="col-lg-9 col-md-9 col-sm-12">
+            <h5 style="padding-bottom:0px;">
             전체 {{ ret.products | length }} 제품
+        </h5>
             <div  id="feed_container" style="margin-top:10px;">
 
                 {% if session['is_company'] %}
@@ -118,20 +120,21 @@ card_header {
                     <card_header>
                         <div class="bio">
                             <a href="/create_product">
-                                <div class="bg" style="background:  url('');
-                                        background-repeat:no-repeat;
-                                        background-size: cover;
-                                        background-position: center;
-                                        ">
+                                <div class="bg" style="text-align: center;border-bottom:1px solid #dddddd;">
+                                    <i class="fa fa-plus fa-4x" style="color:#777777;margin:0;line-height:210px;"></i>
                                 </div>
-                                <div class="container" style="margin-top:10px;margin-left:10px;">
+                            </a>
+                                <div class="container" style="margin-top:10px;margin-left:10px;display:table-cell;">
                                     <div class="row">
-                                        <div calss="card_custom_body">
-                                            <h4>상품 생성하기</h4>
+                                        <div class="card_custom_body">
+                                            <h4>
+                                                <a href="/create_product">
+                                                    상품 생성하기
+                                                </a>
+                                            </h4>
                                         </div>
                                     </div>
                                 </div>
-                            </a>
                         </div>
                     </card_header>
                 </div>
@@ -147,19 +150,24 @@ card_header {
                                         background-position: center;
                                         ">
                                 </div>
-                                <div class="container" style="margin-top:10px;margin-left:10px;">
+                            </a>
+                                <div class="container" style="margin-top:10px;margin-left:10px;display:table-cell;">
                                     <div class="row">
-                                        <div calss="card_custom_body">
-                                            <h4>{{ product.product.product_name }}</h4>
+                                        <div class="card_custom_body">
+                                            <h4>
+                                            <a href="/product_detail/{{ product.product.id }}">
+                                                {{ product.product.product_name }}
+                                            </a>
+                                        </h4>
                                         </div>
                                     </div>
                                 </div>
-                            </a>
                         </div>
                     </card_header>
                 </div>
                 {% endfor %}
             </div>
+            <hr/>
         </div>
     </div>
 

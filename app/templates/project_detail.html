@@ -10,7 +10,6 @@ card_header {
   display: block;
   overflow: hidden;
   position: relative;
-  padding-bottom: 2em;
 
   }
 
@@ -48,11 +47,17 @@ card_header {
 .custom_jumbo{
   width:100%;
   z-index:1;
-  height:200px;
+  height:150px;
   background-color:#576782;
   position:relative;
 }
 
+.custom_jumbo_navbar {
+    width: 100%;
+    height: 50px;
+    background-color:#FFFFFF;
+    position: relative;
+}
 .custom_jumbo_container{
   width:100%;
     height: 100%;
@@ -86,9 +91,15 @@ card_header {
     position: relative;
     margin: 0px 0px 0px 240px;
 }
+#custom_jumbo_navbar_wrapper {
+    position: relative;
+    margin: 0px 0px 0px 200px;
+    vertical-align: middle;
+}
 .profile_container {
     height:168px;
     width: 168px;
+    z-index: 2;
     background-color: #000;
     margin-left: 20px;
 }
@@ -122,34 +133,18 @@ card_header {
     }
 
 </style>
-<div class="custom_jumbo">
-    <div class="custom_jumbo_container" style="background: url({{ '/static/'+ret.image_path }});
-            background-repeat:no-repeat; background-size: cover; background-position: center;">
-        <div id="leftside_container">
-            <div class="profile_container" ></div>
-        </div>
-        <div id="rightside_container">
-            <h1>{{ ret.user.username }}</h1>
-        </div>
-    </div>
-</div>
+
+{% include "company_portfolio_navbar.html" %}
 
 <div class="container main-container " style="margin-top:20px;">
     <div class="row">
         <div class="col-lg-3 col-md-3 col-sm-12">
             <div class="panel panel-default">
-            <!--
-                <div class="panel-heading">
-                    <h4 class="panel-title"><a data-toggle="collapse" href="#collapseCategory" class="collapseWill">
-                        <span class="pull-left"> <i class="fa fa-caret-right"></i></span> Category </a></h4>
-                </div>
-                -->
                 <div id="collapseCategory" class="panel-collapse collapse in">
                     <div class="panel-body">
                         <ul class="nav nav-pills nav-stacked tree">
-                            <li><a href="/company_portfolio/{{ ret.user.id }}"><strong>Home</strong></a></li>
                             <li class="active dropdown-tree open-tree"><a class="dropdown-tree-a" > <span
-                                    class="badge pull-right">{{ ret.projects | length }}</span> Projects</a>
+                                    class="badge pull-right">{{ ret.projects | length }}</span> 프로젝트</a>
                                 <ul class="category-level-2 dropdown-menu-tree">
                                     {% for project in ret.projects %}
                                     <li class="dropdown-tree"><a class="dropdown-tree-a" href="/project_detail/{{ project.id }}">
@@ -164,11 +159,13 @@ card_header {
             </div>
         </div>
         <div class="col-lg-9 col-md-9 col-sm-12">
-            <h2>{{ ret.project.project_name }}</h2>
+            <h2 style="padding-bottom:0px;">{{ ret.project.project_name }}</h2>
         <hr>
+        <h5 style="padding-bottom:0px;">
             {{ ret.feed_introduction }}
+        </h5>
         <hr>
-            <div  id="feed_container" style="margin-top:10px;">
+            <div  id="feed_container" style="margin-top:10px;overflow:hidden;">
                     {% for feed in ret.feeds %}
                         <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="card_container ">

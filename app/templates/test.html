@@ -1,0 +1,213 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
+</script>
+<script src="{{ url_for('static',filename='js/json3.min.js') }}">
+</script>
+</head>
+<body>
+<div class="local-search">
+    <div class="item-region">
+        <select>
+            <option>서울시</option>
+        </select>
+        <select>
+            <option>전체</option>
+        </select>
+        <select>
+            <option>전체</option>
+        </select>
+        <button type="button" class="item_submit" title="검색하기" disabled></button>
+    </div>
+
+</div>
+</body>
+<script type="text/javascript">
+window.state = {};
+function bindLocal1(obj) {
+        var map = window.state.map;
+        var selects = $(".local-search " + obj + " select");
+        var local1 = $(selects[0]);
+        var local2 = $(selects[1]);
+        var local3 = $(selects[2]);
+
+        local1.attr("disabled", false);
+        local2.attr("disabled", true);
+        local3.attr("disabled", true);
+
+        local1.children().remove();
+        var items = window.state.addresses;       
+        $(items).each(function (i, item) {
+            local1.append($("<option />").text(item.name).val(item.name));
+        });
+        
+    }
+
+    function bindLocal2(obj) {
+        var selects = $(".local-search " + obj + " select");
+        var local1 = $(selects[0]);
+        var local2 = $(selects[1]);
+        var local3 = $(selects[2]);
+
+        var v1 = local1.val();
+        var node = findNode(v1);
+
+        var option = $("<option />").text("전체");
+        local2.children().remove();
+        local2.append(option);
+
+        if (node && node.items) {
+            for (var j = 0; j < node.items.length; j++) {
+                var item2 = node.items[j];
+                var option = $("<option />").text(item2.name);
+                local2.append(option);
+
+                local2.attr("disabled", false);
+            }
+        } else {
+            local2.attr("disabled", true);
+        }
+    }
+
+    function bindLocal3(obj) {
+        var selects = $(".local-search " + obj + " select");
+        var local1 = $(selects[0]);
+        var local2 = $(selects[1]);
+        var local3 = $(selects[2]);
+
+        var v1 = local1.val();
+        var v2 = local2.val();
+        var node = findNode(v1, v2);
+
+        if (node) {
+            var option = $("<option />").text("전체");
+            local3.children().remove();
+            local3.append(option);
+        }
+
+        if (node && node.items) {
+            for (var j = 0; j < node.items.length; j++) {
+                var item2 = node.items[j];
+                var option = $("<option />").text(item2.name);
+                local3.append(option);
+
+                local3.attr("disabled", false);
+            }
+        } else {
+            local3.attr("disabled", true);
+        }
+
+        
+    }
+
+function findNode(v1, v2, v3) {
+        if (v1) {
+            var local1s = window.state.addresses;
+            for (var i = 0; i < local1s.length; i++) {
+                var local1 = local1s[i];
+
+                if (local1.name == v1) {
+                    if (v2) {
+                        var local2s = local1.items;
+                        for (var j = 0; j < local2s.length; j++) {
+                            var local2 = local2s[j];
+
+                            if (local2.name == v2) {
+                                if (v3) {
+                                    var local3s = local2.items;
+                                    for (var k = 0; k < local3s.items; k++) {
+                                        var local3 = local3s[k];
+
+                                        if (local3 == v3) {
+                                            return local3;
+                                        }
+                                    }
+                                    return null;
+                                }
+                                return local2;
+                            }
+                        }
+                        return null;
+                    }
+                    return local1;
+                }
+            }
+        }
+        return null;
+    }
+
+
+function initLocalSearch() {
+    var items = $(".local-search .item-region select");
+        var local1 = $(items[0]);
+        local1.children().remove();
+        local1.append($("<option />").text("로딩 중"))
+        local1.attr("disabled", true);
+        local1.change(function () {
+            bindLocal2(".item-region");
+            bindLocal3(".item-region");
+        });
+
+        var local2 = $(items[1]);
+        local2.attr("disabled", true);
+        local2.change(function () {
+            bindLocal3(".item-region");
+        });
+
+        var local3 = $(items[2]);
+        local3.attr("disabled", true);
+
+        $.when(
+             $.ajax({
+                 url: "//hausmart.co.kr/json/address"
+             })
+        ).done(function (data) {
+            data = data.results;
+            var new_data = [];
+            new_data.push(data[8]);
+            new_data.push(data[1]);
+            new_data.push(data[11]);
+            new_data.push(data[7]);
+            new_data.push(data[5]);
+            new_data.push(data[6]);
+            new_data.push(data[10]);
+            new_data.push(data[9]);
+            new_data.push(data[4]);
+            new_data.push(data[0]);
+            new_data.push(data[16]);
+            new_data.push(data[15]);
+            new_data.push(data[3]);
+            new_data.push(data[2]);
+            new_data.push(data[13]);
+            new_data.push(data[12]);
+            new_data.push(data[14]);
+            window.state.addresses = new_data
+
+            bindLocal1(".item-region");
+            bindLocal2(".item-region");
+            bindLocal3(".item-region");
+
+            $(".item_submit").removeAttr("disabled");
+
+        });
+    $(".local-search .item-region button").click(function () {
+            var selects = $(".local-search .item-region select");
+
+            var local1 = $(selects[0]);
+            var local2 = $(selects[1]);
+            var local3 = $(selects[2]);
+
+            var selected = !local3.is(":disabled") ? local3.find("option:selected") : local2.find("option:selected");
+            var lat = selected.data("lat");
+            var lng = selected.data("lng");
+            var zoom = 20 - parseInt(selected.data("zoom"));
+
+            location.href = "/search/map?lat=" + lat + "&lng=" + lng + "&zoom="+ zoom;
+        });
+
+}
+$(document).ready(function () {
+        initLocalSearch();
+        });
+</script>
+</html>
