@@ -123,23 +123,20 @@
                         <br> <br>
                         <h5 style="margin-left:10px;">주소 또는 회사명을 입력하여 전문가를 찾아보세요. </h5>
 
+                        <form action="{% if pros_category_name == '전체' %}{{ url_for('find_pros') }}{% endif %}{% if pros_category_name != '전체' %}/find_pros/{{ pros_category_id }}{% endif %}" method=post enctype="multipart/form-data">
                         <div class="local-search" id="local-search">
                             <div class="type-select" style="display:table-cell;">
                                 <select class="select-style" style="width:120px;">
                                     <option>주소로 회사찾기</option>
+                                    <!--
                                     <option>이름으로 회사 찾기 </option>
+                                    -->
                                 </select>
                             </div>
-                            <div class="item-region" style="display:table-cell;padding-left:10px;">
-                                    <select class="select-style">
-                                        <option>서울시</option>
-                                    </select>
-                                    <select class="select-style">
-                                        <option>전체</option>
-                                    </select>
-                                    <select  class="select-style">
-                                        <option>전체</option>
-                                    </select>
+                            <div class="company-item-region" style="display:table-cell;padding-left:10px;">
+                                {{ findProsForm.company_si }}
+                                {{ findProsForm.company_gu }}
+                                {{ findProsForm.company_dong }}
                                     <input name="submit" class="btn   btn-sm btn-primary"  value="찾기" type="submit" style="width:50px;">
                                 </h5>
                             </div>
@@ -149,6 +146,7 @@
                                 </h5>
                             </div>
                         </div>
+                        </form>
                         
                     </div>
 
@@ -185,7 +183,7 @@
                                             </h4></div>
                                         </div>
                                         <br>
-                                        <h4>{{ pros.company.company_address }}</h4>
+                                        <h4>{{ pros.company.company_si }} {{ pros.company.company_gu }} {{ pros.company.company_dong }} {{ pros.company.company_address }}</h4>
                                         <h5>{{ pros.company.company_introduction }}
                                         {% if pros.over_introduction %}
                                         <a href="/company_portfolio/{{ pros.user.id }}">...더보기</a>
@@ -274,6 +272,9 @@ function bindLocal1(obj) {
                 local3.attr("disabled", false);
             }
         } else {
+            var option = $("<option />").text("전체");
+            local3.children().remove();
+            local3.append(option);
             local3.attr("disabled", true);
         }
 
@@ -318,20 +319,20 @@ function findNode(v1, v2, v3) {
 
 
 function initLocalSearch() {
-    var items = $(".local-search .item-region select");
+    var items = $(".local-search .company-item-region select");
         var local1 = $(items[0]);
         local1.children().remove();
         local1.append($("<option />").text("로딩 중"))
         local1.attr("disabled", true);
         local1.change(function () {
-            bindLocal2(".item-region");
-            bindLocal3(".item-region");
+            bindLocal2(".company-item-region");
+            bindLocal3(".company-item-region");
         });
 
         var local2 = $(items[1]);
         local2.attr("disabled", true);
         local2.change(function () {
-            bindLocal3(".item-region");
+            bindLocal3(".company-item-region");
         });
 
         var local3 = $(items[2]);
@@ -339,7 +340,7 @@ function initLocalSearch() {
 
         $.when(
              $.ajax({
-                 url: "//hausmart.co.kr/json/address"
+                 url: "//1.234.80.248/json/address"
              })
         ).done(function (data) {
             data = data.results;
@@ -363,15 +364,15 @@ function initLocalSearch() {
             new_data.push(data[14]);
             window.state.addresses = new_data
 
-            bindLocal1(".item-region");
-            bindLocal2(".item-region");
-            bindLocal3(".item-region");
+            bindLocal1(".company-item-region");
+            bindLocal2(".company-item-region");
+            bindLocal3(".company-item-region");
 
             $(".item_submit").removeAttr("disabled");
 
         });
-    $(".local-search .item-region button").click(function () {
-            var selects = $(".local-search .item-region select");
+    $(".local-search .company-item-region button").click(function () {
+            var selects = $(".local-search .company-item-region select");
 
             var local1 = $(selects[0]);
             var local2 = $(selects[1]);
@@ -389,11 +390,9 @@ function initLocalSearch() {
 $(document).ready(function () {
         initLocalSearch();
         $("#local-search .type-select .item-title").click(function () {
-            alert('a');
             $("#local-search .type-select").toggleClass("on");
         });
         $("#local-search h5").click(function () {
-            alert('b');
             var idx = $("#local-search h5").index($(this));
 
             $("#local-search .type-select").removeClass("on");

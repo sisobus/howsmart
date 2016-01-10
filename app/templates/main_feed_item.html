@@ -1,7 +1,13 @@
 <div class="card_container">
     <card_header>
         <div class="bio">
-            <a href="/company_feed_detail/{{ feed.feed.id }}">
+            <script type="text/javascript">
+var previous_url = '?previous_url='+window.location.href;
+openFeed = function(feed_id) {
+    location.href="/company_feed_detail/"+feed_id+previous_url;
+}
+            </script>
+            <a href="javascript:openFeed({{ feed.feed.id }});">
                 <div class="bg" style="background:  url({{ '/static/'+feed.image_path }});
                         background-repeat:no-repeat;
                         background-size: cover;
@@ -12,7 +18,7 @@
                 <div class="container" style="margin-top:20px;margin-left:20px;">
                     <div class="row" style="display: table-cell;">
                         <div calss="card_custom_body">
-                            <a href="/company_feed_detail/{{ feed.feed.id }}">
+                            <a href="javascript:openFeed({{ feed.feed.id }});">
                                 <h4 class="feed-title">{{ feed.feed.title }}</h4>
                             </a>
                             <h5>
@@ -29,20 +35,48 @@
     <div class="bio">
         <div class="container" style="display:table-cell;">
             <div class="feed_like_comment" style="margin-top:10px;margin-left:5px;margin-bottom:10px;">
-                <span class="fa-stack " style="display:table-cell;padding-right:15px;">
-                    <i class="fa  fa-circle-thin fa-stack-2x" style="color:#777777;top:0;" > </i>
-                    <i class="fa   fa-thumbs-o-up fa-stack-1x" style="color:#777777;top:0;" > </i>
+                <span class="fa-stack " style="display:table-cell;padding-right:15px;" >
+                    <i class="fa  fa-circle-thin fa-stack-2x" style="{% if feed.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}top:0;" id="like-button-icon-circle-{{ feed.feed.id }}"> </i>
+                    <i class="fa   fa-thumbs-o-up fa-stack-1x" style="{% if feed.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}top:0;" id="like-button-icon-thumb-{{ feed.feed.id }}"> </i>
                 </span>
-                <h5 style="display:table-cell;padding-bottom:0px;padding-left:4px;padding-right:8px;vertical-align:middle;"> 0 좋아요</h5>
+                <h5 style="display:table-cell;padding-bottom:0px;padding-left:4px;padding-right:8px;vertical-align:middle;" ><a onclick="likePost({{ feed.feed.id }});" style="{% if feed.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}" id="like-button-{{ feed.feed.id }}"> {{ feed.number_of_like }} 좋아요</a></h5>
                 <span class="fa-stack " style="display:table-cell;padding-right:15px;">
                     <i class="fa  fa-circle-thin fa-stack-2x" style="color:#777777;top:0;" > </i>
                     <i class="fa   fa-comment fa-stack-1x" style="color:#777777;top:0;" > </i>
                 </span>
 
-                <h5 style="display:table-cell;padding-bottom:0px;padding-left:4px;vertical-align:middle;">{{ feed.number_of_comment }} 댓글</h5>
+                <h5 style="display:table-cell;padding-bottom:0px;padding-left:4px;vertical-align:middle;"><a onclick="showComment({{ feed.feed.id }});">{{ feed.number_of_comment }} 댓글</a></h5>
             </div>
         </div>
     </div>
+    {% if feed.number_of_comment != 0 %}
+    <div class="bio" style="border-top:1px solid #dddddd;display:none;" id="main-comment-wrapper-{{ feed.feed.id }}">
+        <div class="main-comment-container">
+            {% for comment in feed.all_comments %}
+            <div class="main-comment-item">
+                <div class="main-comment-profile">
+                    <div style="background-color:#dddddd; border:1px solid #dddddd;height:34px;width:34px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;"></div>
+                </div>
+                <div class="main-comment-body-top">
+                    <h5 style="padding:0px;">
+                        {% if comment.user.level >= 2 %}
+                        <a href="/company_portfolio/{{ comment.user.id }}" style="color:#72AFAD;">
+                        {% elif comment.user.level == 1 %}
+                        <a href="/user_portfolio/{{ comment.user.id }}" style="color:#72AFAD;">
+                        {% endif %}
+                            {{ comment.user.username }}
+                        </a> 
+                        {{ comment.comment.body}}
+                    </h5>
+                </div>
+                <div class="main-comment-body-bottom">
+                    <h5 style="padding:0px;">{{ comment.comment.created_at }}</h5>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
     </card_footer>
 </div>
 <br>

@@ -13,7 +13,7 @@ app.config['SQLALCHEMY_DATABASE_URI']   = HOWSMART_DATABASE_URI
 app.config['SECRET_KEY']                = HOWSMART_SECRET_KEY
 app.config['UPLOAD_FOLDER']             = UPLOAD_FOLDER
 
-from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed, Pros_category, Company_has_pros_category, Feed_category, Product, Product_has_image, Shop_category
+from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed, Pros_category, Company_has_pros_category, Feed_category, Product, Product_has_image, Shop_category, User_like_feed, Follow
 
 db.init_app(app)
 
@@ -21,7 +21,7 @@ import json
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask import get_flashed_messages
 from flask.ext.login import LoginManager, UserMixin, current_user, login_user, logout_user
-from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm, MakeProjectForm, CreateProjectForm, ProjectEditForm, CreateProductForm
+from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm, MakeProjectForm, CreateProjectForm, ProjectEditForm, CreateProductForm, CompanySearchForm, FindProsForm
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
@@ -32,11 +32,30 @@ def get_feed_information(feeds):
         image = Image.query.filter_by(id=feed.image_id).first()
         image_path = utils.get_image_path(image.image_path)
         user = User.query.filter_by(id=feed.user_id).first()
-        all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+        all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.asc()).all()
+
+        comments_dict_list = []
+        for all_comment in all_comments:
+            comment_user = User.query.filter_by(id=all_comment.user_id).first()
+            cur = {
+                    'comment': all_comment,
+                    'user': comment_user
+                    }
+            comments_dict_list.append(cur)
+
+        all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
+        is_user_like = False
+        if 'user_id' in session:
+            if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
+                is_user_like = True
+
         d['image_path'] = image_path
         d['user'] = user
         d['feed'] = feed
         d['number_of_comment'] = len(all_comments)
+        d['all_comments'] = comments_dict_list
+        d['number_of_like'] = len(all_likes)
+        d['is_user_like'] = is_user_like
         ret.append(d)
     return ret
 
@@ -119,8 +138,6 @@ def company_signup():
         companySignupForm = CompanySignupForm()
 
     if request.method == 'POST':
-
-        print request.form
         if not companySignupForm.validate():
             return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm,offset=10)
         else :
@@ -282,6 +299,9 @@ def create_project():
                 filename = secure_filename(file.filename)
                 if utils.allowedFile(filename):
                     directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
+                    utils.createDirectory(directory_url)
+                    project_count = Project.query.filter_by(company_id=company.id).count()
+                    directory_url = os.path.join(directory_url,str(project_count+1))
                     utils.createDirectory(directory_url)
                     file_path = os.path.join(directory_url,filename)
                     file.save(file_path)
@@ -548,6 +568,9 @@ def feed_detail(feed_id):
 def company_feed_detail(feed_id):
     with app.app_context():
         commentForm = CommentForm()
+    if request.args.get('previous_url'):
+        session['previous_url'] = request.args.get('previous_url')
+        print '@@#!@#!#'+request.args.get('previous_url')
     feed = Feed.query.filter_by(id=feed_id).first()
     feed_category = Feed_category.query.filter_by(id=feed.feed_category_id).first()
     feed_category_name = feed_category.category_name
@@ -558,6 +581,21 @@ def company_feed_detail(feed_id):
     company = Company.query.filter_by(id=project.company_id).first()
     user = User.query.filter_by(id=company.user_id).first()
     all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+
+    comments_dict_list = []
+    for all_comment in all_comments:
+        comment_user = User.query.filter_by(id=all_comment.user_id).first()
+        cur = {
+                'comment': all_comment,
+                'user': comment_user
+                }
+        comments_dict_list.append(cur)
+
+    all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
+    is_user_like = False
+    if 'user_id' in session:
+        if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
+            is_user_like = True
 
     project_has_feeds = Project_has_feed.query.filter_by(project_id=project.id).order_by(Project_has_feed.feed_id.asc()).all()
     feeds_id = []
@@ -600,14 +638,17 @@ def company_feed_detail(feed_id):
         'feed': feed,
         'project': project,
         'user': user,
-        'all_comments': all_comments,
+        'all_comments': comments_dict_list,
         'image_path': image_path,
         'company': company,
         'next_feed_id': next,
         'prev_feed_id': prev,
         'feed_category_name': feed_category_name,
         'other_feeds_in_same_project': other_feeds_in_same_project,
-        'other_projects': other_projects
+        'other_projects': other_projects,
+        'number_of_like': len(all_likes),
+        'is_user_like': is_user_like,
+        'referrer': session['previous_url'] 
     }
     if request.method == 'GET':
         return render_template('company_feed_detail.html',commentForm=commentForm,ret=ret)
@@ -720,6 +761,14 @@ def company_portfolio(user_id):
 
     image   = Image.query.filter_by(id=company.image_id).first()
     image_path = utils.get_image_path(image.image_path)
+
+    number_of_follow = Follow.query.filter_by(to_user_id=user.id).count()
+    number_of_from_follow = Follow.query.filter_by(from_user_id=user.id).count()
+    is_user_follow = False
+    if 'user_id' in session:
+        if Follow.query.filter_by(from_user_id=user.id).filter_by(to_user_id=session['user_id']).first():
+            is_user_follow = True
+
     ret = {
         'user': user,
         'company': company,
@@ -727,7 +776,10 @@ def company_portfolio(user_id):
         'products': products,
         'image_path': image_path,
         'number_of_projects': number_of_all_projects,
-        'number_of_products': number_of_all_products
+        'number_of_products': number_of_all_products,
+        'number_of_follow': number_of_follow,
+        'number_of_from_follow': number_of_follow,
+        'is_user_follow': is_user_follow
     }
 
     return render_template('company_portfolio.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
@@ -1007,7 +1059,7 @@ def product_detail(product_id):
     }
     return render_template('product_detail.html',ret=ret)
 
-@app.route('/find_pros/')
+@app.route('/find_pros/',methods=['GET','POST'])
 def find_pros():
     pros_category_id = 0
     pros_category_name = '전체'
@@ -1015,77 +1067,161 @@ def find_pros():
         signupForm = SignupForm()
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
+        companySearchForm = CompanySearchForm()
+        findProsForm = FindProsForm()
 
-    ret_pros = []
-    users = User.query.filter_by(level=2).order_by(User.created_at.desc()).all()
-    for user in users:
-        d = {}
-        company = Company.query.filter_by(user_id=user.id).first()
-        project = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
-        image = Image.query.filter_by(id=company.image_id).first()
-        image_path = utils.get_image_path(image.image_path)
-        if len(project) == 0:
-            d['last_project_created'] = user.created_at
-        else :
-            d['last_project_created'] = project[0].created_at
-            image = Image.query.filter_by(id=project[0].image_id).first()
+    if request.method == 'GET':
+        ret_pros = []
+        users = User.query.filter_by(level=2).order_by(User.created_at.desc()).all()
+        for user in users:
+            d = {}
+            company = Company.query.filter_by(user_id=user.id).first()
+            project = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
+            image = Image.query.filter_by(id=company.image_id).first()
             image_path = utils.get_image_path(image.image_path)
-        d['user'] = user
-        d['over_introduction'] = False
-        if len(company.company_introduction) > 250:
-            company.company_introduction = company.company_introduction[:250]
-            d['over_introduction'] = True
-        d['company'] = company
-        d['image_path'] = image_path
-        ret_pros.append(d)
+            if len(project) == 0:
+                d['last_project_created'] = user.created_at
+            else :
+                d['last_project_created'] = project[0].created_at
+                image = Image.query.filter_by(id=project[0].image_id).first()
+                image_path = utils.get_image_path(image.image_path)
+            d['user'] = user
+            d['over_introduction'] = False
+            if len(company.company_introduction) > 250:
+                company.company_introduction = company.company_introduction[:250]
+                d['over_introduction'] = True
+            d['company'] = company
+            d['image_path'] = image_path
+            ret_pros.append(d)
 
-    ret_pros = sorted(ret_pros, key=lambda k: k['last_project_created'], reverse=True)
+        ret_pros = sorted(ret_pros, key=lambda k: k['last_project_created'], reverse=True)
 
-    return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros),pros_category_name=pros_category_name)
+        return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros),pros_category_name=pros_category_name,findProsForm=findProsForm)
+    elif request.method == 'POST':
+        ret_pros = []
+        if findProsForm.company_gu.data != u'전체':
+            if findProsForm.company_dong.data == u'전체':
+                companies = Company.query.filter_by(company_si=findProsForm.company_si.data).filter_by(company_gu=findProsForm.company_gu.data).all()
+            elif findProsForm.company_dong.data != u'전체':
+                companies = Company.query.filter_by(company_si=findProsForm.company_si.data).filter_by(company_gu=findProsForm.company_gu.data).filter_by(company_dong=findProsForm.company_dong.data).all()
+        elif findProsForm.company_gu.data == u'전체':
+            companies = Company.query.filter_by(company_si=findProsForm.company_si.data).all()
 
-@app.route('/find_pros/<int:pros_category_id>')
+        for company in companies:
+            d = {}
+            user = User.query.filter_by(id=company.user_id).first()
+            project = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
+            image = Image.query.filter_by(id=company.image_id).first()
+            image_path = utils.get_image_path(image.image_path)
+            if len(project) == 0:
+                d['last_project_created'] = user.created_at
+            else :
+                d['last_project_created'] = project[0].created_at
+                image = Image.query.filter_by(id=project[0].image_id).first()
+                image_path = utils.get_image_path(image.image_path)
+            d['user'] = user
+            d['over_introduction'] = False
+            if len(company.company_introduction) > 250:
+                company.company_introduction = company.company_introduction[:250]
+                d['over_introduction'] = True
+            d['company'] = company
+            d['image_path'] = image_path
+            ret_pros.append(d)
+
+        ret_pros = sorted(ret_pros, key=lambda k: k['last_project_created'], reverse=True)
+        return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros),pros_category_name=pros_category_name,findProsForm=findProsForm)
+
+
+        #return render_template('search_company_test.html',search_company_si=request.form['search_company_si'],search_company_gu=request.form['search_company_gu'],search_company_dong=request.form['search_company_dong'])
+        #return render_template('search_company_test.html')
+
+@app.route('/find_pros/<int:pros_category_id>',methods=['GET','POST'])
 def find_pros_detail(pros_category_id):
 
     with app.app_context():
         signupForm = SignupForm()
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
+        companySearchForm = CompanySearchForm()
+        findProsForm = FindProsForm()
 
-    pros_category_name = Pros_category.query.filter_by(id=pros_category_id).first().category_name
-    ret_pros = []
-    users = User.query.filter_by(level=2).order_by(User.created_at.desc()).all()
-    for user in users:
-        d = {}
-        company = Company.query.filter_by(user_id=user.id).first()
-        company_has_pros_categorys = Company_has_pros_category.query.filter_by(company_id=company.id).all()
-        ok = False
-        for company_has_pros_category in company_has_pros_categorys:
-            if int(company_has_pros_category.pros_category_id) == pros_category_id:
-                ok = True
-        if not ok:
-            continue
-        image = Image.query.filter_by(id=company.image_id).first()
-        image_path = utils.get_image_path(image.image_path)
-        project = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
-        if len(project) == 0:
-            d['last_project_created'] = user.created_at
-        else :
-            d['last_project_created'] = project[0].created_at
-            image = Image.query.filter_by(id=project[0].image_id).first()
+    if request.method == 'GET':
+        pros_category_name = Pros_category.query.filter_by(id=pros_category_id).first().category_name
+        ret_pros = []
+        users = User.query.filter_by(level=2).order_by(User.created_at.desc()).all()
+        for user in users:
+            d = {}
+            company = Company.query.filter_by(user_id=user.id).first()
+            company_has_pros_categorys = Company_has_pros_category.query.filter_by(company_id=company.id).all()
+            ok = False
+            for company_has_pros_category in company_has_pros_categorys:
+                if int(company_has_pros_category.pros_category_id) == pros_category_id:
+                    ok = True
+            if not ok:
+                continue
+            image = Image.query.filter_by(id=company.image_id).first()
             image_path = utils.get_image_path(image.image_path)
+            project = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
+            if len(project) == 0:
+                d['last_project_created'] = user.created_at
+            else :
+                d['last_project_created'] = project[0].created_at
+                image = Image.query.filter_by(id=project[0].image_id).first()
+                image_path = utils.get_image_path(image.image_path)
 
-        d['user'] = user
-        d['over_introduction'] = False
-        if len(company.company_introduction) > 250:
-            company.company_introduction = company.company_introduction[:250]
-            d['over_introduction'] = True
+            d['user'] = user
+            d['over_introduction'] = False
+            if len(company.company_introduction) > 250:
+                company.company_introduction = company.company_introduction[:250]
+                d['over_introduction'] = True
 
-        d['company'] = company
-        d['image_path'] = image_path
-        ret_pros.append(d)
+            d['company'] = company
+            d['image_path'] = image_path
+            ret_pros.append(d)
 
-    ret_pros = sorted(ret_pros, key=lambda k: k['last_project_created'], reverse=True)
-    return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros),pros_category_name=pros_category_name)
+        ret_pros = sorted(ret_pros, key=lambda k: k['last_project_created'], reverse=True)
+        return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros),pros_category_name=pros_category_name,findProsForm=findProsForm,pros_category_id=pros_category_id)
+    elif request.method == 'POST':
+        pros_category_name = Pros_category.query.filter_by(id=pros_category_id).first().category_name
+        ret_pros = []
+        if findProsForm.company_gu.data != u'전체':
+            if findProsForm.company_dong.data == u'전체':
+                companies = Company.query.filter_by(company_si=findProsForm.company_si.data).filter_by(company_gu=findProsForm.company_gu.data).all()
+            elif findProsForm.company_dong.data != u'전체':
+                companies = Company.query.filter_by(company_si=findProsForm.company_si.data).filter_by(company_gu=findProsForm.company_gu.data).filter_by(company_dong=findProsForm.company_dong.data).all()
+        elif findProsForm.company_gu.data == u'전체':
+            companies = Company.query.filter_by(company_si=findProsForm.company_si.data).all()
+
+        for company in companies:
+            company_has_pros_categories = Company_has_pros_category.query.filter_by(company_id=company.id).all()
+            ok = False
+            for company_has_pros_category in company_has_pros_categories:
+                if company_has_pros_category.pros_category_id == pros_category_id:
+                    ok = True
+            if not ok:
+                continue
+            d = {}
+            user = User.query.filter_by(id=company.user_id).first()
+            project = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
+            image = Image.query.filter_by(id=company.image_id).first()
+            image_path = utils.get_image_path(image.image_path)
+            if len(project) == 0:
+                d['last_project_created'] = user.created_at
+            else :
+                d['last_project_created'] = project[0].created_at
+                image = Image.query.filter_by(id=project[0].image_id).first()
+                image_path = utils.get_image_path(image.image_path)
+            d['user'] = user
+            d['over_introduction'] = False
+            if len(company.company_introduction) > 250:
+                company.company_introduction = company.company_introduction[:250]
+                d['over_introduction'] = True
+            d['company'] = company
+            d['image_path'] = image_path
+            ret_pros.append(d)
+
+        ret_pros = sorted(ret_pros, key=lambda k: k['last_project_created'], reverse=True)
+        return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros),pros_category_name=pros_category_name,findProsForm=findProsForm,pros_category_id=pros_category_id)
 
 
 @app.route('/photos/',methods=['GET','POST'])
@@ -1110,6 +1246,15 @@ def photos():
             image_path = utils.get_image_path(image.image_path)
             user = User.query.filter_by(id=feed.user_id).first()
             all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
+            is_user_like = False
+            if 'user_id' in session:
+                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
+                    is_user_like = True
+            d['number_of_like'] = len(all_likes)
+            d['is_user_like'] = is_user_like
+
+
             d['image_path'] = image_path
             d['user'] = user
             d['feed'] = feed
@@ -1141,6 +1286,15 @@ def photos():
             image_path = utils.get_image_path(image.image_path)
             user = User.query.filter_by(id=feed.user_id).first()
             all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+
+
+            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
+            is_user_like = False
+            if 'user_id' in session:
+                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
+                    is_user_like = True
+            d['number_of_like'] = len(all_likes)
+            d['is_user_like'] = is_user_like
             d['image_path'] = image_path
             d['user'] = user
             d['feed'] = feed
@@ -1181,6 +1335,15 @@ def photos_detail(feed_category_id):
             image_path = utils.get_image_path(image.image_path)
             user = User.query.filter_by(id=feed.user_id).first()
             all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+
+
+            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
+            is_user_like = False
+            if 'user_id' in session:
+                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
+                    is_user_like = True
+            d['number_of_like'] = len(all_likes)
+            d['is_user_like'] = is_user_like
             d['image_path'] = image_path
             d['user'] = user
             d['feed'] = feed
@@ -1215,6 +1378,15 @@ def photos_detail(feed_category_id):
             image_path = utils.get_image_path(image.image_path)
             user = User.query.filter_by(id=feed.user_id).first()
             all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+
+
+            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
+            is_user_like = False
+            if 'user_id' in session:
+                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
+                    is_user_like = True
+            d['number_of_like'] = len(all_likes)
+            d['is_user_like'] = is_user_like
             d['image_path'] = image_path
             d['user'] = user
             d['feed'] = feed
@@ -1246,6 +1418,15 @@ def photos_grid():
             image_path = utils.get_image_path(image.image_path)
             user = User.query.filter_by(id=feed.user_id).first()
             all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+
+
+            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
+            is_user_like = False
+            if 'user_id' in session:
+                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
+                    is_user_like = True
+            d['number_of_like'] = len(all_likes)
+            d['is_user_like'] = is_user_like
             d['image_path'] = image_path
             d['user'] = user
             d['feed'] = feed
@@ -1277,6 +1458,15 @@ def photos_grid():
             image_path = utils.get_image_path(image.image_path)
             user = User.query.filter_by(id=feed.user_id).first()
             all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+
+
+            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
+            is_user_like = False
+            if 'user_id' in session:
+                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
+                    is_user_like = True
+            d['number_of_like'] = len(all_likes)
+            d['is_user_like'] = is_user_like
             d['image_path'] = image_path
             d['user'] = user
             d['feed'] = feed
@@ -1317,6 +1507,15 @@ def photos_detail_grid(feed_category_id):
             image_path = utils.get_image_path(image.image_path)
             user = User.query.filter_by(id=feed.user_id).first()
             all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+
+
+            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
+            is_user_like = False
+            if 'user_id' in session:
+                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
+                    is_user_like = True
+            d['number_of_like'] = len(all_likes)
+            d['is_user_like'] = is_user_like
             d['image_path'] = image_path
             d['user'] = user
             d['feed'] = feed
@@ -1351,6 +1550,15 @@ def photos_detail_grid(feed_category_id):
             image_path = utils.get_image_path(image.image_path)
             user = User.query.filter_by(id=feed.user_id).first()
             all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+
+
+            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
+            is_user_like = False
+            if 'user_id' in session:
+                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
+                    is_user_like = True
+            d['number_of_like'] = len(all_likes)
+            d['is_user_like'] = is_user_like
             d['image_path'] = image_path
             d['user'] = user
             d['feed'] = feed
@@ -1460,8 +1668,59 @@ def shop_detail(shop_category_id):
 def test():
     return render_template('test.html')
 
+@app.route('/test_like')
+def test_like():
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+
+    return render_template('test_like.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm)
+
+@app.route('/like_post',methods=['POST'])
+def like_post():
+    is_liked = False
+    user_id = request.form['user_id']
+    feed_id = request.form['feed_id']
+    user_like_feed = User_like_feed.query.filter_by(user_id=user_id).filter_by(feed_id=feed_id).first()
+    if user_like_feed:
+        is_liked = True
+        db.session.delete(user_like_feed)
+        db.session.commit()
+    else :
+        is_liked = False
+        user = User.query.filter_by(id=user_id).first()
+        feed = Feed.query.filter_by(id=feed_id).first()
+        user_like_feed = User_like_feed(user.id,feed.id)
+        user_like_feed.feed_id = feed_id
+        user_like_feed.user_id = user_id
+        db.session.add(user_like_feed)
+        db.session.commit()
+
+    return json.dumps({'status':'OK','user_id':request.form['user_id'],'feed_id':request.form['feed_id'],'is_liked':is_liked,'number_of_like':User_like_feed.query.filter_by(feed_id=feed_id).count()})
+
+@app.route('/follow_post',methods=['POST'])
+def follow_post():
+    is_followed = False
+    from_user_id = request.form['from_user_id']
+    to_user_id = request.form['to_user_id']
+    follow = Follow.query.filter_by(from_user_id=from_user_id).filter_by(to_user_id=to_user_id).first()
+    if follow:
+        is_followed = True
+        db.session.delete(follow)
+        db.session.commit()
+    else:
+        is_followed = False
+        from_user = User.query.filter_by(id=from_user_id).first()
+        to_user = User.query.filter_by(id=to_user_id).first()
+        follow = Follow(from_user.id,to_user.id)
+        db.session.add(follow)
+        db.session.commit()
+    return json.dumps({'status':'OK','from_user_id':from_user_id,'to_user_id':to_user_id,'is_followed':is_followed,'number_of_from_user_follow':Follow.query.filter_by(from_user_id=from_user_id).count(),'number_of_to_user_follow':Follow.query.filter_by(to_user_id=to_user_id).count()})
+
 @app.route('/json/address')
 def address():
     with open('/home/howsmart/howsmart/app/address.json','r') as fp:
         r = json.loads(fp.read())
     return jsonify(results=r)
+

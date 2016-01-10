@@ -98,18 +98,22 @@
             margin: 0;
             background: #f5f5f5;
 
+            overflow-y: scroll;
         }
         #content-form-container {
             height: inherit;
             overflow-y: scroll;
-            padding-bottom: 45px;
+            padding-bottom: 0px;
             -ms-overflow-style: none;
             border-color: #DDDDDD;
             border-style: solid;
             border-width: 1px 1px 1px 1px;
 
-            margin: 10px 10px 10px 10px;
+            margin: 10px 10px 0px 10px;
             background: #ffffff;
+        }
+        #content-container::-webkit-scrollbar {
+            display: none;
         }
         #content-form-container::-webkit-scrollbar {
             display: none;
@@ -216,6 +220,30 @@ div#image-container:hover .bar {
     position: absolute;
     z-index: 1000;
 }
+.main-comment-container {
+    padding: 5px 15px 5px 15px;
+    background: #FFFFFF;
+    margin: 0px 10px 5px 10px;
+    border: 1px solid #dddddd;
+    border-top: 0px solid #dddddd;
+}
+.main-comment-item {
+    height: 42px;
+    margin: 2px 0px 2px 0px;
+}
+.main-comment-profile {
+    position: absolute;
+    width: 50px;
+    margin-top: 4px;
+}
+.main-comment-body-top {
+    position: relative;
+    margin: 0px 0px 0px 50px;
+}
+.main-comment-body-bottom {
+    position: relative;
+    margin: 0px 0px 0px 50px;
+}
 /*
 #content-form-header {
     z-index: 3;
@@ -253,7 +281,7 @@ hr.photos {
                     <a href="/"><img src="{{ url_for('static',filename='img/logo_40.png') }}"></a>
                 </div>
             </div>
-            <a href="javascript:window.history.back();">
+            <a href="{{ session['previous_url'] }}">
                 <div class="pull-right" style="width:50px; height:50px;border-left:1px solid #dddddd;">
                     <div style="background: url({{ url_for('static',filename='img/icons/remove11.png') }});background-repeat:no-repeat;background-size:cover;background-position:center;height:30px;margin-top:10px;">
                     </div>
@@ -305,11 +333,11 @@ hr.photos {
 
                     <h5>다른 <a href="/photos/{{ ret.feed.feed_category_id }}">{{ ret.feed_category_name }}</a> 추천 사진 </h5>
                     <div class="feed_like_comment" style="margin-top:10px;margin-left:5px;margin-bottom:10px;">
-                        <span class="fa-stack " style="display:table-cell;padding-right:15px;">
-                            <i class="fa  fa-circle-thin fa-stack-2x" style="color:#777777;top:0;" > </i>
-                            <i class="fa   fa-thumbs-o-up fa-stack-1x" style="color:#777777;top:0;" > </i>
+                        <span class="fa-stack " style="display:table-cell;padding-right:15px;" >
+                            <i class="fa  fa-circle-thin fa-stack-2x" style="{% if ret.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}top:0;" id="like-button-icon-circle-{{ ret.feed.id }}"> </i>
+                            <i class="fa   fa-thumbs-o-up fa-stack-1x" style="{% if ret.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}top:0;" id="like-button-icon-thumb-{{ ret.feed.id }}"> </i>
                         </span>
-                        <h5 style="vertical-align:middle;display:table-cell;padding-bottom:0px;padding-left:4px;padding-right:8px;"> 0 좋아요</h5>
+                        <h5 style="display:table-cell;padding-bottom:0px;padding-left:4px;padding-right:8px;vertical-align:middle;" ><a onclick="likePost({{ ret.feed.id }});" style="{% if ret.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}" id="like-button-{{ ret.feed.id }}"> {{ ret.number_of_like }} 좋아요</a></h5>
                         <span class="fa-stack " style="display:table-cell;padding-right:15px;">
                             <i class="fa  fa-circle-thin fa-stack-2x" style="color:#777777;top:0;" > </i>
                             <i class="fa   fa-comment fa-stack-1x" style="color:#777777;top:0;" > </i>
@@ -332,13 +360,34 @@ hr.photos {
             </div>
         </form>
         {% endif %}
-        <div id="comment-container">
-        {% for comment in ret.all_comments %}
-            {{ comment.body }} | {{ comment.created_at }}
-            <br>
-        {% endfor %}
-        </div>
+                    </div>
+        {% if ret.all_comments | length != 0 %}
+        <div class="main-comment-container">
+            {% for comment in ret.all_comments %}
+            <div class="main-comment-item">
+                <div class="main-comment-profile">
+                    <div style="background-color:#dddddd; border:1px solid #dddddd;height:34px;width:34px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;"></div>
+                </div>
+                <div class="main-comment-body-top">
+                    <h5 style="padding:0px;">
+                        {% if comment.user.level >= 2 %}
+                        <a href="/company_portfolio/{{ comment.user.id }}" style="color:#72AFAD;">
+                        {% elif comment.user.level == 1 %}
+                        <a href="/user_portfolio/{{ comment.user.id }}" style="color:#72AFAD;">
+                        {% endif %}
+                            {{ comment.user.username }}
+                        </a> 
+                        {{ comment.comment.body}}
+                    </h5>
+                </div>
+                <div class="main-comment-body-bottom">
+                    <h5 style="padding:0px;">{{ comment.comment.created_at }}</h5>
+                </div>
             </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         </div>
     </div>
     <div id="image-container">
@@ -434,6 +483,38 @@ $('#uploadImageContainer').change(function() {
     readURL(this);
 });
 
+</script>
+<script type="text/javascript">
+function likePost(feed_id) {
+    var data = {
+    "user_id": {{ session['user_id'] }},
+    "feed_id": feed_id
+    };
+    $.ajax({
+        url: '/like_post',
+        data: data,
+        type: 'POST',
+        success: function(response) {
+            var jsonData = JSON.parse(response);
+            if ( jsonData["is_liked"] ) {
+                $('#like-button-'+feed_id).css('color','#777777');
+                $('#like-button-'+feed_id).css('font-weight','400');
+                $('#like-button-'+feed_id).text(jsonData['number_of_like']+' 좋아요');
+                $('#like-button-icon-circle-'+feed_id).css('color','#777777');
+                $('#like-button-icon-thumb-'+feed_id).css('color','#777777');
+            } else {
+                $('#like-button-'+feed_id).css('color','#3B5998');
+                $('#like-button-'+feed_id).css('font-weight','600');
+                $('#like-button-'+feed_id).text(jsonData['number_of_like']+' 좋아요');
+                $('#like-button-icon-circle-'+feed_id).css('color','#3B5998');
+                $('#like-button-icon-thumb-'+feed_id).css('color','#3B5998');
+            }
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+}
 </script>
 </body>
 </html>

@@ -117,13 +117,13 @@ card_header {
                         <div class="pull-right ">
                             {% if feed_category_id %}
                             <div class="change-view pull-right">
-                                <a href="/photos/{{ feed_category_id }}/grid" title="Grid" class=""> <i class="fa fa-th-large"></i> </a> 
+                                <a href="/photos/{{ feed_category_id }}/grid" title="Grid" class=""> <i class="fa fa-th"></i> </a> 
                                 <a href="/photos/{{ feed_category_id }}" title="List" class=""><i class="fa fa-th-list"></i></a>
                             </div>
                             {% endif %}
                             {% if not feed_category_id %}
                             <div class="change-view pull-right">
-                                <a href="/photos/grid" title="Grid" class=""> <i class="fa fa-th-large"></i> </a> 
+                                <a href="/photos/grid" title="Grid" class=""> <i class="fa fa-th"></i> </a> 
                                 <a href="/photos" title="List" class=""><i class="fa fa-th-list"></i></a>
                             </div>
                             {% endif %}
@@ -137,7 +137,13 @@ card_header {
                             <div class="col-lg-4 col-md-4 col-sm-12" style="padding:1px 1px 1px 1px;">
                                 <div class="card_container"> 
                                     <div class="card_header">
-                                    <a href="/company_feed_detail/{{ feed.feed.id }}">
+                                        <script type="text/javascript">
+var previous_url = '?previous_url='+window.location.href;
+openFeed = function(feed_id) {
+    location.href="/company_feed_detail/"+feed_id+previous_url;
+}
+                                        </script>
+                                        <a href="javascript:openFeed({{ feed.feed.id }});">
                                         <div class="bg" id="photos_background_image" style="background: url({{ '/static/'+feed.image_path }});
                                             background-repeat: no-repeat;
                                             background-size: cover;
@@ -146,7 +152,7 @@ card_header {
                                         </div>
                                     </a>
                                     <div id="photos_body">
-                                        <a href="/company_feed_detail/{{ feed.feed.id }}">
+                                        <a href="javascript:openFeed({{ feed.feed.id }});">
                                             <h4 style="padding: 3px 0px 2px 10px;">{{ feed.feed.title }}</h4>
                                         </a>
                                         <div style="display:table-cell;vertical-align:middle;padding-left:10px;">
@@ -182,5 +188,37 @@ $(window).scroll(function() {
         });
     }
 });
+</script>
+<script type="text/javascript">
+function likePost(feed_id) {
+    var data = {
+    "user_id": {{ session['user_id'] }},
+    "feed_id": feed_id
+    };
+    $.ajax({
+        url: '/like_post',
+        data: data,
+        type: 'POST',
+        success: function(response) {
+            var jsonData = JSON.parse(response);
+            if ( jsonData["is_liked"] ) {
+                $('#like-button-'+feed_id).css('color','#777777');
+                $('#like-button-'+feed_id).css('font-weight','400');
+                $('#like-button-'+feed_id).text(jsonData['number_of_like']+' 좋아요');
+                $('#like-button-icon-circle-'+feed_id).css('color','#777777');
+                $('#like-button-icon-thumb-'+feed_id).css('color','#777777');
+            } else {
+                $('#like-button-'+feed_id).css('color','#3B5998');
+                $('#like-button-'+feed_id).css('font-weight','600');
+                $('#like-button-'+feed_id).text(jsonData['number_of_like']+' 좋아요');
+                $('#like-button-icon-circle-'+feed_id).css('color','#3B5998');
+                $('#like-button-icon-thumb-'+feed_id).css('color','#3B5998');
+            }
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+}
 </script>
 {% endblock %}

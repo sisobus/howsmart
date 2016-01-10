@@ -17,7 +17,7 @@ class SignupForm(Form):
     def validate(self):
         if not Form.validate(self):
             return False
-        if self.password != self.password_check:
+        if self.password.data != self.password_check.data:
             self.password_check.errors.append('password is not same')
             return False
 
@@ -32,21 +32,31 @@ class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.CheckboxInput()
 
+class CompanySearchForm(Form):
+    company_si = SelectField('search_company_si', choices=[])
+    company_gu = SelectField('search_company_gu', choices=[])
+    company_dong = SelectField('search_company_dong', choices=[])
+
+    def __init__(self, *args, **kargs):
+        Form.__init__(self, *args, **kargs)
+
+
 class CompanySignupForm(Form):
     username    = TextField('username', [validators.Required('please enter your company name')])
     email       = TextField('email', [validators.Required('please enter your company email'), validators.Email('please enter your company email')])
     password    = PasswordField('password', [validators.Required('please enter your password')])
     password_check = PasswordField('password_check', [validators.Required('please enter your password more')])
     introduction = TextAreaField('introduction', [validators.Required('please enter your company introduction')])
+    d = utils.get_address_list()
+    company_si  = SelectField('company_si', choices=d['si'])
+    company_gu  = SelectField('company_gu', choices=d['gu'])
+    company_dong  = SelectField('company_dong', choices=d['dong'])
     address     = TextField('address', [validators.Required('please enter your company address')])
     tel         = TextField('tel', [validators.Required('please enter your company tel')])
     website     = TextField('website', [validators.Required('please enter your company website address')])
     filename    = FileField('filename', [validators.Required('please enter this feed image file')])
     #pros_category = RadioField('pros_category', choices=[('value_1','option1'),('value_2','option2'),('value_3','option3')])
     pros_category = MultiCheckboxField('pros_category', choices=[('1','주거 인테리어'),('2','상업 인테리어'),('4','인테리어 디자이너'),('3','가구 회사')])
-    company_si  = SelectField('company_si', choices=[('전체','전체')])
-    company_gu  = SelectField('company_gu', choices=[('전체','전체')])
-    company_dong  = SelectField('company_dong', choices=[('전체','전체')])
 #     shop_category = SelectField('shop_category', choices=utils.get_shop_category_list())
 
     def __init__(self, *args, **kargs):
@@ -55,8 +65,8 @@ class CompanySignupForm(Form):
     def validate(self):
         if not Form.validate(self):
             return False
-        if self.password != self.password_check:
-            self.password_check.errors.append('password is not same')
+        if self.password.data != self.password_check.data:
+            self.password_check.errors.append('password(%s), password_check(%s) is not same'%(self.password.data,self.password_check.data))
             return False
 
         user = User.query.filter_by(email = self.email.data.lower()).first()
@@ -86,16 +96,16 @@ class SigninForm(Form):
 
 def get_feed_category_list():
     l = [
-        ('1','주방'),
-        ('2','화장실'),
-        ('3','방'),
-        ('4','거실'),
-        ('5','현관'),
-        ('6','주거공간_기타'),
-        ('7','카페'),
-        ('8','식당'),
-        ('9','사무실'),
-        ('10','상업공간_기타'),
+        ('1','거실'),
+        ('2','주방'),
+        ('3','침실'),
+        ('4','서재'),
+        ('5','유아/주니어방'),
+        ('6','욕실'),
+        ('7','현관'),
+        ('8','기타'),
+        ('9','상업공간'),
+        ('10','사무공간'),
     ]
     return l
 
@@ -188,3 +198,18 @@ class CreateProductForm(Form):
         if not Form.validate(self):
             return False
         return True
+
+class FindProsForm(Form):
+    d = utils.get_address_list()
+    company_si  = SelectField('company_si', choices=d['si'])
+    company_gu  = SelectField('company_gu', choices=d['gu'])
+    company_dong  = SelectField('company_dong', choices=d['dong'])
+    company_name = TextField('company_name', [validators.Required('please enter company_name')])
+    def __init__(self, *args, **kargs):
+        Form.__init__(self, *args, **kargs)
+
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        return True
+

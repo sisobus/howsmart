@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<a>
+<h5 id="like-button">like</h5>
+</a>
+<script type="text/javascript">
+$(function() {
+    $('#like-button').click(function() {
+        var data = {
+        "user_id": {{ session['user_id'] }},
+        "feed_id": 297
+        };
+        $.ajax({
+            url: '/like_post',
+            data: data,
+            type: 'POST',
+            success: function(response) {
+                var jsonData = JSON.parse(response);
+                console.log(jsonData);
+                if ( jsonData["is_liked"] ) {
+                    $('#like-button').css('color','#777777');
+                } else {
+                    $('#like-button').css('color','#3B5998');
+                }
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

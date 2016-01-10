@@ -170,8 +170,14 @@ card_header {
                         <div class="col-lg-6 col-md-6 col-sm-12">
                     <div class="card_container ">
                         <card_header>
-                            <div class="bio">
-                                <a href="/company_feed_detail/{{ feed.feed.id }}">
+                        <div class="bio">
+                            <script type="text/javascript">
+var previous_url = '?previous_url='+window.location.href;
+openFeed = function(feed_id) {
+    location.href="/company_feed_detail/"+feed_id+previous_url;
+}
+                            </script>
+                            <a href="javascript:openFeed({{ feed.feed.id }});">
                                     <div class="bg" style="background: url({{ '/static/'+feed.image_path }});
                                             background-repeat: no-repeat;
                                             background-size: cover;

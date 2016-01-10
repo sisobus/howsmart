@@ -312,7 +312,7 @@ function modal_initLocalSearch() {
 
         $.when(
              $.ajax({
-                 url: "//hausmart.co.kr/json/address"
+                 url: "//1.234.80.248/json/address"
              })
         ).done(function (data) {
             data = data.results;
@@ -362,11 +362,9 @@ function modal_initLocalSearch() {
 $(document).ready(function () {
         modal_initLocalSearch();
         $(".item-title").click(function () {
-            alert('a');
             $(".type-select").toggleClass("on");
         });
         $("h5").click(function () {
-            alert('b');
             var idx = $("h5").index($(this));
 
             $(".type-select").removeClass("on");

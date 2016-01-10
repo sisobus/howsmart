@@ -2,6 +2,7 @@
 __author__ = 'sisobus'
 import commands
 import os
+import json
 
 ALLOWED_EXTENSIONS = set(['txt','pdf','png','jpg','JPG','jpeg','JPEG','gif','GIF','zip'])
 
@@ -242,4 +243,25 @@ def convert_price_to_won(price):
         next_i = i+1
         if next_i < len(reverse_str_price) and next_i % 3 == 0:
             ret =  ','+ret
+    return ret
+
+#
+# return {  'si': [(),(),...],
+#           'gu': [(),(),...],
+#           'dong': [(),(),...] }
+#
+def get_address_list():
+    with open('/home/howsmart/howsmart/app/address.json','r') as fp:
+        r = json.loads(fp.read())
+    ret = {
+            'si': [('전체','전체')],
+            'gu': [('전체','전체')],
+            'dong': [('전체','전체')]
+            }
+    for si in r:
+        ret['si'].append((si['name'],si['name']))
+        for gu in si['items']:
+            ret['gu'].append((gu['name'],gu['name']))
+            for dong in gu['items']:
+                ret['dong'].append((dong['name'],dong['name']))
     return ret

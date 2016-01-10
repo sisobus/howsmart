@@ -76,6 +76,15 @@ class UserLike(db.Model):
     comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+class User_like_feed(db.Model):
+    __tablename__ = 'user_like_feed'
+    user_id = db.Column(db.Integer, primary_key=True)
+    feed_id = db.Column(db.Integer, primary_key=True)
+
+    def __init__(self, user_id, feed_id):
+        self.user_id = user_id
+        self.feed_id = feed_id
+
 class Company(db.Model):
     __tablename__ = 'company'
     id = db.Column(db.Integer, primary_key=True)
@@ -185,3 +194,12 @@ class Product_has_image(db.Model):
     def __init__(self, product_id, image_id):
         self.product_id = product_id
         self.image_id = image_id
+
+class Follow(db.Model):
+    __tablename__ = 'follow'
+    from_user_id = db.Column(db.Integer, primary_key=True)
+    to_user_id = db.Column(db.Integer, primary_key=True)
+
+    def __init__(self, from_user_id, to_user_id):
+        self.from_user_id = from_user_id
+        self.to_user_id = to_user_id
