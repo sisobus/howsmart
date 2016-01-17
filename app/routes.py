@@ -13,7 +13,7 @@ app.config['SQLALCHEMY_DATABASE_URI']   = HOWSMART_DATABASE_URI
 app.config['SECRET_KEY']                = HOWSMART_SECRET_KEY
 app.config['UPLOAD_FOLDER']             = UPLOAD_FOLDER
 
-from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed, Pros_category, Company_has_pros_category, Feed_category, Product, Product_has_image, Shop_category, User_like_feed, Follow
+from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed, Pros_category, Company_has_pros_category, Feed_category, Product, Product_has_image, Shop_category, User_like_feed, Follow, Status
 
 db.init_app(app)
 
@@ -766,7 +766,7 @@ def company_portfolio(user_id):
     number_of_from_follow = Follow.query.filter_by(from_user_id=user.id).count()
     is_user_follow = False
     if 'user_id' in session:
-        if Follow.query.filter_by(from_user_id=user.id).filter_by(to_user_id=session['user_id']).first():
+        if Follow.query.filter_by(to_user_id=user.id).filter_by(from_user_id=session['user_id']).first():
             is_user_follow = True
 
     ret = {
@@ -778,7 +778,7 @@ def company_portfolio(user_id):
         'number_of_projects': number_of_all_projects,
         'number_of_products': number_of_all_products,
         'number_of_follow': number_of_follow,
-        'number_of_from_follow': number_of_follow,
+        'number_of_from_follow': number_of_from_follow,
         'is_user_follow': is_user_follow
     }
 

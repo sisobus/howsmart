@@ -55,6 +55,7 @@ class Comment(db.Model):
     created_at = db.Column(db.DateTime)
     feed_id = db.Column(db.Integer, db.ForeignKey('feed.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
 
     def __init__(self, body, created_at):
         self.body = body

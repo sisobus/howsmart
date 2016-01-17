@@ -168,7 +168,7 @@ card_header {
         </h5>
             <div  id="feed_container" style="margin-top:10px;">
 
-                {% if session and session['is_company'] %}
+                {% if session and session['is_company'] and session['user_id'] == ret.user.id %}
                 <div class="card_container ">
                     <card_header>
                         <div class="bio">
@@ -231,7 +231,7 @@ card_header {
         </h5>
             <div  id="feed_container" style="margin-top:10px;">
 
-                {% if session and session['is_company'] %}
+                {% if session and session['is_company'] and session['user_id'] == ret.user.id %}
                 <div class="card_container ">
                     <card_header>
                         <div class="bio">

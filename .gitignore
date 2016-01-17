@@ -6,3 +6,5 @@ app/db/*
 app/static/*
 app/files/*
 app/config.py
+admin/static/*
+admin/config.py

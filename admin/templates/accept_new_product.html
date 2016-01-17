@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- /section:settings.box -->
+<div class="page-header">
+    <h1>
+        스토어 승인
+        <small>
+            <i class="ace-icon fa fa-angle-double-right"></i>
+            신규 요청 관리
+        </small>
+    </h1>
+</div><!-- /.page-header -->
+
+<div class="row">
+    <div class="col-xs-12">
+        <!-- PAGE CONTENT BEGINS -->
+        <div class="row">
+            <div class="col-xs-12">
+                <table id="simple-table" class="table  table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th class="center">
+                                <label class="pos-rel">
+                                    <input type="checkbox" class="ace" />
+                                    <span class="lbl"></span>
+                                </label>
+                            </th>
+                            <th class="detail-col">Details</th>
+                            <th>id</th>
+                            <th>username</th>
+                            <th>이름</th>
+                            <th class="hidden-480">소개</th>
+                            <th>가격</th>
+                            <th>색</th>
+                            <th>크기</th>
+                            <th>모델명</th>
+                            <th>재질</th>
+                            <th>카테고리</th>
+                            <th>
+                                <i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>
+                                created_at
+                            </th>
+                            <th class="hidden-480">Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td class="center">
+                            <label class="pos-rel">
+                                <input type="checkbox" class="ace" />
+                                <span class="lbl"></span>
+                            </label>
+                        </td>
+
+                        <td class="center">
+                            <div class="action-buttons">
+                                <a href="#" class="green bigger-140 show-details-btn" title="Show Details">
+                                    <i class="ace-icon fa fa-angle-double-down"></i>
+                                    <span class="sr-only">Details</span>
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            {{ product.product.id }}
+                        </td>
+
+                        <td>
+                            <a href="#">{{ product.user.username }}</a>
+                        </td>
+                        <td>{{ product.product.product_name }}</td>
+                        <td class="hidden-480">{{ product.product.product_desc }}</td>
+                        <td>{{ product.product_real_price }}</td>
+                        <td>{{ product.product.product_color }}</td>
+                        <td>{{ product.product.product_size }}</td>
+                        <td>{{ product.product.product_model_name }}</td>
+                        <td>{{ product.product.product_meterial }}</td>
+                        <td>{{ product.category_name }}</td>
+                        <td>{{ product.product.created_at }}</td>
+
+                        <td class="hidden-480">
+                            <span class="label label-sm label-success">{{ product.status_name }}</span>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div><!-- /.span -->
+        </div><!-- /.row -->
+    </div>
+</div>
+<script type="text/javascript">
+            jQuery(function($) {
+                /***************/
+                $('.show-details-btn').on('click', function(e) {
+                    e.preventDefault();
+                    $(this).closest('tr').next().toggleClass('open');
+                    $(this).find(ace.vars['.icon']).toggleClass('fa-angle-double-down').toggleClass('fa-angle-double-up');
+                });
+                /***************/
+                
+                
+                
+                
+                
+            
+            })
+$('#simple-table').Tabledit({
+    columns: {
+        identifier: [2,'id'],
+        editable: [[4,'product_name'],[5,'product_desc'],[6,'product_price'],[7,'product_color'],[8,'product_size'],[9,'product_model_name'],[10,'product_meterial'],[13,'status','{"1": "accept", "2": "return"}']]
+    },
+url: "{{url_for('accept_new_product_edit')}}"
+});
+        </script>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- /section:settings.box -->
+<div class="page-header">
+    <h1>
+        프로젝트 승인
+        <small>
+            <i class="ace-icon fa fa-angle-double-right"></i>
+            승인된 프로젝트 관리
+        </small>
+    </h1>
+</div><!-- /.page-header -->
+
+<div class="row">
+    <div class="col-xs-12">
+        <!-- PAGE CONTENT BEGINS -->
+        <div class="row">
+            <div class="col-xs-12">
+                <table id="simple-table" class="table  table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th class="center">
+                                <label class="pos-rel">
+                                    <input type="checkbox" class="ace" />
+                                    <span class="lbl"></span>
+                                </label>
+                            </th>
+                            <th class="detail-col">Details</th>
+                            <th>id</th>
+                            <th>프로젝트 이름</th>
+                            <th>작성자</th>
+                            <th class="hidden-480">설명</th>
+                            <th>저작권</th>
+
+                            <th>
+                                <i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>
+                                created_at
+                            </th>
+                            <th class="hidden-480">Status</th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for project in projects %}
+                    <tr>
+                        <td class="center">
+                            <label class="pos-rel">
+                                <input type="checkbox" class="ace" />
+                                <span class="lbl"></span>
+                            </label>
+                        </td>
+
+                        <td class="center">
+                            <div class="action-buttons">
+                                <a href="#" class="green bigger-140 show-details-btn" title="Show Details">
+                                    <i class="ace-icon fa fa-angle-double-down"></i>
+                                    <span class="sr-only">Details</span>
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            {{ project.project.id }}
+                        </td>
+
+                        <td>
+                            <a href="#">{{ project.project.project_name }}</a>
+                        </td>
+                        <td>{{ project.user.username }}</td>
+                        <td class="hidden-480">{{ project.project.project_body }}</td>
+                        <td>{{ project.project.project_credit }}</td>
+                        <td>{{ project.project.created_at }}</td>
+
+                        <td class="hidden-480">
+                            <span class="label label-sm label-{% if project.project.status_id == 1 %}success{% elif project.project.status_id == 2 %}warning{% endif %}">{{ project.status_name }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div><!-- /.span -->
+        </div><!-- /.row -->
+    </div>
+</div>
+<script type="text/javascript">
+    jQuery(function($) {
+        /***************/
+        $('.show-details-btn').on('click', function(e) {
+            e.preventDefault();
+            $(this).closest('tr').next().toggleClass('open');
+            $(this).find(ace.vars['.icon']).toggleClass('fa-angle-double-down').toggleClass('fa-angle-double-up');
+        });
+        /***************/
+    });
+$('#simple-table').Tabledit({
+    columns: {
+        identifier: [2,'id'],
+        editable: [[3,'title'],[5,'body'],[6,'credit'],[8,'status','{"1": "accept", "2": "return"}']]
+    },
+url: "{{url_for('accepted_project_edit')}}"
+});
+
+</script>
+{% endblock %}
