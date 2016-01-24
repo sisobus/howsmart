@@ -110,7 +110,7 @@
             transform: translate(-50%,-50%);
         }
         #mapper{
-            border:5px solid #EEE;
+            border:2px solid #dddddd;
             width:100px;
             height:100px;
             min-width:100px;
@@ -121,33 +121,30 @@
             display:none;
         }
         #form_panel{
+            border: 1px solid #dddddd;
             float: left;
-            background:#eee;
-            border:5px solid #FFF;
-            outline:1px solid #eee;
+            background:#f5f5f5;
             left: 100px;
             padding: 5px;
             position: absolute;
             top: 40px;
             width: 310px;
+            height: auto;
             display:none;
             z-index:2000;
         }
 
         #form_panel input,textarea{
-            padding:3px;
+            width: 300px;
+            margin: 0px;
+            margin-bottom: 2px;
+            padding:2px;
             background:#FFF;
-            border:1px solid #CFCFCF;
+            border:1px solid #dddddd;
             color:#000;
-        }
-        #form_panel .label{
-            float:left;
-            width:80px;
-            padding:5px;
         }
 
         #form_panel .field{
-            float:left;
             width:200px;
             padding:5px;
         }
@@ -214,7 +211,13 @@
     <div id="image-container">
         <div id="image-real-container">
             <img id="uploadImagePreview" src="{{ url_for('static',filename=ret.image_path) }}" class="img-responsive parallaximg sliderImg"/>
-            <div id='mapper' ><img src='save.png' onclick='openDialog()' /></div>
+            <div id='mapper' ><a><button class="btn btn-primary" onclick='openDialog()' />태그달기</button></a></div>
+            <div id='form_panel'>
+                <input type='text'  placeholder='title' id="tag-name">
+                <input type='text' placeholder='url' id="tag-link" >
+                <button class='btn btn-primary' onclick='addTag()' >저장하기</button>
+                <button class='btn btn-danger' onclick='closeDialog()' >닫기</button>
+            </div>
         </div>
     </div>
 </div>
@@ -258,7 +261,70 @@
 <script src="{{  url_for('static',filename='js/home.js') }}"></script>
 <!-- include custom script for site  -->
 <script>
+var clicked_x_ratio;
+var clicked_y_ratio;
+var tag_id = 1;
+function createTag() {
+    var image_width = $('#uploadImagePreview').width();
+    var image_height = $('#uploadImagePreview').height();
+    var image_left = $('#uploadImagePreview').offset().left;
+    var image_top = $('#uploadImagePreview').offset().top;
+    console.log('?');
+    {% for tag in ret.tags %}
+        console.log({{tag.id}});
+        $('body').append($('<div/>', {
+            id: 'tagging-container-'+{{tag.id}},
+            style: 'position:absolute;display:block;z-index:1000;'
+        }));
+        $('#tagging-container-'+{{tag.id}}).append($('<i/>', {
+            class: 'fa fa-tag fa-2x',
+            style: 'color:#92CFCD'
+        }));
+        $('#tagging-container-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}}))
+            .css('top',image_top+image_height*({{tag.tag_y}}))
+            .show()
+
+        $('body').append($('<div/>', {
+            id: 'tagging-container-information-'+{{tag.id}},
+            style: 'position:absolute;display:block;z-index:1000;'
+        }));
+        $('#tagging-container-information-'+{{tag.id}}).append($('<div/>', {
+            style: 'background:#f5f5f5;'
+        }));
+        $('#tagging-container-information-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}})+35)
+            .css('top',image_top+image_height*({{tag.tag_y}}))
+            .css('background','#f5f5f5')
+            .css('border','1px solid #dddddd')
+            .css('padding','2px 2px 2px 2px')
+            .text('{{tag.tag_name}}')
+            .hide()
+        $('#tagging-container-'+{{tag.id}}).mouseover(function() {
+                $('#tagging-container-information-'+{{tag.id}}).fadeIn('slow');
+            }).mouseout(function() {
+                $('#tagging-container-information-'+{{tag.id}}).hide();
+            });
+    {% endfor %}
+}
+function rePositionTag() {
+    var image_width = $('#uploadImagePreview').width();
+    var image_height = $('#uploadImagePreview').height();
+    var image_left = $('#uploadImagePreview').offset().left;
+    var image_top = $('#uploadImagePreview').offset().top;
+    {% for tag in ret.tags %}
+        $('#tagging-conteiner-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}}))
+            .css('top',image_top+image_height*({{tag.tag_y}}))
+            .show()
+        $('#tagging-container-information-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}})+35)
+            .css('top',image_top+image_height*({{tag.tag_y}}))
+            .hide()
+    {% endfor %}
+}
+$(window).resize(function() {
+        rePositionTag();
+})
+
 $(document).ready(function() {
+createTag();
     $("#uploadImagePreview").click(function(e) {
         var image_left = $(this).offset().left;
         var click_left = e.pageX;
@@ -274,16 +340,117 @@ $(document).ready(function() {
         var mapper_height = $('#mapper').height();
         var imagemap_height = $('#uploadImagePreview').height();
 
-        var tag_x_ratio = (left_distance / imagemap_width) * 100; 
-        var tag_y_ratio = (top_distance / imagemap_height) * 100;
-        console.log(left_distance);
-        console.log(top_distance);
-        console.log(imagemap_width);
-        console.log(imagemap_height);
-        console.log(tag_x_ratio);
-        console.log(tag_y_ratio);
+        var tag_x_ratio = (left_distance / imagemap_width) ; 
+        var tag_y_ratio = (top_distance / imagemap_height);
+        clicked_x_ratio = tag_x_ratio;
+        clicked_y_ratio = tag_y_ratio;
+        if((top_distance + mapper_height > imagemap_height) && (left_distance + mapper_width > imagemap_width)){
+            $('#mapper').css('left',imagemap_width*(tag_x_ratio)+image_left-mapper_width)
+                .css('top',imagemap_height*(tag_y_ratio)-image_top)
+                .css('width',"100px")
+                .css('height','100px')
+                .show();
+        } else if(left_distance + mapper_width > imagemap_width){
+            $('#mapper').css('left',imagemap_width*(tag_x_ratio)+image_left-mapper_width)
+                .css('top',imagemap_height*(tag_y_ratio)+image_top)
+                .css('width',"100px")
+                .css('height','100px')
+                .show();
+        } else if(top_distance + mapper_height > imagemap_height){
+            $('#mapper').css('left',imagemap_width*(tag_x_ratio)+image_left)
+                .css('top',imagemap_height*(tag_y_ratio)-image_top)
+                .css('width',"100px")
+                .css('height','100px')
+                .show();
+        }  else{
+            $('#mapper').css('left',imagemap_width*(tag_x_ratio)+image_left)
+                .css('top',imagemap_height*(tag_y_ratio)+image_top)
+                .css('width',"100px")
+                .css('height','100px')
+                .show();
+        }
+        $("#mapper").resizable({ containment: "parent" });
     });
 });
+var openDialog = function() {
+    var imagemap_width = $('#uploadImagePreview').width();
+    var imagemap_height = $('#uploadImagePreview').height();
+    var form_panel_width = $('#form_panel').width();
+    var form_panel_height = $('#form_panel').height();
+    $("#form_panel").css('left',imagemap_width/2-form_panel_width/2)
+                    .css('top',imagemap_height/2-form_panel_height/2)
+
+    $("#form_panel").fadeIn('slow');
+};
+var closeDialog = function() {
+    $('#form_panel').fadeOut('slow');
+};
+var addTag = function() {
+    var data = {
+        "tag_x": clicked_x_ratio,
+        "tag_y": clicked_y_ratio,
+        "feed_id": {{ ret.feed.id }},
+        "tag_name": $('#tag-name').val(),
+        "tag_link": $('#tag-link').val()
+    };
+    $.ajax({
+        url: '/add_tag',
+        data: data,
+        type: 'POST',
+        success: function(response) {
+            var jsonData = JSON.parse(response);
+            console.log(jsonData);
+            $('#tag-name').css('border','1px solid #dddddd')
+                            .val('')
+            $('#tag-link').css('border','1px solid #dddddd')
+                            .val('')
+            $('#form_panel').fadeOut('slow');
+            $('#mapper').fadeOut('slow');
+            var image_width = $('#uploadImagePreview').width();
+            var image_height = $('#uploadImagePreview').height();
+            var image_left = $('#uploadImagePreview').offset().left;
+            var image_top = $('#uploadImagePreview').offset().top;
+            $('body').append($('<div/>', {
+                id: 'new-tag-container-'+tag_id ,
+                style: 'position:absolute;display:block;z-index:1000;'
+            }));
+            $('#new-tag-container-'+tag_id).append($('<i/>', {
+                class: 'fa fa-tag fa-2x',
+                style: 'color:#92CFCD;'
+            }));
+            $('#new-tag-container-'+tag_id).css('left',image_left+image_width*(clicked_x_ratio))
+                                            .css('top',image_top+image_height*(clicked_y_ratio))
+                                            .show()
+            $('body').append($('<div/>', {
+                id: 'new-tag-container-information-'+tag_id,
+                style: 'position:absolute;display:block;z-index:1000;'
+            }));
+            $('#new-tag-container-information-'+tag_id).append($('<div/>', {
+                style: 'background:#f5f5f5;'
+            }));
+            $('#new-tag-container-information-'+tag_id).css('left',image_left+image_width*(clicked_x_ratio)+35)
+                .css('top',image_top+image_height*(clicked_y_ratio))
+                .css('background','#f5f5f5')
+                .css('border','1px solid #dddddd')
+                .css('padding','2px 2px 2px 2px')
+                .text(data['tag_name'])
+                .hide()
+        
+            $('#new-tag-container-'+tag_id).mouseover(function() {
+                    $('#new-tag-container-information-'+tag_id).fadeIn('slow');
+                }).mouseout(function() {
+                    $('#new-tag-container-information-'+tag_id).hide();
+                });
+            tag_id = tag_id + 1;
+
+        },
+        error: function(error) {
+            console.log(error);
+            $('#tag-name').css('border','2px solid #FF0000')
+            $('#tag-link').css('border','2px solid #FF0000')
+        }
+    });
+};
 function readURL(input){
     if ( input.files && input.files[0] ) {
         var reader = new FileReader();

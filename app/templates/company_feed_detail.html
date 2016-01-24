@@ -7,62 +7,83 @@
     <link rel="stylesheet" href="{{  url_for('static',filename='bootstrap/css/bootstrap.css') }}" />
     <link rel="stylesheet" href="{{  url_for('static',filename='css/style_feed_detail.css') }}" />
     <link rel="stylesheet" href="{{  url_for('static',filename='css/style-add-20151122.css') }}" />
+    <link rel="stylesheet" href="{{  url_for('static',filename='css/fa-shake.css') }}" />
+    <style>
+    </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
 </script>
     <script>
         paceOptions = {
             elements: true
         };
-        function go() {
+        function createTag() {
             var image_width = $('#uploadImagePreview').width();
             var image_height = $('#uploadImagePreview').height();
             var image_left = $('#uploadImagePreview').offset().left;
             var image_top = $('#uploadImagePreview').offset().top;
-            var x = 0.6;
-            var y = 0.37;
-            {% if ret.feed.id == 288 %}
-                x = 0.6;
-                y = 0.25;
-            {% endif %}
-            {% if ret.feed.id == 289 %}
-                x = 0.3;
-                y = 0.3;
-            {% endif %}
-            {% if ret.feed.id == 290 %}
-                x = 0.25;
-                y = 0.3;
-            {% endif %}
-            {% if ret.feed.id == 253 %}
-                x = 0.9;
-                y = 0.45;
-            {% endif %}
-            $('#tagging-container').css("left",image_left+image_width*(x)).css("top",image_height*(y)+image_top).show();
-            {% if ret.feed.id == 253 %}
-                x = 0.28; y = 0.7;
-            $('#tagging-container1').css("left",image_left+image_width*(x)).css("top",image_height*(y)+image_top).show();
-            {% endif %}
-            {% if ret.feed.id == 252 %}
-                x = 0.7;y = 0.7;
-            $('#tagging-container').css("left",image_left+image_width*(x)).css("top",image_height*(y)+image_top).show();
-
-                x = 0.9;y = 0.8;
-            $('#tagging-container1').css("left",image_left+image_width*(x)).css("top",image_height*(y)+image_top).show();
-
-                x = 0.36;y = 0.6;
-            $('#tagging-container2').css("left",image_left+image_width*(x)).css("top",image_height*(y)+image_top).show();
-
-                x = 0.3;y = 0.7;
-            $('#tagging-container3').css("left",image_left+image_width*(x)).css("top",image_height*(y)+image_top).show();
-
-                x = 0.9;y = 0.8;
-            $('#tagging-container4').css("left",image_left+image_width*(x)).css("top",image_height*(y)+image_top).show();
-            {% endif %}
+            {% for tag in ret.tags %}
+                console.log({{tag.id}});
+                $('body').append($('<div/>', {
+                    id: 'tagging-container-'+{{tag.id}},
+                    style: 'position:absolute;display:block;z-index:1000;cursor:pointer;'
+                }));
+                $('#tagging-container-'+{{tag.id}}).append($('<i/>', {
+                    class: 'fa fa-tag fa-2x',
+                    style: 'color:#92CFCD'
+                }));
+                $('#tagging-container-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}}))
+                    .css('top',image_top+image_height*({{tag.tag_y}}))
+                    .show()
+                $('body').append($('<div/>', {
+                    id: 'tagging-container-information-'+{{tag.id}},
+                    style: 'position:absolute;display:block;z-index:1000;'
+                }));
+                $('#tagging-container-information-'+{{tag.id}}).append($('<div/>', {
+                    style: 'background:#f5f5f5;'
+                }));
+                $('#tagging-container-information-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}})+35)
+                    .css('top',image_top+image_height*({{tag.tag_y}}))
+                    .css('background','#f5f5f5')
+                    .css('border','1px solid #dddddd')
+                    .css('padding','2px 2px 2px 2px')
+                    .text('{{tag.tag_name}}')
+                    .hide()
+                $('#tagging-container-'+{{tag.id}}).mouseover(function() {
+                        $('#tagging-container-information-'+{{tag.id}}).fadeIn('slow');
+                    }).mouseout(function() {
+                        $('#tagging-container-information-'+{{tag.id}}).hide();
+                    }).click(function() {
+                        var url = '{{tag.tag_link}}';
+                        if ( url.search('http://') == -1 || url.search('https://') == -1) 
+                            url = 'http://'+url;
+                        window.location.href = url;
+                    });
+            {% endfor %}
+        }
+        function rePositionTag() {
+            var image_width = $('#uploadImagePreview').width();
+            var image_height = $('#uploadImagePreview').height();
+            var image_left = $('#uploadImagePreview').offset().left;
+            var image_top = $('#uploadImagePreview').offset().top;
+            {% for tag in ret.tags %}
+                $('#tagging-container-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}}))
+                    .css('top',image_top+image_height*({{tag.tag_y}}))
+                    .show()
+                $('#tagging-container-information-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}})+35)
+                    .css('top',image_top+image_height*({{tag.tag_y}}))
+            {% endfor %}
+        }
+        function shakeAllTag() {
+            {% for tag in ret.tags %}
+                $('#tagging-container-'+{{tag.id}}).find('i').addClass('faa-shake').addClass('animated')
+            {% endfor %}
         }
         $(document).ready(function() {
-            go();
+                createTag();
+                shakeAllTag();
                 })
         $(window).resize(function() {
-            go();
+                rePositionTag();
         })
     </script>
     <style type="text/css">
@@ -294,7 +315,7 @@ hr.photos {
             <div id="content-form-body">
                 <div class="content-margin-container">
                     <div style="background-color:#dddddd; border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
-                    <h1 style="padding-bottom:0px;display:table-cell;padding-left:5px;"><a href="/company_portfolio/{{ ret.user.id }}" target="_blank">{{ ret.user.username }}</a></h1>
+                    <h1 style="padding-bottom:0px;display:table-cell;padding-left:5px;"><a href="/company_portfolio/{{ ret.user.id }}" target="_blank">{{ ret.user.username }} &nbsp;</a>{% if session and 'user_id' in session and session['user_id'] == ret.user.id %}<button class='btn btn-primary' id='edit-button'><a href="/project_edit/{{ret.feed.id}}" style="display:block;color:#FFFFFF;">수정하기</a></button>{% endif %}</h1>
             </div>
             <hr style="margin:0px 0px 0px 0px;">
                 <div class="content-margin-container">
@@ -393,35 +414,6 @@ hr.photos {
     <div id="image-container">
         <div id="image-real-container">
             <img id="uploadImagePreview" src="{{ url_for('static',filename=ret.image_path) }}" class="img-responsive "/>
-            {% if ret.feed.id == 287 or ret.feed.id == 288 or
-            ret.feed.id == 289 or ret.feed.id == 290 or ret.feed.id == 273 or 
-            ret.feed.id == 274  or ret.feed.id == 253 %}
-            <div id="tagging-container" style="left:1px;top:1px;">
-                <i class="fa fa-tag fa-2x" style="color:#92CFCD;"></i>
-            </div>
-            {% endif %}
-            {% if ret.feed.id == 253 %}
-            <div id="tagging-container1" style="left:1px;top:1px;display:block;position:absolute;z-index:1000;">
-                <i class="fa fa-tag fa-2x" style="color:#92CFCD;"></i>
-            </div>
-            {% endif %}
-            {% if ret.feed.id == 252 %}
-            <div id="tagging-container" style="left:1px;top:1px;display:block;position:absolute;z-index:1000;">
-                <i class="fa fa-tag fa-2x" style="color:#92CFCD;"></i>
-            </div>
-            <div id="tagging-container1" style="left:1px;top:1px;display:block;position:absolute;z-index:1000;">
-                <i class="fa fa-tag fa-2x" style="color:#92CFCD;"></i>
-            </div>
-            <div id="tagging-container2" style="left:1px;top:1px;display:block;position:absolute;z-index:1000;">
-                <i class="fa fa-tag fa-2x" style="color:#92CFCD;"></i>
-            </div>
-            <div id="tagging-container3" style="left:1px;top:1px;display:block;position:absolute;z-index:1000;">
-                <i class="fa fa-tag fa-2x" style="color:#92CFCD;"></i>
-            </div>
-            <div id="tagging-container4" style="left:1px;top:1px;display:block;position:absolute;z-index:1000;">
-                <i class="fa fa-tag fa-2x" style="color:#92CFCD;"></i>
-            </div>
-            {% endif %}
         </div>
     </div>
 </div>

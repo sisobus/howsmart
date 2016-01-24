@@ -21,7 +21,7 @@ import json
 from flask import render_template, flash, redirect, session, url_for, request, g, jsonify
 from flask import get_flashed_messages
 from flask.ext.login import LoginManager, UserMixin, current_user, login_user, logout_user
-from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm, MakeProjectForm, CreateProjectForm, ProjectEditForm, CreateProductForm, CompanySearchForm, FindProsForm
+from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm, MakeProjectForm, CreateProjectForm, ProjectEditForm, CreateProductForm, CompanySearchForm, FindProsForm, AddTagForm
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
@@ -431,12 +431,15 @@ def project_edit(feed_id):
         prev = feeds_id[idx-1]
     if idx != len(feeds_id)-1:
         next = feeds_id[idx+1]
+
+    tags = Tag.query.filter_by(feed_id=feed.id).all()
     ret = {
         'feed': feed,
         'prev': prev,
         'next': next,
         'image_path': image_path,
-        'project_id': project.id
+        'project_id': project.id,
+        'tags': tags
     }
     if request.method == 'POST':
         cur_feed = Feed.query.filter_by(id=feed_id).first()
@@ -634,6 +637,9 @@ def company_feed_detail(feed_id):
         next = feeds_id[idx+1]
     elif idx == len(feeds_id)-1:
         next = feeds_id[0]
+
+    tags = Tag.query.filter_by(feed_id=feed.id).all()
+
     ret = {
         'feed': feed,
         'project': project,
@@ -648,7 +654,8 @@ def company_feed_detail(feed_id):
         'other_projects': other_projects,
         'number_of_like': len(all_likes),
         'is_user_like': is_user_like,
-        'referrer': session['previous_url'] 
+        'referrer': session['previous_url'] ,
+        'tags': tags
     }
     if request.method == 'GET':
         return render_template('company_feed_detail.html',commentForm=commentForm,ret=ret)
@@ -783,6 +790,76 @@ def company_portfolio(user_id):
     }
 
     return render_template('company_portfolio.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
+                           ret=ret)
+@app.route('/company_portfolio_edit/<int:user_id>')
+def company_portfolio_edit(user_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    user = User.query.filter_by(id=user_id).first()
+    company = Company.query.filter_by(user_id=user.id).first()
+    t_projects = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
+    number_of_all_projects = len(t_projects)
+    projects = []
+    for project in t_projects:
+        if 'is_company' in session and session['is_company']:
+            if len(projects) >= 5:
+                break
+        else :
+            if len(projects) >= 6:
+                break
+        cur_image = Image.query.filter_by(id=project.image_id).first()
+        cur_image_path = utils.get_image_path(cur_image.image_path)
+        d = {
+            'project': project,
+            'image_path': cur_image_path
+        }
+        projects.append(d)
+
+    t_products = Product.query.filter_by(user_id=user.id).order_by(Product.created_at.desc()).all()
+    number_of_all_products = len(t_products)
+    products = []
+    for t_product in t_products:
+        if 'is_company' in session and session['is_company']:
+            if len(products) >= 5:
+                break
+        else:
+            if len(products) >= 6:
+                break
+        cur_image_id = Product_has_image.query.filter_by(product_id=t_product.id).first().image_id
+        cur_image = Image.query.filter_by(id=cur_image_id).first()
+        cur_image_path = utils.get_image_path(cur_image.image_path)
+        d = {
+            'product': t_product,
+            'image_path': cur_image_path
+        }
+        products.append(d)
+
+    image   = Image.query.filter_by(id=company.image_id).first()
+    image_path = utils.get_image_path(image.image_path)
+
+    number_of_follow = Follow.query.filter_by(to_user_id=user.id).count()
+    number_of_from_follow = Follow.query.filter_by(from_user_id=user.id).count()
+    is_user_follow = False
+    if 'user_id' in session:
+        if Follow.query.filter_by(to_user_id=user.id).filter_by(from_user_id=session['user_id']).first():
+            is_user_follow = True
+
+    ret = {
+        'user': user,
+        'company': company,
+        'projects': projects,
+        'products': products,
+        'image_path': image_path,
+        'number_of_projects': number_of_all_projects,
+        'number_of_products': number_of_all_products,
+        'number_of_follow': number_of_follow,
+        'number_of_from_follow': number_of_from_follow,
+        'is_user_follow': is_user_follow
+    }
+
+    return render_template('company_portfolio_edit.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
                            ret=ret)
 
 @app.route('/company_portfolio/<int:user_id>/project')
@@ -978,6 +1055,49 @@ def project_detail(project_id):
     }
     return render_template('project_detail.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
                            ret=ret)
+
+@app.route('/project_detail_edit/<int:project_id>')
+def project_detail_edit(project_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+
+    project = Project.query.filter_by(id=project_id).first()
+    company = Company.query.filter_by(id=project.company_id).first()
+    company_image   = Image.query.filter_by(id=company.image_id).first()
+    company_image_path = utils.get_image_path(company_image.image_path)
+    projects = Project.query.filter_by(company_id=company.id).order_by(Project.created_at.desc()).all()
+    user = User.query.filter_by(id=company.user_id).first()
+    project_has_feeds = Project_has_feed.query.filter_by(project_id=project_id).all()
+    feeds = []
+    for project_has_feed in project_has_feeds:
+        cur_feed_id = project_has_feed.feed_id
+        cur_feed = Feed.query.filter_by(id=cur_feed_id).first()
+        image = Image.query.filter_by(id=cur_feed.image_id).first()
+        image_path = utils.get_image_path(image.image_path)
+        all_comments = Comment.query.filter_by(feed_id=cur_feed.id).order_by(Comment.created_at.desc()).all()
+        d = {
+            "feed": cur_feed,
+            "image_path": image_path,
+            "number_of_comment": len(all_comments)
+        }
+        feeds.append(d)
+    feed_introduction = ''
+    if len(feeds) != 0:
+        feed_introduction = feeds[0]['feed'].body
+    ret = {
+        'user': user,
+        'company': company,
+        'project': project,
+        'projects': projects,
+        'feeds': feeds,
+        'feed_introduction': feed_introduction,
+        'image_path': company_image_path
+    }
+    return render_template('project_detail_edit.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
+                           ret=ret)
+
 
 
 @app.route('/product_detail/<int:product_id>')
@@ -1724,3 +1844,91 @@ def address():
         r = json.loads(fp.read())
     return jsonify(results=r)
 
+@app.route('/add_tag',methods=['POST'])
+def add_tag():
+    d = {
+        'status': 'OK',
+        'tag_x': request.form['tag_x'],
+        'tag_y': request.form['tag_y'],
+        'feed_id': request.form['feed_id'],
+        'tag_name': request.form['tag_name'],
+        'tag_link': request.form['tag_link']
+            }
+    if len(d['tag_name']) == 0 or len(d['tag_link']) == 0:
+        return json.dumps({'error': 'tag-name or tag-link is none'}), 500
+    tag = Tag(d['tag_x'],d['tag_y'],d['feed_id'],d['tag_name'],d['tag_link'])
+    db.session.add(tag)
+    db.session.commit()
+    return json.dumps(d)
+
+@app.route('/project_detail_edit_done',methods=['POST'])
+def project_detail_edit_done():
+    feed_size = int(request.form['feed_size'])
+    t_ids = []
+    t_original_ids = []
+    for i in xrange(feed_size):
+        t_ids.append(request.form['ids['+str(i)+']'])
+        t_original_ids.append(request.form['original_ids['+str(i)+']'])
+    d = {
+        'status': 'OK',
+        'ids': t_ids,
+        'original_ids': t_original_ids,
+        'project_name': request.form['project_name'],
+        'project_body': request.form['project_body'],
+        'project_id': request.form['project_id']
+    }
+    print d
+    project = Project.query.filter_by(id=int(d['project_id'])).first()
+    project.project_name = d['project_name']
+    project.project_body = d['project_body']
+    db.session.commit()
+    is_changed = set()
+    for i in xrange(len(d['ids'])):
+        f1 = Feed.query.filter_by(id=int(d['original_ids'][i].split('-')[-1])).first()
+        f2 = Feed.query.filter_by(id=int(d['ids'][i].split('-')[-1])).first()
+        if f1.id in is_changed or f2.id in is_changed:
+            continue
+        print is_changed
+        is_changed.add(f1.id)
+        print f1.id, f2.id
+
+        t_title = f1.title
+        t_body = f1.body
+        t_image_id = f1.image_id
+        t_feed_category_id = f1.feed_category_id
+        t_status_id = f1.status_id
+        print f1.image_id,f2.image_id
+
+        f1.title = f2.title
+        f1.body = f2.body
+        f1.image_id = f2.image_id
+        f1.feed_category_id = f2.feed_category_id
+        f1.status_id = f2.status_id
+
+        f2.title = t_title
+        f2.body = t_body
+        f2.image_id = t_image_id
+        f2.feed_category_id = t_feed_category_id
+        f2.status_id = t_status_id
+        print f1.image_id,f2.image_id
+    db.session.commit()
+    project.image_id = Feed.query.filter_by(id=Project_has_feed.query.filter_by(project_id=project.id).first().feed_id).first().image_id
+    db.session.commit()
+    return json.dumps(d)
+
+
+@app.route('/company_portfolio_edit_done',methods=['POST'])
+def company_portfolio_edit_done():
+    d = {
+        'status': 'OK',
+        'company_introduction': request.form['company_introduction'],
+        'company_tel': request.form['company_tel'],
+        'company_website': request.form['company_website'],
+        'company_id': request.form['company_id']
+            }
+    company = Company.query.filter_by(id=int(d['company_id'])).first()
+    company.company_introduction = d['company_introduction']
+    company.company_tel = d['company_tel']
+    company.company_website = d['company_website']
+#    db.session.commit()
+    return json.dumps(d)

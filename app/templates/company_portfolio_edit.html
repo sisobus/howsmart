@@ -115,29 +115,20 @@ card_header {
         </div>
         <div class="col-lg-10 col-md-10 col-sm-12">
                 <div class="col-lg-8 col-md-8 col-sm-12">
-                    <h5 style="padding-bottom:0px;padding-top:15px;">
-                    {{ ret.company.company_introduction }}
-                </h5>
+                    <textarea  style="width:100%;height: 100px;margin-top:10px; border:1px solid #dddddd;border-top:2px solid #dddddd; border-left:2px solid #dddddd;" id='company-introduction'>{{ret.company.company_introduction}}</textarea>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12">
                     <h5 style="padding-bottom:0px;padding-top:15px;">
-                    회사이름 : {{ ret.user.username }}
+                        회사이름 : {{ ret.user.username }}
                     <br>
-                    회사주소 : {{ ret.company.company_address }}
+                    회사주소 : {{ret.company.company_si}} {{ ret.company.company_gu}} {{ ret.company.company_dong}} {{ ret.company.company_address }}
                     <br>
-                    회사번호 : {{ ret.company.company_tel }}
+                    회사번호 : <input type="text" value={{ ret.company.company_tel }} style="height:auto;" id="company-tel">
                     <br>
-                    회사 웹사이트 : {{ ret.company.company_website }}
+                    회사 웹사이트 : <input type="text" value={{ ret.company.company_website }} style="height:auto;" id='company-website'>
                 </h5>
-                {% if session and 'user_id' in session and session['user_id'] == ret.user.id %}
-                <button class="btn btn-primary" id="edit-button">수정하기</button>
-                <script>
-                $('#edit-button').click(function() {
-                        window.location.href = '/company_portfolio_edit/{{ret.user.id}}';
-                });
-                </script>
-                {% endif %}
-
+                <button class="btn btn-primary" id='edit-button'>수정</button>
+                <button class="btn btn-danger" id="cancel-button">취소</button>
                 </div>
         </div>
     </div>
@@ -304,6 +295,31 @@ card_header {
 
 </div>
 <script type="text/javascript">
+$('#edit-button').click(function() {
+    var company_introduction = $('#company-introduction').text();
+    var company_tel = $('#company-tel').val();
+    var company_website = $('#company-website').val();
+    var data = {
+        'company_introduction': company_introduction,
+        'company_tel': company_tel,
+        'company_website': company_website,
+        'company_id': {{ret.company.id}}
+    };
+    $.ajax({
+        url: '/company_portfolio_edit_done',
+        data: data,
+        type: 'POST',
+        success: function(response) {
+            console.log(response);
+            window.location.href = '/company_portfolio/{{ret.user.id}}';
+        }, error: function(error) {
+            console.log(error);
+        }
+    });
+});
+$('#cancel-button').click(function() {
+    window.location.href = '/company_portfolio/{{ ret.user.id }}';
+});
 function followPost(to_user_id) {
     var data = {
     "from_user_id": {{ session['user_id'] }},

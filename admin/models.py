@@ -218,3 +218,19 @@ class Status(db.Model):
     def __init__(self,id,status_name):
         self.id = id
         self.status_name = status_name
+
+class Tag(db.Model):
+    __tablename__ = 'tag'
+    id = db.Column(db.Integer, primary_key=True)
+    tag_x = db.Column(db.Float)
+    tag_y = db.Column(db.Float)
+    feed_id = db.Column(db.Integer, db.ForeignKey('feed.id'))
+    tag_name = db.Column(db.String(300))
+    tag_link = db.Column(db.String(300))
+
+    def __init__(self, tag_x, tag_y, feed_id, tag_name, tag_link):
+        self.tag_x = tag_x
+        self.tag_y = tag_y
+        self.feed_id = feed_id
+        self.tag_name = tag_name
+        self.tag_link = tag_link

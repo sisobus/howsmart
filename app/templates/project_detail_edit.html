@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+<script src="{{ url_for('static',filename='js/jquery.shapeshift.min.js') }}"></script>
 <style type="text/css">
     * {
   -webkit-box-sizing: border-box;
@@ -14,15 +15,11 @@ card_header {
   }
 
 .card_container {
-    outline: 0;
-    width: 100%;
-    height: 250px;
+    width: 400px;
     /*
     max-width:32%;
     */
-    position: relative;
-    float: left;
-    margin: 5px 1px 5px 1px;
+    position: absolute;
 
   background-color: #ffffff;
 
@@ -158,16 +155,16 @@ card_header {
             </div>
         </div>
         <div class="col-lg-9 col-md-9 col-sm-12">
-            <h2 style="padding-bottom:0px;" id='project-name'>{{ ret.project.project_name }}{% if session and 'user_id' in session and session['user_id'] == ret.user.id %}<div class="pull-right"><button class="btn btn-primary" id='edit-button'>수정하기</button></div>{% endif %}</h2>
+            <input type="text" id='project-name' value='{{ ret.project.project_name }}' placeholder='{{ ret.project.project_name }}' style="width: 75%;">
+            <div class="pull-right"><button class="btn btn-primary" id='edit-button'>완료</button> <button class="btn btn-danger" id='cancel-button'>취소</button></div>
         <hr>
-        <h5 style="padding-bottom:0px;" id="project-body">
-            {{ ret.project.project_body }}
+        <h5 style="padding-bottom:0px;" >
+            <input type="text" id='project-body' value='{{ ret.project.project_body }}' placeholder='{{ ret.project.project_body }}' style="width: 75%;">
         </h5>
         <hr>
-            <div  id="feed_container" style="margin-top:10px;overflow:hidden;">
+                <div class="container-shapeshift" style="position:relative;">
                     {% for feed in ret.feeds %}
-                        <div class="col-lg-6 col-md-6 col-sm-12">
-                    <div class="card_container ">
+                    <div class="card_container " id="container-{{feed.feed.id}}"> 
                         <card_header>
                         <div class="bio">
                             <script type="text/javascript">
@@ -187,15 +184,53 @@ openFeed = function(feed_id) {
                             </div>
                         </card_header>
                     </div>
-                        </div>
                     {% endfor %}
+                </div>
             </div>
         </div>
     </div>
 </div>
 <script>
+    $(document).ready(function() {
+        $(".container-shapeshift").shapeshift();
+    });
     $('#edit-button').click(function() {
-        window.location.href = '/project_detail_edit/{{ ret.project.id }}';
+            ids = {};
+        $('.container-shapeshift').children().each(function(index, value) {
+            var id = $(this).attr('id');
+            ids[index] = id;
+        });
+        var index = 0;
+        original_ids = {};
+        {% for feed in ret.feeds %}
+        original_ids[index] = 'container-'+{{feed.feed.id}};
+        index = index + 1;
+        {% endfor %}
+        var project_name = $('#project-name').val();
+        var project_body = $('#project-body').val();
+        var data = {
+            ids: ids,
+            original_ids: original_ids,
+            feed_size: {{ ret.feeds | length }},
+            project_name: project_name,
+            project_body: project_body,
+            project_id: {{ ret.project.id }}
+        };
+        $.ajax({
+            url: '/project_detail_edit_done',
+            data: data,
+            type: 'POST',
+            success: function(response) {
+                window.location.href = '/project_detail/{{ ret.project.id }}';
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+
+    });
+    $('#cancel-button').click(function() {
+        window.location.href = '/project_detail/{{ ret.project.id }}'
     });
 </script>
 {% endblock %}

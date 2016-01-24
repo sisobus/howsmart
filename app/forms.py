@@ -213,3 +213,12 @@ class FindProsForm(Form):
             return False
         return True
 
+class AddTagForm(Form):
+    tag_name = TextField('tag_name',[validators.Required('tag_name')])
+    tag_link = TextField('tag_link',[validators.Required('tag_link')])
+    def __init__(self, *args, **kargs):
+        Form.__init__(self, *args, **kargs)
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        return True
