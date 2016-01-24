@@ -1,8 +1,10 @@
 #-*- coding:utf-8 -*-
 from flask.ext.wtf import Form,widgets
 from wtforms import widgets,TextField,TextAreaField, SubmitField, validators, ValidationError, PasswordField, FileField, RadioField, SelectField, SelectMultipleField
-from models import db, User
+from models import db, User, Project_type_category,Style_category
 import utils
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask import Flask
 
 class SignupForm(Form):
     username    = TextField('username', [validators.Required('please enter your username')])
@@ -39,6 +41,7 @@ class CompanySearchForm(Form):
 
     def __init__(self, *args, **kargs):
         Form.__init__(self, *args, **kargs)
+
 
 
 class CompanySignupForm(Form):
@@ -139,10 +142,50 @@ class ProjectEditForm(Form):
             return False
         return True
 
+def get_project_type_category_list():
+    l = [
+            ('1',u'없음'),
+            ('2',u'원룸'),
+            ('3',u'투베이'),
+            ('4',u'오피스텔'),
+            ('5',u'아파트'),
+            ('6',u'빌라연립'),
+            ('7',u'단독주택'),
+            ('8',u'사무공간'),
+            ('9',u'상업공간'),
+            ('10',u'기타'),
+            ]
+    return l
+
+def get_style_category_list():
+    l = []
+    l = [
+            ('1',u'없음'),
+            ('2',u'모던'),
+            ('3',u'북유럽'),
+            ('4',u'빈티지'),
+            ('5',u'내츄럴'),
+            ('6',u'프로방스'),
+            ('7',u'클래식+앤틱'),
+            ('8',u'오리엔탈'),
+            ('9',u'유니크'),
+            ('10',u'기타'),
+            ]
+    return l
+
 class CreateProjectForm(Form):
     project_name    = TextField('project_name', [validators.Required('please enter project name')])
     project_body    = TextAreaField('body', [validators.Required('please enter this project body')])
     project_credit  = TextField('project_credit', [validators.Required('please enter project credit')])
+    project_type_category = SelectField('project_type_category',choices=get_project_type_category_list(),validators=[validators.Optional()])
+    d = utils.get_address_list()
+    project_si = SelectField('company_si', choices=d['si'], validators=[validators.Optional()])
+    project_gu  = SelectField('company_gu', choices=d['gu'], validators=[validators.Optional()])
+    project_dong  = SelectField('company_dong', choices=d['dong'], validators=[validators.Optional()])
+    project_style_category = SelectField('project_style_category',choices=get_style_category_list(), validators=[validators.Optional()])
+    project_area = SelectField('project_area',choices=[('1',u'10평대미만'),('2',u'20평대'),('3',u'30평대'),('4',u'40평대'),('5',u'50평대이상')],validators=[validators.Optional()])
+    project_location = TextField('project_location',validators=[validators.Optional()])
+    hash_tag = TextField('hash_tag',validators=[validators.Optional()])
 
     def __init__(self, *args, **kargs):
         Form.__init__(self, *args, **kargs)
@@ -190,6 +233,8 @@ class CreateProductForm(Form):
     product_model_name = TextField('product_model_name', [validators.Required('please enter product model name')])
     product_meterial = TextField('product_meterial', [validators.Required('please enter product meterial')])
     shop_category = SelectField('shop_category', choices=utils.get_shop_category_list())
+    product_style_category = SelectField('product_style_category',choices=get_style_category_list(), validators=[validators.Optional()])
+    hash_tag = TextField('hash_tag',validators=[validators.Optional()])
 
     def __init__(self, *args, **kargs):
         Form.__init__(self, *args, **kargs)
@@ -222,3 +267,5 @@ class AddTagForm(Form):
         if not Form.validate(self):
             return False
         return True
+
+

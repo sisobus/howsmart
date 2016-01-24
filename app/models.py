@@ -121,6 +121,13 @@ class Project(db.Model):
     project_body    = db.Column(db.String(5000))
     project_credit  = db.Column(db.String(500))
     status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
+    project_type_category_id = db.Column(db.Integer)
+    project_si = db.Column(db.String(300))
+    project_gu = db.Column(db.String(300))
+    project_dong = db.Column(db.String(300))
+    style_category_id = db.Column(db.Integer)
+    project_area = db.Column(db.String(200))
+    project_location = db.Column(db.String(500))
 
     def __init__(self, project_name, company_id, image_id, created_at, project_body, project_credit):
         self.project_name = project_name
@@ -178,6 +185,7 @@ class Product(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     created_at = db.Column(db.DateTime)
     status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
+    style_category_id = db.Column(db.Integer)
 
     def __init__(self, product_name, product_price, product_color, product_desc, product_size, product_model_name, product_meterial, shop_category_id, user_id,created_at):
         self.product_name = product_name
@@ -233,3 +241,41 @@ class Tag(db.Model):
         self.feed_id = feed_id
         self.tag_name = tag_name
         self.tag_link = tag_link
+
+class Project_type_category(db.Model):
+    __tablename__ = 'project_type_category'
+    id = db.Column(db.Integer, primary_key=True)
+    type_name = db.Column(db.String(300))
+
+    def __init__(self, id, type_name):
+        self.id = id
+        self.type_name = type_name
+
+class Style_category(db.Model):
+    __tablename__ = 'style_category'
+    id = db.Column(db.Integer, primary_key=True)
+    style_name = db.Column(db.String(300))
+
+    def __init__(self, id, style_name):
+        self.id = id
+        self.style_name = style_name
+
+class Project_hash_tag(db.Model):
+    __tablename__ = 'project_hash_tag'
+    id = db.Column(db.Integer, primary_key=True)
+    hash_tag_name = db.Column(db.String(300))
+    project_id  = db.Column(db.Integer, primary_key=True)
+
+    def __init__(self, hash_tag_name, project_id):
+        self.hash_tag_name = hash_tag_name
+        self.project_id = project_id
+
+class Product_hash_tag(db.Model):
+    __tablename__ = 'product_hash_tag'
+    id = db.Column(db.Integer, primary_key=True)
+    product_hash_tag_name = db.Column(db.String(300))
+    product_id = db.Column(db.Integer, primary_key=True)
+
+    def __init__(self, product_hash_tag_name, product_id):
+        self.product_hash_tag_name = product_hash_tag_name
+        self.product_id = product_id

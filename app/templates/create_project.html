@@ -3,7 +3,8 @@
     <style type="text/css">
     #create_project_form {
         background-color: #FFFFFF;
-        border: 1px gray solid;
+        border: 1px  solid #dddddd;
+        border-top: 0px;
     }
     input#project_name,
     input#project_credit,
@@ -27,9 +28,10 @@
     }
     </style>
 <div class="container main-container">
-<h1>1단계: 프로젝트 정보 및 사진</h1>
     <div id="create_project_form">
-        <form action="{{ url_for('create_project') }}" method="POST" enctype="multipart/form-data" class="dropzone" >
+        <form action="{{ url_for('create_project') }}" method="POST" style="margin-left:10px;margin-right:10px;">
+            <br>
+            <h3>필수입력사항(*)</h3>
             {{ createProjectForm.hidden_tag() }}
             {{ createProjectForm.project_name(placeholder='프로젝트 명') }}
             {% for message in createProjectForm.project_name.errors %}
@@ -46,12 +48,36 @@
                 <div class="flash">{{ message }}</div>
             {% endfor %}
             <hr/>
+            <h3>선택사항</h3>
+            <div style="margin-left:20px;margin-right:20px;">
+            프로젝트 타입 : {{ createProjectForm.project_type_category }}
+            <br>
+            프로젝트 지역 주소 : 
+            <br>
+            프로젝트 스타일 : {{ createProjectForm.project_style_category }}
+            <br>
+            프로젝트 면적 : {{ createProjectForm.project_area }}
+            <br>
+            활동 지역(수기작성) : {{ createProjectForm.project_location }}
+            <br>
+            <style>
+            input#hash_tag {
+                width: 100%;
+            }
+            </style>
+            {{ createProjectForm.hash_tag(placeholder='해시태그(#으로 구분. ex. #액자 #차가운)') }}
+        </div>
 
-            <div class="fallback">
-                <input name="file" type="file" multiple>
-            </div>
+            <hr/>
             <div>
-                <input name="submit" class="btn   btn-lg btn-primary" value="저장" type="submit">
+                <input name="submit" class="btn   btn-lg btn-primary" value="저장" type="submit" style="width:100%;">
+            </div>
+            <hr/>
+            <h3>사진 등록(필수)</h3>
+        </form>
+        <form action="{{ url_for('create_project') }}" method="POST" enctype="multipart/form-data" class="dropzone" style="border:0px;border-top:1px solid #dddddd;">
+            <div id='uploadme' class="fallback">
+                <input name="file" type="file" multiple/>
             </div>
         </form>
     </div>
@@ -60,4 +86,6 @@
     <br>
     <br>
     <br>
+<script>
+</script>
 {% endblock %}

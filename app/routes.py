@@ -13,7 +13,7 @@ app.config['SQLALCHEMY_DATABASE_URI']   = HOWSMART_DATABASE_URI
 app.config['SECRET_KEY']                = HOWSMART_SECRET_KEY
 app.config['UPLOAD_FOLDER']             = UPLOAD_FOLDER
 
-from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed, Pros_category, Company_has_pros_category, Feed_category, Product, Product_has_image, Shop_category, User_like_feed, Follow, Status, Tag
+from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed, Pros_category, Company_has_pros_category, Feed_category, Product, Product_has_image, Shop_category, User_like_feed, Follow, Status, Tag, Project_type_category, Style_category, Project_hash_tag, Product_hash_tag 
 
 db.init_app(app)
 
@@ -116,6 +116,7 @@ def signup():
         else:
             newuser = User(signupForm.username.data, signupForm.email.data, signupForm.password.data)
             newuser.created_at = datetime.utcnow()
+            newuser.status_id = 1
             db.session.add(newuser)
             db.session.commit()
 
@@ -272,6 +273,7 @@ def merge_feed_for_project(createProjectForm):
     if len(not_merged_feeds) != 0:
         cur_feed = not_merged_feeds[0]
         project = Project(cur_feed.title,company.id,cur_feed.image_id, datetime.utcnow(),cur_feed.body,createProjectForm.project_credit.data)
+        project.status_id = 1
         db.session.add(project)
         db.session.commit()
         for feed in not_merged_feeds:
@@ -314,6 +316,7 @@ def create_project():
                     feed.user_id = user.id
                     feed.image_id = image.id
                     feed.feed_category_id = 1
+                    feed.status_id = 1
                     db.session.add(feed)
                     db.session.commit()
             return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm, \
@@ -325,6 +328,29 @@ def create_project():
         project = Project.query.filter_by(id=project_id).first()
         project.project_name = createProjectForm.project_name.data
         project.project_body = createProjectForm.project_body.data
+        if createProjectForm.project_type_category.data:
+            project.project_type_category_id = createProjectForm.project_type_category.data
+        if createProjectForm.project_si.data:
+            project.project_si = createProjectForm.project_si.data
+        if createProjectForm.project_gu.data:
+            project.project_gu = createProjectForm.project_gu.data
+        if createProjectForm.project_dong.data:
+            project.project_dong = createProjectForm.project_dong.data
+        if createProjectForm.project_style_category.data:
+            project.style_category_id = createProjectForm.project_style_category.data
+        if createProjectForm.project_area.data:
+            project.project_area = createProjectForm.project_area.data
+        if createProjectForm.project_location.data:
+            project.project_location = createProjectForm.project_location.data
+        if createProjectForm.hash_tag.data:
+            t_tags = createProjectForm.hash_tag.data.split('#')
+            for t_tag in t_tags:
+                tt_tag = t_tag.strip()
+                if len(tt_tag) == 0:
+                    continue
+                project_hash_tag = Project_hash_tag(tt_tag,project.id)
+                db.session.add(project_hash_tag)
+                db.session.commit()
         db.session.commit()
         feeds_id = Project_has_feed.query.filter_by(project_id=project_id).order_by(Project_has_feed.feed_id.asc()).all()
         for feed_id in feeds_id:
@@ -357,6 +383,7 @@ def merge_image_for_product(createProductForm):
         product = Product(createProductForm.product_name.data,int(createProductForm.product_price.data),createProductForm.product_color.data,\
                           createProductForm.product_desc.data,createProductForm.product_size.data,createProductForm.product_model_name.data,\
                           createProductForm.product_meterial.data,int(createProductForm.shop_category.data),user.id,datetime.utcnow())
+        product.status_id = 1
         db.session.add(product)
         db.session.commit()
         for image in not_merged_images:
@@ -398,6 +425,20 @@ def create_product():
             return render_template('create_product.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm, \
                                    createProductForm=createProductForm)
         product_id = merge_image_for_product(createProductForm)
+        product = Product.query.filter_by(id=product_id).first()
+        if createProductForm.product_style_category.data:
+            product.style_category_id = createProductForm.product_style_category.data
+        if createProductForm.hash_tag.data:
+            t_tags = createProductForm.hash_tag.data.split('#')
+            for t_tag in t_tags:
+                tt_tag = t_tag.strip()
+                if len(tt_tag) == 0:
+                    continue
+                product_hash_tag = Product_hash_tag(tt_tag,product.id)
+                db.session.add(product_hash_tag)
+                db.session.commit()
+
+            
         return redirect(url_for('company_portfolio_shop',user_id=user.id))
     elif request.method == 'GET':
         return render_template('create_product.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm, \

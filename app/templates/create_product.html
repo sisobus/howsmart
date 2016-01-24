@@ -3,7 +3,7 @@
     <style type="text/css">
     #create_product_form {
         background-color: #FFFFFF;
-        border: 1px gray solid;
+        border: 1px solid #dddddd;
     }
     input#product_name,
     input#product_price,
@@ -31,9 +31,10 @@
     }
     </style>
 <div class="container main-container">
-<h1>1단계: 제품 정보 및 사진</h1>
     <div id="create_product_form">
-        <form action="{{ url_for('create_product') }}" method="POST" enctype="multipart/form-data" class="dropzone" >
+        <form action="{{ url_for('create_product') }}" method="POST" style="margin-left:20px;margin-right:20px;">
+            <br>
+            <h3>필수입력사항(*)</h3>
             {{ createProductForm.hidden_tag() }}
             {{ createProductForm.product_name(placeholder='제품 명') }}
             {% for message in createProductForm.product_name.errors %}
@@ -70,17 +71,29 @@
                 <div class="flash">{{ message }}</div>
             {% endfor %}
             <hr/>
-            {{ createProductForm.shop_category(placeholder='enter product shopcategory') }}
+            카테고리 : {{ createProductForm.shop_category(placeholder='enter product shopcategory') }}
             {% for message in createProductForm.shop_category.errors %}
                 <div class="flash">{{ message }}</div>
             {% endfor %}
             <hr/>
+            <h3>선택사항</h3>
+            상품 스타일 : {{ createProductForm.product_style_category }}
+            <hr/>
+            <style>
+            input#hash_tag {
+                width: 100%;
+            }
+            </style>
+            {{ createProductForm.hash_tag(placeholder='해시태그(#으로 구분. ex. #액자 #차가운)') }}
 
+            <div>
+                <input name="submit" class="btn   btn-lg btn-primary" style="width:100%;" value="저장" type="submit">
+            </div>
+            <hr/>
+        </form>
+        <form action="{{ url_for('create_product') }}" method="POST" enctype="multipart/form-data" class="dropzone" style="border:0px;border-top:1px solid #dddddd;">
             <div class="fallback">
                 <input name="file" type="file" multiple>
-            </div>
-            <div>
-                <input name="submit" class="btn   btn-lg btn-primary" style="background-color:#ffffff; border:1px solid gray;" value="저장" type="submit">
             </div>
         </form>
     </div>
