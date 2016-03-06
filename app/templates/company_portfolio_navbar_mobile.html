@@ -1,6 +1,16 @@
-<!--
-<div class="custom_jumbo">
-    -->
+<style>
+#mobile-leftside-container {
+    position: absolute;
+    width: 100px;
+    padding: 0;
+    margin: 0;
+    top:110px;
+}
+#mobile-rightside-container {
+    position: relative;
+    margin: 0px 0px 0px 100px;
+}
+</style>
 <link href="{{ url_for('static',filename='css/jquery.Jcrop.css') }}" rel="stylesheet">
 <link href="{{ url_for('static',filename='css/jquery.SimpleCropper.css') }}" rel="stylesheet">
 <link href="{{ url_for('static',filename='css/image-crop.css') }}" rel="stylesheet">
@@ -9,14 +19,14 @@
 <div class="container nav-margin" style="padding: 0px 0px 0px 0px;height:200px;">
     <div class="custom_jumbo_container" style="background: url({{ '/static/'+ret.image_path }});
             background-repeat:no-repeat; background-size: cover; background-position: center;">
-        <div id="leftside_container">
+        <div id="mobile-leftside-container" style="height:80px;">
             {% if ret.user_profile_image_path | length != 0 %}
-            <div class="cropme" style="width:168px; height:168px; margin-left:20px;">
+            <div class="cropme" style="width:80px; height:80px; margin-left:10px;">
                 <div style="background: url({{ url_for('static',filename=ret.user_profile_image_path) }});
-                    background-repeat:no-repeat; background-size: cover; background-position: center;z-index:10;height:168px;"></div>
+                    background-repeat:no-repeat; background-size: cover; background-position: center;z-index:10;height:80px;"></div>
             </div>
             {% else %}
-            <div class="cropme" style="width:168px; height:168px; margin-left:20px;">
+            <div class="cropme" style="width:80px; height:80px; margin-left:20px;">
             </div>
             {% endif %}
         </div>
@@ -44,7 +54,7 @@ error: function(error) {
             });
         
         </script>
-        <div id="rightside_container">
+        <div id="mobile-rightside-container">
             <h1>{{ ret.user.username }}</h1>
         </div>
     </div>

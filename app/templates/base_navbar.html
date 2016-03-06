@@ -13,7 +13,7 @@
         font-size: 14px;
         line-height: 20px;
         height: 30px;
-        width: 600px;
+        width: 450px;
         margin: 5px 0px 5px 0px;
         vertical-align: middle;
         display: block;
@@ -30,11 +30,21 @@
 <!-- Fixed navbar start -->
 
 <div class="navbar navbar-tshop navbar-fixed-top megamenu" role="navigation" style="margin-bottom: 0px;">
-    <div class="navbar-top" style="height:40px;">
+    <div class="navbar-top hidden-xs" style="height:40px;margin-top:5px;">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-9 col-sm-9 col-xs-9 col-md-9" >
-                    <div class="pull-left " style="margin-left:164px;">
+            <div class="row navbar-collapse collapse">
+<div class="navbar-header">
+    <!--
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"><span
+                        class="sr-only"> Toggle navigation </span> <span class="icon-bar"> </span> <span
+                        class="icon-bar"> </span> <span class="icon-bar"> </span></button>
+                        -->
+
+                <a  href="/"> <img src="{{ url_for('static',filename='img/logo_40.png') }}"> </a>
+            </div>
+
+
+                    <div class="pull-left " style="margin-left:65px;">
                         <ul class="userMenu ">
                             <li style="margin-bottom:5px;margin-top:5px;">
                             <div style="width:30px;height:30px;background-color:white;border:1px solid #dddddd;border-right:0px;text-align:center;">
@@ -43,14 +53,9 @@
                             </li>
                             <li>
                             <input type="text" id="search-bar" placeholder="사진, 전문가, 제품으로 검색하기" style="display:table-cell;">
-                            <!--
-                                <a href="#"> <span class="hidden-xs">Search bar</span><i
-                                    class="glyphicon glyphicon-info-sign hide visible-xs "></i> </a>
-                                    -->
                             </li>
                         </ul>
                     </div>
-                </div>
                 <style>
                 .userMenu li a {
                     line-height: 40px;
@@ -58,12 +63,19 @@
                 </style>
                 <!-- User Menu start -->
                 {% if session.logged_in %}
-                <div class="col-lg-3 col-sm-3 col-xs-3 col-md-3 no-margin no-padding">
                     <div class="pull-right">
                         <ul class="userMenu">
+                            <li>
+
+                            </li>
+                            &nbsp;
                             {% if session['is_company'] %}
                             <li><a href="/company_portfolio/{{ session['user_id'] }}"><span class="hidden-xs">
+                                    {% if session['user_profile_image_path'] %}
+                                    <div style="background:url({{ url_for('static',filename=session['user_profile_image_path']) }}); border:1px solid #dddddd;height:40px;width:40px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;transform:scale(0.5);-webkit-transform: scale(0.5);-ms-transform: scale(0.5);"></div>
+                                    {% else %}
                                     <div style="background-color:#dddddd; border:1px solid #dddddd;height:40px;width:40px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;transform:scale(0.5);-webkit-transform: scale(0.5);-ms-transform: scale(0.5);"></div>
+                                    {% endif %}
                                     <div style="padding-bottom:0px;display:table-cell;padding-left:5px;">
                                         {{ session['username'] }}
                                     </div>
@@ -72,7 +84,6 @@
                                 {% if not session['is_company'] %}
                                 <li><a href="/user_portfolio/{{ session['user_id'] }}"><span class="hidden-xs">{{ session['username'] }}님 환영합니다</span>
                                     {% endif %}
-                                    <i class="glyphicon glyphicon-log-in hide visible-xs "></i> </a></li>
                                 <li><a href="{{ url_for('signout') }}">
 
                                     <i class="fa fa-sign-out 1x" style="color:#777777;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;display:table-cell;" > </i>
@@ -84,7 +95,6 @@
                         </div>
                     </div>
                     {% elif not session.logged_in %}
-                    <div class="col-lg-3 col-sm-3 col-xs-3 col-md-3 no-margin no-padding">
                         <div class="pull-right">
                             <ul class="userMenu">
                                 <li>
@@ -111,27 +121,92 @@
                     <!-- user menu end -->
                 </div>
             </div>
-        </div>
         <!--/.navbar-top-->
 
         <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"><span
-                        class="sr-only"> Toggle navigation </span> <span class="icon-bar"> </span> <span
-                        class="icon-bar"> </span> <span class="icon-bar"> </span></button>
-
-                <a  href="/"> <img src="{{ url_for('static',filename='img/logo_40.png') }}"> </a>
-
-                <!-- this part for mobile -->
-                <div class="search-box pull-right hidden-lg hidden-md hidden-sm">
-                    <div class="input-group">
-                        <button class="btn btn-nobg getFullSearch" type="button"><i class="fa fa-search"> </i></button>
-                    </div>
-                    <!-- /input-group -->
+            <div class="navbar-header">  
+                <button type="button" class="navbar-toggle pull-left" data-toggle="collapse" data-target="#navbar-collapse" style="background:#ffffff;margin-left:5px;">
+                    <span class="sr-only"> Toggle navigation </span> 
+                    <span class="icon-bar" style="border:solid 2px #777777;"> </span> 
+                    <span class="icon-bar" style="border:solid 2px #777777;"> </span> 
+                    <span class="icon-bar" style="border:solid 2px #777777;"> </span> 
+                </button>
+                <div class="visible-xs">
+                    <ul class="userMenu">
+                                <li style="margin-top:12px;">
+                        <a href="/">
+                            <h3 style="padding-bottom:0px;">
+                            <b>LOGO</b>
+                        </h3>
+                    </a>
+                        </li>
+                    </ul>
                 </div>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav" style="margin-left:10px;">
+                    {% if session.logged_in %}
+                    <div class="pull-right visible-xs">
+                        <ul class="userMenu">
+                            {% if session['is_company'] %}
+                                <li style="margin-top:3px;">
+                            <a href="/company_portfolio/{{ session['user_id'] }}"><span class="visible-xs">
+                                    {% if session['user_profile_image_path'] %}
+                                    <div style="background:url({{ url_for('static',filename=session['user_profile_image_path']) }}); border:1px solid #dddddd;height:40px;width:40px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;transform:scale(0.5);-webkit-transform: scale(0.5);-ms-transform: scale(0.5);"></div>
+                                    {% else %}
+                                    <div style="background-color:#dddddd; border:1px solid #dddddd;height:40px;width:40px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;transform:scale(0.5);-webkit-transform: scale(0.5);-ms-transform: scale(0.5);"></div>
+                                    {% endif %}
+                                    <div style="padding-bottom:0px;display:table-cell;padding-left:5px;">
+                                        <b>
+                                        {{ session['username'] }}
+                                    </b>
+                                    </div>
+                                </span>
+                                {% endif %}
+                                {% if not session['is_company'] %}
+                                <li><a href="/user_portfolio/{{ session['user_id'] }}"><span class="visible-xs">{{ session['username'] }}님 환영합니다</span>
+                                    {% endif %}
+                                <li style="margin-top:3px;">
+                                <a href="{{ url_for('signout') }}">
+
+                                    <i class="fa fa-sign-out 1x" style="color:#777777;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;display:table-cell;" > </i>
+                                    <div style="display:table-cell;">
+                                        <b>
+                                        로그아웃
+                                    </b>
+                                    </div>
+                                </a></li>
+                            </ul>
+                        </div>
+                    {% elif not session.logged_in %}
+                        <div class="pull-right">
+                            <ul class="userMenu">
+                                <li style="margin-top:3px;">
+                                <a href="#" data-toggle="modal" data-target="#ModalLogin"> <span class="visible-xs">
+
+                                        <i class="fa fa-sign-in 1x" style="color:#777777;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;display:table-cell;" > </i>
+                                        <div style="display:table-cell;">
+                                            <b> 로그인</b>
+                                        </div>
+                                    </span>
+                                </a>
+                                </li>
+                                <li class="visible-xs" style="margin-top:3px;">
+                                <a href="#" data-toggle="modal" data-target="#ModalSignup" style="padding-right:15px;"> 
+
+                                    <i class="fa fa-user-plus 1x" style="color:#777777;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;display:table-cell;" > </i>
+                                        <div style="display:table-cell;">
+                                            <b>
+                                    회원가입 
+                                </b>
+                                </div>
+                                </a></li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                    <!-- user menu end -->
+                    </div>
+
+                        <div class="navbar-collapse collapse" id="navbar-collapse" style="overflow-x:hidden;">
+                            <hr class="visible-xs" style="margin:0px 15px 0px -15px;width:2580px;"/>
+                <ul class="nav navbar-nav" >
                     <li class="dropdown megamenu-20width"><a class="dropdown-toggle" href="/photos/"> 
                         <i class="fa fa-camera fa-1x" style="color:#777777;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;display:table-cell;" > </i>
                         <div style="display:table-cell;padding-left:4px;padding-right:4px;">
@@ -190,121 +265,7 @@
                     </ul>
                     </li>
                 </ul>
-                <!--- this part will be hidden for mobile version -->
-            <div class="nav navbar-nav navbar-right hidden-xs">
-                <div class="dropdown  cartMenu "><a href="#" class="dropdown-toggle" data-toggle="dropdown" style="margin-right:0px;padding-right:0px;"> <i class="fa fa-shopping-cart fa-1x" style="color:#777777;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;" > </i> <span class="cartRespons" style="color:#777777;margin-right:0px;"> 장바구니</span> </a>
-                    <div class="dropdown-menu col-lg-4 col-xs-12 col-md-4 ">
-                        <div class="w100 miniCartTable scroll-pane" style="overflow:scroll;">
-                            <table>
-                                <tbody>
-                                <tr class="miniCartProduct">
-                                    <td style="width:20%" class="miniCartProductThumb">
-                                    </td>
-                                    <td style="width:40%">
-                                        <div class="miniCartDescription">
-                                            <h4><a href="#"> A </a></h4>
-                                            <span class="size"> A_1 </span>
-
-                                            <div class="price"><span> 11,000원 </span></div>
-                                        </div>
-                                    </td>
-                                    <td style="width:10%" class="miniCartQuantity"><a> 1 개 </a></td>
-                                    <td style="width:15%" class="miniCartSubtotal"><span> 11,000원 </span></td>
-                                    <td style="width:5%" class="delete"><a> x </a></td>
-                                </tr>
-                                <tr class="miniCartProduct">
-                                    <td style="width:20%" class="miniCartProductThumb">
-                                    </td>
-                                    <td style="width:40%">
-                                        <div class="miniCartDescription">
-                                            <h4><a href="#"> A </a></h4>
-                                            <span class="size"> A_1 </span>
-
-                                            <div class="price"><span> 11,000원 </span></div>
-                                        </div>
-                                    </td>
-                                    <td style="width:10%" class="miniCartQuantity"><a> 1 개 </a></td>
-                                    <td style="width:15%" class="miniCartSubtotal"><span> 11,000원 </span></td>
-                                    <td style="width:5%" class="delete"><a> x </a></td>
-                                </tr>
-                                <tr class="miniCartProduct">
-                                    <td style="width:20%" class="miniCartProductThumb">
-                                    </td>
-                                    <td style="width:40%">
-                                        <div class="miniCartDescription">
-                                            <h4><a href="#"> A </a></h4>
-                                            <span class="size"> A_1 </span>
-
-                                            <div class="price"><span> 11,000원 </span></div>
-                                        </div>
-                                    </td>
-                                    <td style="width:10%" class="miniCartQuantity"><a> 1 개 </a></td>
-                                    <td style="width:15%" class="miniCartSubtotal"><span> 11,000원 </span></td>
-                                    <td style="width:5%" class="delete"><a> x </a></td>
-                                </tr>
-                                <tr class="miniCartProduct">
-                                    <td style="width:20%" class="miniCartProductThumb">
-                                    </td>
-                                    <td style="width:40%">
-                                        <div class="miniCartDescription">
-                                            <h4><a href="#"> A </a></h4>
-                                            <span class="size"> A_1 </span>
-
-                                            <div class="price"><span> 11,000원 </span></div>
-                                        </div>
-                                    </td>
-                                    <td style="width:10%" class="miniCartQuantity"><a> 1 개 </a></td>
-                                    <td style="width:15%" class="miniCartSubtotal"><span> 11,000원 </span></td>
-                                    <td style="width:5%" class="delete"><a> x </a></td>
-                                </tr>
-                                <tr class="miniCartProduct">
-                                    <td style="width:20%" class="miniCartProductThumb">
-                                    </td>
-                                    <td style="width:40%">
-                                        <div class="miniCartDescription">
-                                            <h4><a href="#"> A </a></h4>
-                                            <span class="size"> A_1 </span>
-
-                                            <div class="price"><span> 11,000원 </span></div>
-                                        </div>
-                                    </td>
-                                    <td style="width:10%" class="miniCartQuantity"><a> 1 개 </a></td>
-                                    <td style="width:15%" class="miniCartSubtotal"><span> 11,000원 </span></td>
-                                    <td style="width:5%" class="delete"><a> x </a></td>
-                                </tr>
-                                <tr class="miniCartProduct">
-                                    <td style="width:20%" class="miniCartProductThumb">
-                                    </td>
-                                    <td style="width:40%">
-                                        <div class="miniCartDescription">
-                                            <h4><a href="#"> A </a></h4>
-                                            <span class="size"> A_1 </span>
-
-                                            <div class="price"><span> 11,000원 </span></div>
-                                        </div>
-                                    </td>
-                                    <td style="width:10%" class="miniCartQuantity"><a> 1 개 </a></td>
-                                    <td style="width:15%" class="miniCartSubtotal"><span> 11,000원 </span></td>
-                                    <td style="width:5%" class="delete"><a> x </a></td>
-                                </tr>
-                                </tbody>
-                            </table>
                         </div>
-                        <!--/.miniCartTable-->
-
-                        <div class="miniCartFooter text-right">
-                            <h3 class="text-right subtotal"> 총 ??,000원 </h3>
-                            <a class="btn btn-sm btn-danger"> <i class="fa fa-shopping-cart"> </i> 장바구니 가기 </a> <a
-                                class="btn btn-sm btn-primary"> 결제하기 </a></div>
-                        <!--/.miniCartFooter-->
-
-                    </div>
-                    <!--/.dropdown-menu-->
-                </div>
-                <!--/.cartMenu-->
-            </div>
-            <!--/.navbar-nav hidden-xs--> 
-        </div>
         <!--/.nav-collapse -->
 
     </div>

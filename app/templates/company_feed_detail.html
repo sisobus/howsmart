@@ -12,6 +12,7 @@
     </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
 </script>
+<script src="{{ url_for('static',filename='js/jquery.smooth-scroll.js') }}"></script>
     <script>
         paceOptions = {
             elements: true
@@ -81,7 +82,13 @@
         $(document).ready(function() {
                 createTag();
                 shakeAllTag();
-                })
+                // .main-comment-container
+                $('a#comment-button').on('click',function() {
+                    $.smoothScroll({
+                        scrollTarget: '#main-comment-container'
+                    });
+                });
+            })
         $(window).resize(function() {
                 rePositionTag();
         })
@@ -314,8 +321,12 @@ hr.photos {
             -->
             <div id="content-form-body">
                 <div class="content-margin-container">
+                    {% if ret.user_profile_image_path %}
+                    <div style="background:url({{url_for('static',filename=ret.user_profile_image_path)}}); border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
+                    {% else %}
                     <div style="background-color:#dddddd; border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
-                    <h1 style="padding-bottom:0px;display:table-cell;padding-left:5px;"><a href="/company_portfolio/{{ ret.user.id }}" target="_blank">{{ ret.user.username }} &nbsp;</a>{% if session and 'user_id' in session and session['user_id'] == ret.user.id %}<button class='btn btn-primary' id='edit-button'><a href="/project_edit/{{ret.feed.id}}" style="display:block;color:#FFFFFF;">수정하기</a></button>{% endif %}</h1>
+                    {% endif %}
+                    <h1 style="padding-bottom:0px;display:table-cell;padding-left:5px;"><a href="/company_portfolio/{{ ret.user.id }}" target="_blank">{{ ret.user.username }} &nbsp;</a>{% if session and 'user_id' in session and session['user_id'] == ret.user.id %}<button class='btn btn-primary' id='edit-button'><a href="/project_edit/{{ret.feed.id}}" style="display:block;color:#FFFFFF;">수정하기</a></button> <button class="btn btn-danger">삭제하기 </button>{% endif %}</h1>
             </div>
             <hr style="margin:0px 0px 0px 0px;">
                 <div class="content-margin-container">
@@ -323,6 +334,9 @@ hr.photos {
                 <h4>{{ ret.feed.body }}</h4>
                 <h5>카테고리: <a href="/photos/{{ ret.feed.feed_category_id }}" target="_blank">{{ ret.feed_category_name }}</a></h5>
                 <h5 style="padding-bottom:0px;">주소: </h5>
+                <a id="comment-button" href="#main-comment-container"> 
+                    <button class="btn btn-primary" style="height:21px;vertical-align:middle;padding:0px 5px 0px 5px;font-size:13px;"><i class="fa fa-comment"></i> 댓글 {{ ret.all_comments | length }}</button>
+                </a>
             </div>
             <hr style="margin:0px 0px 0px 0px;">
             <div class="content-margin-container">
@@ -375,7 +389,7 @@ hr.photos {
                     {% for message in commentForm.body.errors %}
                         <div class="flash">{{ message }}</div>
                     {% endfor %}
-                    {{ commentForm.body(placeholder="의견을 남겨주세요 !",autofocus=true) }}
+                    {{ commentForm.body(placeholder="의견을 남겨주세요 !") }}
                 </div>
                 <input name="submit" class="btn btn-block btn-lg btn-primary" value="댓글 달기 " type="submit">
             </div>
@@ -383,11 +397,15 @@ hr.photos {
         {% endif %}
                     </div>
         {% if ret.all_comments | length != 0 %}
-        <div class="main-comment-container">
+        <div class="main-comment-container" id="main-comment-container">
             {% for comment in ret.all_comments %}
             <div class="main-comment-item">
                 <div class="main-comment-profile">
+                    {% if comment.user_profile_image_path %}
+                    <div style="background:url({{url_for('static',filename=comment.user_profile_image_path)}}); border:1px solid #dddddd;height:34px;width:34px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;"></div>
+                    {% else %}
                     <div style="background-color:#dddddd; border:1px solid #dddddd;height:34px;width:34px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;"></div>
+                    {% endif %}
                 </div>
                 <div class="main-comment-body-top">
                     <h5 style="padding:0px;">

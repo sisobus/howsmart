@@ -1,0 +1,115 @@
+<style>
+.mobile-card-container {
+    width:100%;
+}
+.mobile-card-body-item {
+    padding-left: 10px;
+    padding-right:10px;
+}
+mobile-card-header {
+    display: block;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #dddddd;
+    border-left: 0px;
+    border-right:0px;
+}
+</style>
+<div class="mobile-card-container" >
+    <mobile-card-header>
+        <div class="bio">
+            <script type="text/javascript">
+var previous_url = '?previous_url='+window.location.href;
+openpost = function(post_id) {
+    location.href="/blog_post/"+post_id+previous_url;
+}
+            </script>
+            <a href="javascript:openpost({{ post.post.id }});">
+                <div class="bg" style="background:  url({{ '/static/'+post.image_path }});
+                    background-repeat:no-repeat;
+                    background-size: cover;
+                    background-position: center;
+                    " id="mobile-image-{{post.post.id}}">
+                    <div style="position: absolute;left:40%;top:260px;display:none;" id="mobile-button-container-{{post.post.id}}">
+                        <a href="#">
+                            <button class="btn " id="mobile-save-button-{{post.post.id}}" style="background: black;color:white;"><i class="fa fa-plus"></i> Save </button>
+                        </a>
+                        <a href="#">
+                            <button class="btn " id="mobile-share-button-{{post.post.id}}" style="background: black;color:white;">Share</button>
+                        </a>
+                    </div>
+                </div>
+            </a>
+                <div  style="width:inherit;">
+                    <div class="row" style="display: table-cell;background:#ffffff;">
+                        <div calss="card_custom_body">
+                            <div class="mobile-card-body-item">
+                                <a href="javascript:openpost({{ post.post.id }});">
+                                    <h4 style="padding:0;margin-top:10px;margin-bottom:10px;"> {{ post.post.post_name }}</h4>
+                                </a>
+                            </div>
+                            <hr style="margin:0;"/>
+                            <!--
+                            <div class="mobile-card-body-item">
+                                <h5>
+                                    {% if post.user.level == 2 %}
+                                    <a href="/company_portfolio/{{ post.user.id }}">
+                                    {% elif post.user.level == 1 %}
+                                    <a href="/user_portfolio/{{ post.user.id }}">
+                                    {% elif post.user.level == 99 %}
+                                    <a href="/user_portfolio/{{ post.user.id }}">
+                                    {% endif %}
+                                    {{ post.user.username }}
+                                    </a>
+                                </h5>
+                            </div>
+                            -->
+                            <div class="mobile-card-body-item">
+                                <h5 style="margin-top: 10px;">
+                                    {{ post.post.post_summary }} <a href="javascript:openpost({{post.post.id}});">...더보기</a>
+                                </h5>
+                            </div>
+                    </div>
+                    </div>
+                </div>
+        </div>
+    </card_header>
+</div>
+<br>
+<script>
+$('#image-{{post.post.id}}').hover(function() {
+    $('#button-container-{{post.post.id}}').fadeIn('slow');
+    }, function() {
+    $('#button-container-{{post.post.id}}').fadeOut('slow');
+});
+$('#save-button-{{post.post.id}}').bind('click',function(e) {
+        // Prevents the default action to be triggered. 
+    e.preventDefault();
+
+    // Triggering bPopup when click event is fired
+    $('#popup').bPopup({
+        contentContainer:'.content',
+    });
+    $('#image-preview').attr('src',"{{ url_for('static',filename=post.image_path) }}");
+    $('#save-button').click(function() {
+        var data = {
+            "post_id": "{{ post.post.id }}",
+            "comment": $('#comment-box').val(),
+            "user_id": "{{ session['user_id'] }}"
+        };
+        $.ajax({
+            url: '/save_post',
+            data: data,
+            type: 'POST',
+            success: function(response) {
+                var jsonData = JSON.parse(response);
+                console.log(jsonData);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+        $('#popup').bPopup().close();
+    });
+});
+</script>

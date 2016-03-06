@@ -78,7 +78,6 @@
             width: 100%;
         }
         form input#title {
-            margin-top: 100px;
         }
         form textarea#body {
             height: 300px;
@@ -162,48 +161,59 @@
     <div id="content-container">
         <div id="content-form-container">
             <div id="content-form-header">
+                <br>
             </div>
             <div>
+                <h4 style="padding-left:5px;"> 사진을 클릭하시면 태그를 달 수 있습니다.</h4>
             <form action="{{ url_for('project_edit',feed_id=ret.feed.id) }}" method="post" enctype="multipart/form-data">
                 {{ writeFeedForm.hidden_tag() }}
                 <div>
+                <h5 style="padding-left:5px;padding-bottom:0px;">사진명</h5>
                 {{ writeFeedForm.title(value=ret.feed.title,placeholder="사진 명") }}
                     {% for message in writeFeedForm.title.errors %}
                         <div class="flash">{{ message }}</div>
                     {% endfor %}
                 </div>
                 <div>
+                <h5 style="padding-left:5px;padding-bottom:0px;">사진설명</h5>
                 {% for message in writeFeedForm.body.errors %}
                     <div class="flash">{{ message }}</div>
                 {% endfor %}
                 {{ writeFeedForm.body(placeholder="사진에 대한 설명을 해주세요.") }}
                 </div>
+                <h5 style="padding-left:5px;padding-bottom:0px;">공간 카테고리</h5>
                 <div style="margin-left: 20px;">
                     {% for message in writeFeedForm.feed_category.errors %}
                         <div class="flash">{{ message }}</div>
                     {% endfor %}
                     {{ writeFeedForm.feed_category }}
                 </div>
+                {% if ret.next != -1 %}
                 <div>
-                    <input name="submit" class="btn  btn-lg btn-primary" value="수정하기" type="submit">
+                    <input name="submit" class="btn  btn-lg btn-primary" style="width:100%;"value="다음" type="submit">
                 </div>
+                {% endif %}
             </form>
 
             <br>
                 {% if ret.prev != -1 %}
                     <a href="/project_edit/{{ ret.prev }}">
-                        <button class="btn btn-lg btn-primary">이전</button>
+                        <button class="btn btn-lg btn-info">이전</button>
                     </a>
                 {% endif %}
 
+                {% if ret.next == -1 %}
                 <a href="/project_detail/{{ ret.project_id }}">
                     <button class="btn btn-lg btn-primary">완료</button>
                 </a>
+                {% endif %}
 
                 {% if ret.next != -1 %}
+                <!--
                     <a href="/project_edit/{{ ret.next }}">
                         <button class="btn btn-lg btn-primary">다음</button>
                     </a>
+                    -->
                 {% endif %}
             </div>
         </div>

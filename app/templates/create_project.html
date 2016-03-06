@@ -29,6 +29,18 @@
     </style>
 <div class="container main-container">
     <div id="create_project_form">
+        <br>
+        <div>
+            <h3 style="padding-left:10px;"><font color=red>step1. 프로젝트 정보 작성&nbsp;&nbsp;</font>
+            step2. 사진별 피드 작성&nbsp;&nbsp;
+            step3. 프로젝트 생성 완료</h3>
+        </div>
+            <h3 style="padding-left:10px;">사진 등록(필수)</h3>
+        <form action="{{ url_for('create_project') }}" method="POST" enctype="multipart/form-data" class="dropzone" style="border:0px;border-top:1px solid #dddddd;border-bottom:1px solid #dddddd;">
+            <div id='uploadme' class="fallback">
+                <input name="file" type="file" multiple/>
+            </div>
+        </form>
         <form action="{{ url_for('create_project') }}" method="POST" style="margin-left:10px;margin-right:10px;">
             <br>
             <h3>필수입력사항(*)</h3>
@@ -70,15 +82,9 @@
 
             <hr/>
             <div>
-                <input name="submit" class="btn   btn-lg btn-primary" value="저장" type="submit" style="width:100%;">
+                <input name="submit" class="btn   btn-lg btn-primary" value="다음" type="submit" style="width:100%;">
             </div>
-            <hr/>
-            <h3>사진 등록(필수)</h3>
-        </form>
-        <form action="{{ url_for('create_project') }}" method="POST" enctype="multipart/form-data" class="dropzone" style="border:0px;border-top:1px solid #dddddd;">
-            <div id='uploadme' class="fallback">
-                <input name="file" type="file" multiple/>
-            </div>
+            <br>
         </form>
     </div>
 </div>

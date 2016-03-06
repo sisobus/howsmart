@@ -83,7 +83,7 @@
 }
 
     </style>
-<div class="container main-container ">
+<div class="container main-container nav-margin hidden-xs">
     <div class="row">
         <div class="breadcrumbDiv col-lg-12">
             <ul class="breadcrumb" style="margin-bottom:10px;background-color:#FFFFFF;margin-top:10px;">
@@ -168,7 +168,11 @@
                                             <h1 href="/company_portfolio/{{ pros.user.id }}">
                                                     <a href="/company_portfolio/{{ pros.user.id }}">
                                                         <div class="pull-left"><h2>
+                                                                {% if pros.user_profile_image_path %}
+                                                                <div style="background:url({{url_for('static',filename=pros.user_profile_image_path)}}); border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
+                                                                {% else %}
                                                                 <div style="background-color:#dddddd; border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
+                                                                {% endif %}
                                                                                                         <div style="display:table-cell;vertical-align:middle;padding-left:10px;">
                                                                 {{ pros.user.username }}
                                                             </div>
@@ -200,6 +204,108 @@
         </div>
     </div>
 </div>
+<style>
+.mobile-pros-container {
+    width: 100%;
+}
+.mobile-card-body-item {
+    padding-left: 10px;
+    padding-right:10px;
+    background:#ffffff;
+}
+mobile-card-header {
+    display: block;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #dddddd;
+    border-left: 0px;
+    border-right:0px;
+}
+</style>
+<div class="main-container nav-margin visible-xs" style="overflow:hidden;">
+    <div class="row">
+        <div class="col-lg-2 col-md-2 col-sm-12">
+            <div class="panel panel-default" style="border-left:0px;border-right:0px;border-bottom:0px;">
+                <div class="w100 productFilter clearfix" style="border-top:0px;margin-bottom:0px;">
+                    <p class="pull-left" style="font-size:20px;margin-left:10px;"> {{ pros_category_name }}  <strong>{{ ret_pros|length }}</strong> 전문가
+                    </p>
+                <button id="filter-button" class="btn btn-primary" style="width:95%;margin:5px 10px 10px 10px;">필터</button>
+                <script>
+                $('#filter-button').click(function() {
+                    var $filter_wrapper = $('#mobile-collapseCategory');
+                    if ($filter_wrapper.is(':visible')) {
+                        $filter_wrapper.hide();
+                    } else {
+                        $filter_wrapper.show();
+                    }
+                });
+                </script>
+                </div>
+                <div id="mobile-collapseCategory" class="panel-collapse collapse in" style="display:none;">
+                    <div class="panel-body">
+                        <ul class="nav nav-pills nav-stacked tree">
+                            <li ><a href="/find_pros/1" >  주거 인테리어</a></li>
+                            <li><a href="/find_pros/2">  상업 인테리어</a></li>
+                            <li><a href="/find_pros/4"> 인테리어 디자이너</a></li>
+                            <li><a href="/find_pros/3"> 가구 회사</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-10 col-md-10 col-sm-12">
+            {% for pros in ret_pros %}
+            <div class="mobile-pros-container" style="margin-bottom:10px;">
+                <mobile-card-header>
+                    <a href="/company_portfolio/{{ pros.user.id }}">
+                        <div class="bg" style="background: url({{ '/static/'+pros.image_path }});
+                            background-repeat: no-repeat;
+                            background-size: cover;
+                            background-position: center;
+                            ">
+                        </div>
+                    </a>
+                    <div class="mobile-card-body-item" style="padding-top:10px;">
+                        <div class="container" style="width:inherit;margin-left:0px;margin-right:0px;padding-left:0px;padding-right:0px;">
+                            <h1 href="/company_portfolio/{{ pros.user.id }}">
+                                    <a href="/company_portfolio/{{ pros.user.id }}">
+                                        <div class="pull-left">
+                                            <h2 style="padding-bottom:0px;">
+                                                {% if pros.user_profile_image_path %}
+                                                <div style="background:url({{url_for('static',filename=pros.user_profile_image_path)}}); border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
+                                                {% else %}
+                                                <div style="background-color:#dddddd; border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
+                                                {% endif %}
+                                                                                        <div style="display:table-cell;vertical-align:middle;padding-left:10px;">
+                                                {{ pros.user.username }}
+                                            </div>
+                                        </h2></div>
+                                    </a>
+                                </a>
+                        </div>
+                        <br>
+                        <h4 style="padding-bottom:0px;">
+                            <i class="fa fa-phone-square 1x" style="color:#777777;display:table-cell;vertical-align:middle;" > </i>
+                            <div style="display:table-cell;vertical-align:middle;padding-left:5px;">
+                                {{ pros.company.company_tel }}
+                            </div>
+                        </h4>
+
+                        <h4>{{ pros.company.company_si }} {{ pros.company.company_gu }} {{ pros.company.company_dong }} {{ pros.company.company_address }}</h4>
+                        <h5>{{ pros.company.company_introduction }}
+                        {% if pros.over_introduction %}
+                        <a href="/company_portfolio/{{ pros.user.id }}">...더보기</a>
+                        {% endif %}
+                    </h5>
+                    </div>
+                    </mobile-card-header>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
 <script type="text/javascript">
     window.state = {};
 function bindLocal1(obj) {

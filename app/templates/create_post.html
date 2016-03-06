@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<link href="{{ url_for('static',filename='css/summernote.css') }}" rel="stylesheet">
+<script src="{{ url_for('static',filename='js/summernote.min.js') }}"></script>
+<script src="{{ url_for('static',filename='js/summernote-ko-KR.js') }}"></script>
+  <div class="container">
+      <style>
+        input[type="text"] {
+            -webkit-border-radius: 3px 0 0 3px;
+            -moz-border-radius: 3px 0 0 3px;
+            border-radius: 3px 0 0 3px;
+            border: 1px solid #dddddd;
+            color: #888888;
+            font-size: 14px;
+            height: 36px;
+            width: 100%;
+            padding-left: 10px;
+        }
+        input[type="text"]:hover {
+            border-color: #eeeeee;
+            outline: 0 none;
+        }
+        input[type="text"]:focus {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+      </style>  
+      <form action="{{ url_for('create_post') }}" method="post" enctype="multipart/form-data">
+          <input id="post-name" name="post-name" type="text" placeholder="포스트 제목" style="margin-top:10px;" autofocus>
+          <input id="post-summary" name="post-summary" type="text" placeholder="포스트 요약">
+          대표이미지<input id="imgup" name="imgup" type="file" style="margin-bottom:10px;">
+          <textarea id="summernote" name="post-body"><p>포스트 글쓰기</p></textarea>
+          <button type="submit" id="save-button" class="btn btn-primary" style="width:100%;margin-bottom:20px;">저장하기</button>
+      </form>
+  </div>
+  <script>
+function sendFile(file) {
+    var formData = new FormData()
+    formData.append("file",file);
+
+    var fileData = URL.createObjectURL(file);
+    $('#summernote').summernote('insertImage', fileData,function ($image) {
+    console.log(formData);
+        $.ajax({
+            url: "/post_image_save",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            dataType:"json",
+            type: 'POST',
+            success: function(data){
+                console.log(data);
+                $image.attr('src', '/static/'+data.url);
+                $image.attr('style', 'width:100%;'); 
+            },
+            error: function(error) {
+                console.log(error);
+                $image.attr('src','?');
+            }
+        });
+
+    });
+}
+
+    $(document).ready(function() {
+        $('#summernote').summernote({
+            height: 400,
+            lang: 'ko-KR',
+            callbacks: {
+                onImageUpload: function(files) {
+                    sendFile(files[0]);
+                }
+            }
+        });
+            });
+  </script>
+{% endblock %}

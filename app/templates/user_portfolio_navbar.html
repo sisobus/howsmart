@@ -6,16 +6,17 @@
 <link href="{{ url_for('static',filename='css/image-crop.css') }}" rel="stylesheet">
 <script src="{{ url_for('static',filename='js/jquery.Jcrop.js') }}"></script>
 <script src="{{ url_for('static',filename='js/jquery.SimpleCropper.js') }}"></script>
-<div class="container nav-margin" style="padding: 0px 0px 0px 0px;height:200px;">
-    <div class="custom_jumbo_container" style="background: url({{ '/static/'+ret.image_path }});
+
+<div class="container" style="padding: 0px 0px 0px 0px;height:200px;">
+    <div class="custom_jumbo_container" style="background: url({{ '/static/'+'files/dedesign1@dedesign.com/MG_2192.jpg' }});
             background-repeat:no-repeat; background-size: cover; background-position: center;">
         <div id="leftside_container">
-            {% if ret.user_profile_image_path | length != 0 %}
-            <div class="cropme" style="width:168px; height:168px; margin-left:20px;">
-                <div style="background: url({{ url_for('static',filename=ret.user_profile_image_path) }});
-                    background-repeat:no-repeat; background-size: cover; background-position: center;z-index:10;height:168px;"></div>
+                {% if ret.user_profile_image_path | length != 0 %} 
+                <div class="cropme" style="width:168px; height:168px; margin-left:20px;">
+                    <div style="background: url({{ url_for('static',filename=ret.user_profile_image_path) }});
+                        background-repeat:no-repeat; background-size: cover; background-position: center;z-index:10;height:168px;"></div>
             </div>
-            {% else %}
+                {% else %}
             <div class="cropme" style="width:168px; height:168px; margin-left:20px;">
             </div>
             {% endif %}
@@ -55,20 +56,25 @@ error: function(error) {
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav" id="company-portfolio-navbar">
                     <li>
-                        <a href="/company_portfolio/{{ ret.user.id }}">회사소개</a>
+                        <a href="/user_portfolio/{{ ret.user.id }}">개인소개</a>
                     </li>
                     <li>
-                        <a href="/company_portfolio/{{ ret.user.id }}/project">프로젝트</a>
+                        <a href="/user_portfolio/{{ ret.user.id }}/project">프로젝트</a>
                     </li>
                     <li>
-                        <a href="/company_portfolio/{{ ret.user.id }}/shop">스토어</a>
+                        <a href="/user_portfolio/{{ ret.user.id }}/shop">스토어</a>
                     </li>
                     <li>
-                        <a href="/company_portfolio/{{ ret.user.id }}/qna">질문/답변</a>
+                        <a href="/user_portfolio/{{ ret.user.id }}/news">하우스토리</a>
+                    </li>
+                    <!--
+                    <li>
+                        <a href="/user_portfolio/{{ ret.user.id }}/qna">질문/답변</a>
                     </li>
                     <li>
-                        <a href="/company_portfolio/{{ ret.user.id }}/review">리뷰</a>
+                        <a href="/user_portfolio/{{ ret.user.id }}/review">리뷰</a>
                     </li>
+                    -->
                 </ul>
             </div>
         </div>

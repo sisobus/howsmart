@@ -1,5 +1,19 @@
-<div class="panel panel-default">
-    <div id="collapseCategory" class="panel-collapse collapse in">
+<div class="panel panel-default" style="border-left:0px;border-right:0px;">
+    <div class="w100 productFilter clearfix" style="border-top:0px;margin-bottom:0px;">
+        <p class="pull-left" style="font-size:20px;margin-left:10px;"> {{ ret.shop_category_name }}  <strong>{{ ret.cur_category_product_count }}</strong> 제품  </p>
+    <button id="filter-button" class="btn btn-primary" style="width:95%;margin:5px 10px 10px 10px;">필터</button>
+        <script>
+        $('#filter-button').click(function() {
+            var $filter_wrapper = $('#mobile-collapseCategory');
+            if ($filter_wrapper.is(':visible')) {
+                $filter_wrapper.hide();
+            } else {
+                $filter_wrapper.show();
+            }
+        });
+        </script>
+    </div>
+    <div id="mobile-collapseCategory" class="panel-collapse collapse in" style="display:none;">
         <div class="panel-body">
             <ul class="nav nav-pills nav-stacked tree">
                 <li class="active dropdown-tree open-tree">

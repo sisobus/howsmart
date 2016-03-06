@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<link href="{{ url_for('static',filename='css/jquery.Jcrop.css') }}" rel="stylesheet">
+<link href="{{ url_for('static',filename='css/jquery.SimpleCropper.css') }}" rel="stylesheet">
+<link href="{{ url_for('static',filename='css/image-crop.css') }}" rel="stylesheet">
+<script src="{{ url_for('static',filename='js/jquery.Jcrop.js') }}"></script>
+<script src="{{ url_for('static',filename='js/jquery.SimpleCropper.js') }}"></script>
+<style>
+
+
+</style>
+<div class="cropme" style="width: 168px; height: 168px;"></div>
+<script>
+// Init Simple Cropper
+$('.cropme').simpleCropper();
+</script>
+
+
+
+
+{% endblock %}

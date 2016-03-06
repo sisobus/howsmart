@@ -32,7 +32,9 @@
     }
     .photos-contents-list-container {
         background-color: #FFFFFF;
+        /*
         margin-left: -20px;
+        */
         border: 1px solid #DDDDDD;
         margin-bottom: 10px;
     }
@@ -42,9 +44,41 @@
     .photos-contents-list-container-item {
         margin: 5px 5px 5px 5px;
     }
+card_header {
+  display: block;
+  overflow: hidden;
+  position: relative;
+
+  }
+
+.card_container {
+    outline: 0; 
+    width: 100%;
+    position: relative;
+    float: left;
+    margin: 1px 1px 1px 1px;
+
+  background-color: #ffffff;
+    border: 1px solid #dddddd;
+
+  }
+
+.card_custom_body {
+    padding-top: 15px;
+    padding-left:25px;
+    padding-right:25px;
+    height: 70px;
+}
+
+.bg {
+  border-bottom: 0px solid #5cc0ff;
+  max-width: 100%;
+  height:200px;
+}
 
     </style>
-<div class="container main-container ">
+    {% include "photos_mobile.html" %}
+<div class="container main-container nav-margin hidden-xs">
     <div class="row">
         <div class="breadcrumbDiv col-lg-12">
             <ul class="breadcrumb" style="margin-bottom:10px;background-color:#FFFFFF;margin-top:10px;">
@@ -64,7 +98,7 @@
                 <div id="collapseCategory" class="panel-collapse collapse in">
                     <div class="panel-body">
                         <ul class="nav nav-pills nav-stacked tree">
-                            <li class="active dropdown-tree open-tree"><a class="dropdown-tree-a">  주거공간</a>
+                            <li class="active dropdown-tree open-tree"><a class="dropdown-tree-a">  공간 </a>
                                 <ul class="category-level-2 dropdown-menu-tree">
                                     <li class="dropdown-tree"><a class="dropdown-tree-a" href="/photos/1">
                                         거실</a></li>
@@ -75,10 +109,46 @@
                                     <li><a href="/photos/6"> 욕실</a></li>
                                     <li><a href="/photos/7"> 현관</a></li>
                                     <li><a href="/photos/8"> 기타</a></li>
+                                    <li><a href="/photos/9"> 상업공간</a></li>
+                                    <li><a href="/photos/10"> 사무공간</a></li>
                                 </ul>
                             </li>
-                            <li class="active dropdown-tree open-tree"><a href="/photos/9">상업공간</a></li>
-                            <li class="active dropdown-tree open-tree"><a href="/photos/10">사무공간</a></li>
+                            <li class="active dropdown-tree "><a class="dropdown-tree-a"> 타입 </a>
+                                <ul class="category-level-2 dropdown-menu-tree">
+                                    <li><a href="#"> 원룸</a></li>
+                                    <li><a href="#"> 투베이</a></li>
+                                    <li><a href="#"> 오피스텔</a></li>
+                                    <li><a href="#"> 아파트</a></li>
+                                    <li><a href="#"> 빌라연립</a></li>
+                                    <li><a href="#"> 단독주택</a></li>
+                                    <li><a href="#"> 사무공간</a></li>
+                                    <li><a href="#"> 상업공간</a></li>
+                                    <li><a href="#"> 기타</a></li>
+                                </ul>
+                            </li>
+                            <li class="active dropdown-tree "><a class="dropdown-tree-a"> 스타일 </a>
+                                <ul class="category-level-2 dropdown-menu-tree">
+                                    <li><a href="#"> 모던 </a></li>
+                                    <li><a href="#"> 북유럽</a></li>
+                                    <li><a href="#"> 빈티지</a></li>
+                                    <li><a href="#"> 내츄럴</a></li>
+                                    <li><a href="#"> 프로방스</a></li>
+                                    <li><a href="#"> 클래식+앤틱</a></li>
+                                    <li><a href="#"> 오리엔탈</a></li>
+                                    <li><a href="#"> 유니크</a></li>
+                                    <li><a href="#"> 기타</a></li>
+                                </ul>
+                            </li>
+                            <li class="active dropdown-tree "><a class="dropdown-tree-a"> 면적 </a>
+                                <ul class="category-level-2 dropdown-menu-tree">
+                                    <li><a href="#"> 10평대 미만</a></li>
+                                    <li><a href="#"> 10평대</a></li>
+                                    <li><a href="#"> 20평대</a></li>
+                                    <li><a href="#"> 30평대</a></li>
+                                    <li><a href="#"> 40평대</a></li>
+                                    <li><a href="#"> 50평대 이상</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -106,8 +176,43 @@
                         </div>
                     </div>
 
+                    {% include "modal_save_feed.html" %}
                     <div class="xsResponse clearfix">
-                        <div id="all_photos_container">
+                        <div id="all_photos_container" style="padding-top:10px;" class="visible-xs">
+                            {% for feed in feeds %}
+                            <div class="col-lg-4 col-md-4 col-sm-12" style="padding:1px 1px 1px 1px;">
+                                <div class="card_container"> 
+                                    <div class="card_header">
+                                        <script type="text/javascript">
+var previous_url = '?previous_url='+window.location.href;
+openFeed = function(feed_id) {
+    location.href="/company_feed_detail/"+feed_id+previous_url;
+}
+                                        </script>
+                                        <a href="javascript:openFeed({{ feed.feed.id }});">
+                                        <div class="bg" id="" style="background: url({{ '/static/'+feed.image_path }});
+                                            background-repeat: no-repeat;
+                                            background-size: cover;
+                                            background-position: center;
+                                            ">
+                                        </div>
+                                    </a>
+                                    <div id="">
+                                        <a href="javascript:openFeed({{ feed.feed.id }});">
+                                            <h4 style="padding: 3px 0px 2px 10px;">{{ feed.feed.title }}</h4>
+                                        </a>
+                                        <div style="display:table-cell;vertical-align:middle;padding-left:10px;">
+                                            <strong>
+                                            <a href="/company_portfolio/{{ feed.user.id }}"><h5 style="vertical-align:middle; padding-bottom:3px;font-weight:700;">{{ feed.user.username }}</h5></a>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div id="all_photos_container" class="hidden-xs">
                             {% for feed in feeds %}
                             <div id="photos_container">
                                 <div class="photos-contents-list-container-item" >
@@ -118,15 +223,69 @@ openFeed = function(feed_id) {
 }
                                     </script>
                                     <a href="javascript:openFeed({{ feed.feed.id }});">
-                                        <div class="third-effect" id="photos_background_image" style="background: url({{ '/static/'+feed.image_path }});
+                                        <div  style="background: url({{ '/static/'+feed.image_path }});
                                             background-repeat: no-repeat;
                                             background-size: cover;
                                             background-position: center;
-                                            ">
+                                            position:absolute;width: 500px; height:290px; margin: 0px 5px 0px 5px;
+                                            " id="image-{{feed.feed.id}}">
+                                            <div style="position: absolute;left:37%;bottom:10px;display:none;" id="button-container-{{feed.feed.id}}">
+                                                <a href="#">
+                                                    <button class="btn " id="save-button-{{feed.feed.id}}" style="background: black;color:white;"><i class="fa fa-plus"></i> Save </button>
+                                                </a>
+                                                <a href="#">
+                                                    <button class="btn " id="share-button-{{feed.feed.id}}" style="background: black;color:white;">Share</button>
+                                                </a>
+                                            </div>
+<script>
+$('#image-{{feed.feed.id}}').hover(function() {
+    $('#button-container-{{feed.feed.id}}').fadeIn('slow');
+    }, function() {
+    $('#button-container-{{feed.feed.id}}').fadeOut('slow');
+});
+$('#save-button-{{feed.feed.id}}').bind('click',function(e) {
+        // Prevents the default action to be triggered. 
+    e.preventDefault();
+    console.log('{{feed.feed.id}}');
+
+    // Triggering bPopup when click event is fired
+    $('#popup').bPopup({
+        contentContainer:'.content',
+    });
+    $('#image-preview').attr('src',"{{ url_for('static',filename=feed.image_path) }}");
+    $('#save-button').click(function() {
+        var data = {
+            "feed_id": "{{ feed.feed.id }}",
+            "comment": $('#comment-box').val(),
+            "user_id": "{{ session['user_id'] }}"
+        };
+        $.ajax({
+            url: '/save_feed',
+            data: data,
+            type: 'POST',
+            success: function(response) {
+                var jsonData = JSON.parse(response);
+                console.log(jsonData);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+        $('#popup').bPopup().close();
+    });
+});
+</script>
+
                                         </div>
                                     </a>
                                     <div id="photos_body">
-                                        <div style="background-color:#dddddd; border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
+                                        {% if feed.user_profile_image_path %}
+                                        <div style="background: url({{ url_for('static',filename=feed.user_profile_image_path) }}); border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;">
+                                        </div>
+                                        {% else %}
+                                        <div style="background-color:#dddddd; border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;">
+                                        </div>
+                                        {% endif %}
                                         <div style="display:table-cell;vertical-align:middle;padding-left:10px;">
                                         <a href="/company_portfolio/{{ feed.user.id }}"><h5 style="vertical-align:middle; padding-bottom:0px;">{{ feed.user.username }}</h5></a>
                                     </div>
@@ -139,7 +298,7 @@ openFeed = function(feed_id) {
                     <i class="fa  fa-circle-thin fa-stack-2x" style="{% if feed.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}top:0;" id="like-button-icon-circle-{{ feed.feed.id }}"> </i>
                     <i class="fa   fa-thumbs-o-up fa-stack-1x" style="{% if feed.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}top:0;" id="like-button-icon-thumb-{{ feed.feed.id }}"> </i>
                 </span>
-                <h5 style="display:table-cell;padding-bottom:0px;padding-left:4px;padding-right:8px;vertical-align:middle;" ><a onclick="likePost({{ feed.feed.id }});" style="{% if feed.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}" id="like-button-{{ feed.feed.id }}"> {{ feed.number_of_like }} 좋아요</a></h5>
+                <h5 style="display:table-cell;padding-bottom:0px;padding-left:4px;padding-right:8px;vertical-align:middle;" ><a onclick="likefeed({{ feed.feed.id }});" style="{% if feed.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}" id="like-button-{{ feed.feed.id }}"> {{ feed.number_of_like }} 좋아요</a></h5>
                 <span class="fa-stack " style="display:table-cell;padding-right:15px;">
                     <i class="fa  fa-circle-thin fa-stack-2x" style="color:#777777;top:0;" > </i>
                     <i class="fa   fa-comment fa-stack-1x" style="color:#777777;top:0;" > </i>
@@ -161,7 +320,7 @@ $(window).scroll(function() {
     if ($(window).scrollTop() == $(document).height() - $(window).height()) {
         $.ajax({
             async : true,
-            type : "POST",
+            type : "feed",
         {% if feed_category_id == 0 %}
             url : "{{ url_for('photos') }}",
         {% endif %}
@@ -174,7 +333,7 @@ $(window).scroll(function() {
 });
 </script>
 <script type="text/javascript">
-function likePost(feed_id) {
+function likefeed(feed_id) {
     var data = {
     "user_id": {{ session['user_id'] }},
     "feed_id": feed_id

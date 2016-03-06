@@ -1,0 +1,46 @@
+<script src="{{ url_for('static',filename='js/jquery.bpopup.min.js') }}"></script>
+<style>
+  #element_to_pop_up { display:none; }
+  #popup,#popup2,.bMulti{background-color:#fff;border-radius:10px 10px 10px 10px;box-shadow:0 0 25px 5px #999;color:#111;display:none;min-width:700px;padding:25px}
+  #popup .logo{color:#2b91af;font:bold 325% 'Petrona',sans}#popup,.bMulti{min-height:250px}#popup2 iframe{background:url('loader.gif') center center no-repeat;min-height:240px;min-width:450px}.loading{background:url('loader.gif') center center no-repeat}.bMulti p{font:500% 'Petrona',sans-serif;padding:45px 0 0;text-align:center}.bMulti a{left:175px;position:absolute;top:175px}.lt-ie9 .bModal{background-color:#000}
+    #comment-box {
+        height:inherit;width:100%;border:1px solid #dddddd;
+    }
+    #comment-box:focus {
+        border:1px solid #eeeeee;
+        outline: none;
+    }
+    #comment-box:hover {
+        border: 1px solid #eeeeee;
+        outline: none;
+    }
+    img#image-preview {
+        max-width:100%;
+        max-height:100%;
+        position: absolute;
+        display: block;
+        margin-left: 10px;
+        margin-right: auto;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+    }
+</style>
+<!-- Element to pop up -->
+<div id="popup" style="background:#ffffff;padding:0px;">
+    <div style="border-bottom:1px solid #dddddd;padding: 11px 10px 10px 10px;">
+        <h4 style="padding-bottom:1px;">피드 저장</h4>
+    </div>
+    <div class="col-xs-6" style="display:table-cell;height:300px;margin-top:5px;">
+        <img id="image-preview" src="{{ url_for('static',filename='files/dw1@designwings.com/KakaoTalk_Photo_2015-12-02-15-26-55_88.jpeg') }}">
+    </div>
+    <div class="col-xs-6" style="height:300px;margin-top:5px;">
+        <textarea id="comment-box" placeholder="코멘트를 달아주세요."></textarea>
+    </div>
+    <div style="margin-top:312px;border-top:1px solid #dddddd;padding:10px 10px 10px 11px;text-align:right;">
+        <button class="btn btn-primary" id="save-button"><i class="fa fa-plus"></i> 저장하기</button>
+    </div>
+
+</div>
+<script>
+</script>

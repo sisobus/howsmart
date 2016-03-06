@@ -1,4 +1,4 @@
-<div class="banner">
+<div class="banner" >
     <div class="full-container">
         <div class="slider-content">
             <!--
@@ -7,8 +7,8 @@
             -->
             <!-- prev/next links -->
 
-            <span class="prevControl sliderControl" style="background:rgba(255,255,255,0);"> <i class="fa fa-angle-left fa-5x " style="color:#ffffff;"></i></span> 
-            <span class="nextControl sliderControl" style="background:rgba(255,255,255,0);"> <i class="fa fa-angle-right fa-5x " style="color:#ffffff;"></i></span>
+            <span class="prevControl sliderControl hidden-xs" style="background:rgba(255,255,255,0);"> <i class="fa fa-angle-left fa-5x " style="color:#ffffff;"></i></span> 
+            <span class="nextControl sliderControl hidden-xs" style="background:rgba(255,255,255,0);"> <i class="fa fa-angle-right fa-5x " style="color:#ffffff;"></i></span>
 
             <div class="slider slider-v1"
                  data-cycle-swipe=true
@@ -22,11 +22,11 @@
                             <div class="col-lg-12 col-md-12 col-sm-12 sliderTextFull ">
                                 <div class="inner text-center">
                                     <div class="topAnima animated">
-                                        <h1 class="uppercase xlarge" style="font-weight:900;">스마트한 공간 디자인</h1>
+                                        <h1 class="uppercase xlarge hidden-xs" style="font-weight:900;">스마트한 공간 디자인</h1>
 
                                         <h1 class="hidden-xs xlarge" style="color:#FFFFFF;font-weight:900;font-size:38px;">인테리어&nbsp; 시작은&nbsp; 하우스마트와 &nbsp; 함께 </h1>
                                     </div>
-                                    <div class="control-group">
+                                    <div class="control-group hidden-xs ">
                                         <style>
                                         a#email-signup:hover,
                                         a#email-signup:focus {
@@ -51,7 +51,10 @@
                         </div>
                     </div>
                     {% endif %}
-                    <img src="{{ url_for('static',filename=ret_banner_feed.image_path) }}" class="img-responsive parallaximg sliderImg" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);-webkit-transform: translate(-50%,-50%);-ms-transform: translate(-50%,-50%);" alt="img">
+                    <img src="{{ url_for('static',filename=ret_banner_feed.image_path) }}" class="img-responsive parallaximg sliderImg" style="width:100%;margin-top:0px;" alt="img">
+                    <!--
+                    <img src="{{ url_for('static',filename=ret_banner_feed.image_path) }}" class="img-responsive parallaximg sliderImg" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);-webkit-transform: translate(-50%,-50%);-ms-transform: translate(-50%,-50%);width:100%;" alt="img">
+                    -->
                 </div>
                 {% endfor %}
                 <!--/.slider-item-->
@@ -59,3 +62,26 @@
         </div>
     </div>
 </div>
+{% if not session.logged_in %}
+<div class="control-group visible-xs" style="background:#ffffff;width:100%;padding:10px 10px 10px 10px;">
+    <style>
+a#email-signup:hover,
+a#email-signup:focus {
+    color: #FFFFFF;
+    background-color: #72AFAD;
+}
+a#fb-signup:hover,
+a#fb-signup:focus {
+    color: #FFFFFF;
+}
+    </style>
+    <a class="btn btn-primary btn-lg bottomAnima animated opacity0" data-toggle="modal" data-target="#ModalSignup" style="{background-color:#92CFCD;} :hover {background-color:#72AFAD}; width:100%;margin-bottom:5px;" id="email-signup">
+        <i class="fa fa-envelope-o fa-1x" style="color:#FFFFFF;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;" > </i>
+        이메일로 가입하기
+        <span class="arrowUnicode">►</span></a>
+    <a class="btn btn-fb btn-lg bottomAnima animated opacity0" style="width:100%;" id="fb-signup" href="#"> 
+        <i class="fa fa-facebook-square fa-1x" style="color:#FFFFFF;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;" > </i>
+        페이스북으로 가입하기 <span class="arrowUnicode">►</span></a>
+</div>
+
+{% endif %}

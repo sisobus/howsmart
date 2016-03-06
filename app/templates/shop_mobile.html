@@ -1,0 +1,52 @@
+    <style>
+.mobile-shop-container {
+    width: 100%;
+}
+.mobile-card-body-item {
+    padding-left: 10px;
+    padding-right:10px;
+    background:#ffffff;
+}
+mobile-card-header {
+    display: block;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #dddddd;
+    border-left: 0px;
+    border-right:0px;
+}
+    </style>
+<div class="main-container nav-margin visible-xs" style="overflow-x : hidden;">
+    <div class="row">
+        <div class="col-lg-2 col-md-2 col-sm-12">
+            {% include "shop_category_mobile.html" %}
+        </div>
+        <div class="col-lg-10 col-md-10 col-sm-12">
+            {% for product in ret.products %}
+                <div class="mobile-shop-container" style="margin-bottom: 10px;">
+                    <mobile-card-header>
+                        <a href="/product_detail/{{ product.product.id }}">
+                            <div class="bg" style="background: url({{ '/static/'+product.image_path }});
+                                background-repeat: no-repeat;
+                                background-size: cover;
+                                background-position: center;height:300px;
+                                " id="mobile-image-{{product.product.id}}">
+                            </div>
+                        </a>
+                        <div class="mobile-card-body-item" style="border-top:1px solid #dddddd;">
+                            <a href="/product_detail/{{ product.product.id }}" style="">
+                                <h4 style="padding-bottom:0px;padding-top:10px;">{{ product.product.product_name }}</h4>
+                            </a>
+                            <h5 style="padding-bottom:0px;">{{ product.product_real_price }} 원 </h5>
+                            <a href="/product_detail/{{ product.product.id }}">
+                                <h6>more colors</h6>
+                            </a>
+                        </div>
+                    </mobile-card-header>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+</script>

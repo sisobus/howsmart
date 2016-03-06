@@ -145,8 +145,9 @@
                         {{ companySignupForm.pros_category }}
                     </div>
                 </div>
+                <hr>
                 <div class="form-group">
-                    회사 대표 이미지를 올려주세요
+                    전문가 찾기에 보일 회사 대표 이미지를 올려주세요(필수)
                     <div>
                     {% for message in companySignupForm.filename.errors %}
                         <div class="flash">{{ message }}</div>

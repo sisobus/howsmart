@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from flask import Flask, url_for
 from werkzeug import secure_filename
+from werkzeug.datastructures import ImmutableMultiDict 
 import utils
 import os
 import time
@@ -13,7 +14,7 @@ app.config['SQLALCHEMY_DATABASE_URI']   = HOWSMART_DATABASE_URI
 app.config['SECRET_KEY']                = HOWSMART_SECRET_KEY
 app.config['UPLOAD_FOLDER']             = UPLOAD_FOLDER
 
-from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed, Pros_category, Company_has_pros_category, Feed_category, Product, Product_has_image, Shop_category, User_like_feed, Follow, Status, Tag, Project_type_category, Style_category, Project_hash_tag, Product_hash_tag 
+from models import db, User, Feed, Image, Comment, Company, Project, Project_has_feed, Pros_category, Company_has_pros_category, Feed_category, Product, Product_has_image, Shop_category, User_like_feed, Follow, Status, Tag, Project_type_category, Style_category, Project_hash_tag, Product_hash_tag, Blog_post, Blog_post_comment, User_save_feed, User_save_post, User_save_product, User_profile
 
 db.init_app(app)
 
@@ -24,6 +25,15 @@ from flask.ext.login import LoginManager, UserMixin, current_user, login_user, l
 from forms import SignupForm, SigninForm, WriteFeedForm, CommentForm, CompanySignupForm, MakeProjectForm, CreateProjectForm, ProjectEditForm, CreateProductForm, CompanySearchForm, FindProsForm, AddTagForm
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
+
+def get_user_profile_image_path(user):
+    user_profile_image_path = ''
+    user_profile = User_profile.query.filter_by(user_id=user.id).order_by(User_profile.created_at.desc()).first()
+    if user_profile:
+        image = Image.query.filter_by(id=user_profile.image_id).first()
+        user_profile_image_path = utils.get_image_path(image.image_path)
+
+    return user_profile_image_path 
 
 def get_feed_information(feeds):
     ret = []
@@ -59,6 +69,35 @@ def get_feed_information(feeds):
         ret.append(d)
     return ret
 
+def get_blog_post_information(posts):
+    ret = []
+    for post in posts:
+        d = {}
+        image = Image.query.filter_by(id=post.image_id).first()
+        image_path = utils.get_image_path(image.image_path)
+        user = User.query.filter_by(id=post.user_id).first()
+        blog_post_comments = Blog_post_comment.query.filter_by(blog_post_id=post.id).order_by(Blog_post_comment.created_at.asc()).all()
+
+        comments_dict_list = []
+        for all_comment in blog_post_comments:
+            comment_user = User.query.filter_by(id=all_comment.user_id).first()
+            user_profile_image_path = get_user_profile_image_path(comment_user)
+            cur = {
+                    'comment': all_comment,
+                    'user': comment_user,
+                    'user_profile_image_path': user_profile_image_path 
+                    }
+            comments_dict_list.append(cur)
+        d['image_path'] = image_path
+        d['user'] = user
+        d['post'] = post
+        d['number_of_comment'] = len(blog_post_comments)
+        ret.append(d)
+    return ret
+
+        
+        
+
 @app.route('/',methods=['GET','POST'])
 def main():
     session['project_id'] = 0
@@ -87,12 +126,13 @@ def main():
             cur_feed_id = Project_has_feed.query.filter_by(project_id=cur_project.id).order_by(Project_has_feed.feed_id.asc()).first().feed_id
             cur_feed = Feed.query.filter_by(id=cur_feed_id).first()
             feeds.append(cur_feed)
-        #feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
         ret_feeds = get_feed_information(feeds)
         ret_feeds = sorted(ret_feeds, key=lambda k: k['feed'].created_at, reverse=True)
-#        ret_pros = sorted(ret_pros, key=lambda k: k['last_project_created'], reverse=True)
+        blog_posts = Blog_post.query.order_by(Blog_post.created_at.desc()).all()
+        posts = get_blog_post_information(blog_posts)
+
         return render_template('main.html', signupForm=signupForm, signinForm=signinForm, \
-                               companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset,ret_banner_feeds=ret_banner_feeds)
+                               companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset,ret_banner_feeds=ret_banner_feeds,posts=posts)
 
     elif request.method == 'POST':
         offset = int(request.form['offset'])
@@ -120,11 +160,16 @@ def signup():
             db.session.add(newuser)
             db.session.commit()
 
+            user_profile = User_profile(newuser.id, 565, datetime.utcnow())
+            db.session.add(user_profile)
+            db.session.commit()
+
             session['username'] = newuser.username
             session['email'] = newuser.email
             session['logged_in'] = True
             session['user_id'] = newuser.id
             session['is_company'] = False
+            session['user_profile_image_path'] = get_user_profile_image_path(newuser)
 
             return redirect(url_for('main'))
 
@@ -151,7 +196,13 @@ def company_signup():
                     newuser = User(companySignupForm.username.data, companySignupForm.email.data, companySignupForm.password.data)
                     newuser.level = 2
                     newuser.created_at = datetime.utcnow()
+                    newuser.status_id = 1
                     db.session.add(newuser)
+                    db.session.commit()
+                    print 'complete: new user add'
+
+                    user_profile = User_profile(newuser.id, 565, datetime.utcnow())
+                    db.session.add(user_profile)
                     db.session.commit()
 
                     directory_url = os.path.join(app.config['UPLOAD_FOLDER'],newuser.email)
@@ -163,10 +214,13 @@ def company_signup():
                     image.created_at = datetime.utcnow()
                     db.session.add(image)
                     db.session.commit()
+                    print 'complete: new image add'
                     newcompany = Company(companySignupForm.introduction.data, companySignupForm.address.data, companySignupForm.tel.data, companySignupForm.website.data, newuser.id, companySignupForm.company_si.data, companySignupForm.company_gu.data, companySignupForm.company_dong.data)
                     newcompany.image_id = image.id
+                    newcompany.status_id = 1
                     db.session.add(newcompany)
                     db.session.commit()
+                    print 'complete: new company add'
 
                     for category_data in companySignupForm.pros_category.data:
                         cur_pros_category_id = int(category_data)
@@ -180,8 +234,11 @@ def company_signup():
                     session['logged_in']    = True
                     session['user_id']      = newuser.id
                     session['is_company'] = True
-
-                    return redirect(url_for('company_portfolio',user_id=newuser.id))
+                    session['user_profile_image_path'] = get_user_profile_image_path(newuser)
+                    print 'complete: new session add'
+                    
+                    #return redirect(url_for('company_portfolio',user_id=newuser.id))
+                    return redirect(url_for('main'))
     if request.method == 'GET':
         return render_template('main.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm,offset=10)
 
@@ -205,6 +262,7 @@ def signin():
                 session['is_company'] = False
             elif user.level == 2:
                 session['is_company'] = True
+            session['user_profile_image_path'] = get_user_profile_image_path(user)
 
             return redirect(url_for('main'))
     elif request.method == 'GET':
@@ -221,6 +279,7 @@ def signout():
     session.pop('user_id', None)
     session.pop('is_company',None)
     session.pop('project_id',None)
+    session.pop('user_profile_image_path',None)
     return redirect(url_for('main'))
 
 @app.route('/write_feed',methods=['GET','POST'])
@@ -486,9 +545,11 @@ def project_edit(feed_id):
         cur_feed = Feed.query.filter_by(id=feed_id).first()
         cur_feed.title = writeFeedForm.title.data
         cur_feed.body = writeFeedForm.body.data
-        cur_feed.feed_category_id = writeFeedForm.feed_category.data
+        if writeFeedForm.feed_category.data != "None" :
+            cur_feed.feed_category_id = writeFeedForm.feed_category.data
         db.session.commit()
-        return render_template('project_edit.html',writeFeedForm=writeFeedForm,ret=ret)
+        return redirect(url_for('project_edit',feed_id=next))
+#        return render_template('project_edit.html',writeFeedForm=writeFeedForm,ret=ret)
     elif request.method == 'GET':
         return render_template('project_edit.html',writeFeedForm=writeFeedForm,ret=ret)
 
@@ -624,6 +685,7 @@ def company_feed_detail(feed_id):
     project = Project.query.filter_by(id=project_id).first()
     company = Company.query.filter_by(id=project.company_id).first()
     user = User.query.filter_by(id=company.user_id).first()
+    user_profile_image_path = get_user_profile_image_path(user)
     all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
 
     comments_dict_list = []
@@ -631,7 +693,8 @@ def company_feed_detail(feed_id):
         comment_user = User.query.filter_by(id=all_comment.user_id).first()
         cur = {
                 'comment': all_comment,
-                'user': comment_user
+                'user': comment_user,
+                'user_profile_image_path': get_user_profile_image_path(comment_user)
                 }
         comments_dict_list.append(cur)
 
@@ -696,7 +759,8 @@ def company_feed_detail(feed_id):
         'number_of_like': len(all_likes),
         'is_user_like': is_user_like,
         'referrer': session['previous_url'] ,
-        'tags': tags
+        'tags': tags,
+        'user_profile_image_path': user_profile_image_path
     }
     if request.method == 'GET':
         return render_template('company_feed_detail.html',commentForm=commentForm,ret=ret)
@@ -747,20 +811,180 @@ def user_portfolio(user_id):
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
     user = User.query.filter_by(id=user_id).first()
-    feeds = Feed.query.filter_by(user_id=user.id).order_by(Feed.created_at.desc()).all()
-    ret_feeds = []
+    number_of_follow = Follow.query.filter_by(to_user_id=user.id).count()
+    number_of_from_follow = Follow.query.filter_by(from_user_id=user.id).count()
+    is_user_follow = False
+    if 'user_id' in session:
+        if Follow.query.filter_by(to_user_id=user.id).filter_by(from_user_id=session['user_id']).first():
+            is_user_follow = True
+    user_save_feeds = User_save_feed.query.filter_by(user_id=user.id).order_by(User_save_feed.id.desc()).all()
+    number_of_projects = len(user_save_feeds)
+    projects = []
+    for user_save_feed in user_save_feeds:
+        feed = Feed.query.filter_by(id=user_save_feed.feed_id).first()
+        project_has_feed = Project_has_feed.query.filter_by(feed_id=feed.id).first()
+        project = Project.query.filter_by(id=project_has_feed.project_id).first()
+        cur_image = Image.query.filter_by(id=project.image_id).first()
+        cur_image_path = utils.get_image_path(cur_image.image_path)
+        d = {
+            'project': project,
+            'image_path': cur_image_path,
+            'comment': user_save_feed.comment
+        }
+        projects.append(d)
 
-    for feed in feeds:
-        d = {}
-        image = Image.query.filter_by(id=feed.image_id).first()
-        image_path = utils.get_image_path(image.image_path)
-        all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-        d['image_path'] = image_path
-        d['user'] = user
-        d['feed'] = feed
-        d['number_of_comment'] = len(all_comments)
-        ret_feeds.append(d)
-    return render_template('user_portfolio.html',user=user,signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,feeds=ret_feeds)
+    user_save_products = User_save_product.query.filter_by(user_id=user.id).order_by(User_save_product.id.desc()).all()
+    number_of_products = len(user_save_products)
+    products = []
+    for user_save_product in user_save_products:
+        product = Product.query.filter_by(id=user_save_product.product_id).first()
+        cur_image_id = Product_has_image.query.filter_by(product_id=product.id).first().image_id
+        cur_image = Image.query.filter_by(id=cur_image_id).first()
+        cur_image_path = utils.get_image_path(cur_image.image_path)
+        d = {
+            'product': product,
+            'image_path': cur_image_path,
+            'comment': user_save_product.comment
+        }
+        products.append(d)
+    user_save_posts = User_save_post.query.filter_by(user_id=user.id).order_by(User_save_post.id.desc()).all()
+    number_of_posts= len(user_save_posts)
+    posts = []
+    for user_save_post in user_save_posts:
+        blog_post = Blog_post.query.filter_by(id=user_save_post.post_id).first()
+        cur_image = Image.query.filter_by(id=blog_post.image_id).first()
+        cur_image_path = utils.get_image_path(cur_image.image_path)
+        d = {
+            'post': blog_post,
+            'image_path': cur_image_path,
+            'comment': user_save_post.comment
+        }
+        posts.append(d)
+
+    user_profile_image_path = ''
+    user_profile = User_profile.query.filter_by(user_id=user.id).order_by(User_profile.created_at.desc()).first()
+    if user_profile:
+        image = Image.query.filter_by(id=user_profile.image_id).first()
+        user_profile_image_path = utils.get_image_path(image.image_path)
+
+    ret = {
+        'user': user,
+        'number_of_follow': number_of_follow,
+        'number_of_from_follow': number_of_from_follow,
+        'is_user_follow': is_user_follow,
+        'number_of_projects': number_of_projects,
+        'projects': projects[:6],
+        'number_of_products': number_of_products,
+        'products': products[:6],
+        'number_of_posts': number_of_posts,
+        'posts': posts[:6],
+        'user_profile_image_path': user_profile_image_path
+            }
+
+    return render_template('user_portfolio.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret=ret)
+
+@app.route('/user_portfolio/<int:user_id>/project')
+def user_portfolio_project(user_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    user = User.query.filter_by(id=user_id).first()
+    user_save_feeds = User_save_feed.query.filter_by(user_id=user.id).order_by(User_save_feed.id.desc()).all()
+    number_of_projects = len(user_save_feeds)
+    projects = []
+    for user_save_feed in user_save_feeds:
+        feed = Feed.query.filter_by(id=user_save_feed.feed_id).first()
+        project_has_feed = Project_has_feed.query.filter_by(feed_id=feed.id).first()
+        project = Project.query.filter_by(id=project_has_feed.project_id).first()
+        cur_image = Image.query.filter_by(id=project.image_id).first()
+        cur_image_path = utils.get_image_path(cur_image.image_path)
+        d = {
+            'project': project,
+            'image_path': cur_image_path,
+            'comment': user_save_feed.comment
+        }
+        projects.append(d)
+
+    ret = {
+        'user': user,
+        'number_of_projects': number_of_projects,
+        'projects': projects,
+            }
+
+    return render_template('user_portfolio_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret=ret)
+
+
+@app.route('/user_portfolio/<int:user_id>/shop')
+def user_portfolio_shop(user_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    user = User.query.filter_by(id=user_id).first()
+
+    user_save_products = User_save_product.query.filter_by(user_id=user.id).order_by(User_save_product.id.desc()).all()
+    number_of_products = len(user_save_products)
+    products = []
+    for user_save_product in user_save_products:
+        product = Product.query.filter_by(id=user_save_product.product_id).first()
+        cur_image_id = Product_has_image.query.filter_by(product_id=product.id).first().image_id
+        cur_image = Image.query.filter_by(id=cur_image_id).first()
+        cur_image_path = utils.get_image_path(cur_image.image_path)
+        d = {
+            'product': product,
+            'image_path': cur_image_path,
+            'comment': user_save_product.comment
+        }
+        products.append(d)
+    
+    used_category = [ False for i in xrange(128) ]
+    ret_category = utils.get_all_category()
+    for category in ret_category:
+        for second_category in category['child_categories']:
+            if used_category[int(second_category['category_id'])]:
+                second_category['used'] = True
+
+
+    ret = {
+        'user': user,
+        'number_of_products': number_of_products,
+        'products': products,
+        'category': ret_category
+            }
+
+    return render_template('user_portfolio_shop.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret=ret)
+
+@app.route('/user_portfolio/<int:user_id>/news')
+def user_portfolio_news(user_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    user = User.query.filter_by(id=user_id).first()
+    user_save_posts = User_save_post.query.filter_by(user_id=user.id).order_by(User_save_post.id.desc()).all()
+    number_of_posts= len(user_save_posts)
+    posts = []
+    for user_save_post in user_save_posts:
+        blog_post = Blog_post.query.filter_by(id=user_save_post.post_id).first()
+        cur_image = Image.query.filter_by(id=blog_post.image_id).first()
+        cur_image_path = utils.get_image_path(cur_image.image_path)
+        d = {
+            'post': blog_post,
+            'image_path': cur_image_path,
+            'comment': user_save_post.comment
+        }
+        posts.append(d)
+
+    ret = {
+        'user': user,
+        'number_of_posts': number_of_posts,
+        'posts': posts,
+            }
+
+    return render_template('user_portfolio_news.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret=ret)
+
+
 
 @app.route('/company_portfolio/<int:user_id>')
 def company_portfolio(user_id):
@@ -817,6 +1041,13 @@ def company_portfolio(user_id):
         if Follow.query.filter_by(to_user_id=user.id).filter_by(from_user_id=session['user_id']).first():
             is_user_follow = True
 
+    user_profile_image_path = ''
+    user_profile = User_profile.query.filter_by(user_id=user.id).order_by(User_profile.created_at.desc()).first()
+    if user_profile:
+        image = Image.query.filter_by(id=user_profile.image_id).first()
+        user_profile_image_path = utils.get_image_path(image.image_path)
+
+
     ret = {
         'user': user,
         'company': company,
@@ -827,7 +1058,8 @@ def company_portfolio(user_id):
         'number_of_products': number_of_all_products,
         'number_of_follow': number_of_follow,
         'number_of_from_follow': number_of_from_follow,
-        'is_user_follow': is_user_follow
+        'is_user_follow': is_user_follow,
+        'user_profile_image_path': user_profile_image_path
     }
 
     return render_template('company_portfolio.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
@@ -1253,6 +1485,7 @@ def find_pros():
                 d['over_introduction'] = True
             d['company'] = company
             d['image_path'] = image_path
+            d['user_profile_image_path'] = get_user_profile_image_path(user)
             ret_pros.append(d)
 
         ret_pros = sorted(ret_pros, key=lambda k: k['last_project_created'], reverse=True)
@@ -1406,6 +1639,7 @@ def photos():
             image = Image.query.filter_by(id=feed.image_id).first()
             image_path = utils.get_image_path(image.image_path)
             user = User.query.filter_by(id=feed.user_id).first()
+            user_profile_image_path = get_user_profile_image_path(user)
             all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
             all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
             is_user_like = False
@@ -1420,6 +1654,7 @@ def photos():
             d['user'] = user
             d['feed'] = feed
             d['number_of_comment'] = len(all_comments)
+            d['user_profile_image_path'] = user_profile_image_path 
             ret_feeds.append(d)
 
         #feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
@@ -1827,7 +2062,11 @@ def shop_detail(shop_category_id):
 
 @app.route('/test')
 def test():
-    return render_template('test.html')
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    return render_template('test.html',signinForm=signinForm,signupForm=signupForm,companySignupForm=companySignupForm)
 
 @app.route('/test_like')
 def test_like():
@@ -1972,4 +2211,177 @@ def company_portfolio_edit_done():
     company.company_tel = d['company_tel']
     company.company_website = d['company_website']
 #    db.session.commit()
+    return json.dumps(d)
+
+@app.route('/create_post',methods=['GET','POST'])
+def create_post():
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    if request.method == 'POST':
+        file = request.files['imgup']
+        filename = secure_filename(file.filename)
+        if utils.allowedFile(filename):
+            directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
+            utils.createDirectory(directory_url)
+            file_path = os.path.join(directory_url,filename)
+            file.save(file_path)
+            image = Image(file_path)
+            image.user_id = session['user_id']
+            image.created_at = datetime.utcnow()
+            db.session.add(image)
+            db.session.commit()
+        blog_post = Blog_post(request.form['post-name'],request.form['post-body'],request.form['post-summary'],datetime.utcnow(),image.id,session['user_id'])
+        db.session.add(blog_post)
+        db.session.commit()
+        return redirect(url_for('create_post'))
+    return render_template('create_post.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm)
+
+@app.route('/post_image_save',methods=['POST'])
+def post_image_save():
+    file = request.files['file']
+    filename = secure_filename(file.filename)
+    if utils.allowedFile(filename):
+        directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
+        utils.createDirectory(directory_url)
+        file_path = os.path.join(directory_url,filename)
+        file.save(file_path)
+        image = Image(file_path)
+        image.user_id = session['user_id']
+        image.created_at = datetime.utcnow()
+        db.session.add(image)
+        db.session.commit()
+    else:
+        return json.dumps({'status':'error','message':'extention error'})
+    print file.filename
+    print file_path
+    d = {
+        'status': 'OK',
+        'url': utils.get_image_path(image.image_path)
+            }
+    return json.dumps(d)
+
+@app.route('/blog_post/<post_id>',methods=['GET','POST'])
+def blog_post(post_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+        commentForm = CommentForm()
+    blog_post = Blog_post.query.filter_by(id=post_id).first()
+    user = User.query.filter_by(id=blog_post.user_id).first()
+    blog_post_comments = Blog_post_comment.query.filter_by(blog_post_id=blog_post.id).order_by(Blog_post_comment.created_at.asc()).all()
+
+    comments_dict_list = []
+    for all_comment in blog_post_comments:
+        comment_user = User.query.filter_by(id=all_comment.user_id).first()
+        cur = {
+                'comment': all_comment,
+                'user': comment_user,
+                'user_profile_image_path': get_user_profile_image_path(comment_user)
+                }
+        comments_dict_list.append(cur)
+
+    d = {
+            'post': blog_post,
+            'user': user,
+            'all_comments':comments_dict_list 
+            }
+
+    if request.method == 'GET':
+        return render_template('blog_post.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,post=d,commentForm=commentForm)
+    elif request.method == 'POST':
+        if not commentForm.validate():
+            return render_template('blog_post.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,post=d,commentForm=commentForm)
+        if commentForm.validate_on_submit():
+            blog_post_comment = Blog_post_comment(commentForm.body.data, datetime.utcnow(), post_id, session['user_id'], 1)
+            db.session.add(blog_post_comment)
+            db.session.commit()
+            d['all_comments'] = Blog_post_comment.query.filter_by(blog_post_id=post_id).order_by(Blog_post_comment.created_at.asc()).all()
+        return redirect(url_for('blog_post',post_id=post_id))
+
+@app.route('/save_post',methods=['POST'])
+def save_post():
+    d = {
+            'status':'OK',
+            'post_id': int(request.form['post_id']),
+            'user_id': int(request.form['user_id']),
+            'comment': request.form['comment']
+            }
+    user_save_post = User_save_post.query.filter_by(user_id=d['user_id']).filter_by(post_id=d['post_id']).first()
+    if user_save_post:
+        return json.dumps({'status':'error','message':'is aleady save'})
+    user_save_post = User_save_post(d['user_id'],d['post_id'],d['comment'])
+    db.session.add(user_save_post)
+    db.session.commit()
+    return json.dumps(d)
+
+@app.route('/save_feed',methods=['POST'])
+def save_feed():
+    d = {
+        'status': 'OK',
+        'feed_id': int(request.form['feed_id']),
+        'user_id': int(request.form['user_id']),
+        'comment': request.form['comment']
+            }
+    user_save_feed = User_save_feed.query.filter_by(user_id=d['user_id']).filter_by(feed_id=d['feed_id']).first()
+    if user_save_feed:
+        return json.dumps({'status':'error','message':'is aleady save'})
+    user_save_feed = User_save_feed(d['user_id'],d['feed_id'],d['comment'])
+    db.session.add(user_save_feed)
+    db.session.commit()
+    return json.dumps(d)
+
+@app.route('/save_product',methods=['POST'])
+def save_product():
+    d = {
+            'status':'OK',
+            'product_id' : int(request.form['product_id']),
+            'user_id': int(request.form['user_id']),
+            'comment': request.form['comment']
+            }
+    user_save_product = User_save_product.query.filter_by(user_id=d['user_id']).filter_by(product_id=d['product_id']).first()
+    if user_save_product:
+        return json.dumps({'status':'error','message':'is aleady save'})
+    user_save_product = User_save_product(d['user_id'],d['product_id'],d['comment'])
+    db.session.add(user_save_product)
+    db.session.commit()
+    json.dumps(d)
+
+@app.route('/image_crop',methods=['GET','POST'])
+def image_crop():
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    return render_template('image_crop.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm)
+
+@app.route('/image_crop_upload',methods=['POST'])
+def image_crop_upload():
+    base64_string = request.form['imageData']
+    filename = "uploaded_image%s.png" % str(time.time()).replace('.','_')
+    directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'])
+    utils.createDirectory(directory_url)
+    directory_url = os.path.join(directory_url,'profile')
+    utils.createDirectory(directory_url)
+    file_path = os.path.join(directory_url,filename)
+    fp = open(file_path,'wb')
+    fp.write(base64_string.decode('base64'))
+    fp.close()
+
+    user = User.query.filter_by(id=session['user_id']).first()
+    image = Image(file_path)
+    image.user_id = user.id 
+    image.created_at = datetime.utcnow()
+    db.session.add(image)
+    db.session.commit()
+
+    user_profile = User_profile(user.id, image.id, datetime.utcnow())
+    db.session.add(user_profile)
+    db.session.commit()
+
+    d = {
+        'status': 'OK',
+            }
     return json.dumps(d)

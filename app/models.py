@@ -279,3 +279,85 @@ class Product_hash_tag(db.Model):
     def __init__(self, product_hash_tag_name, product_id):
         self.product_hash_tag_name = product_hash_tag_name
         self.product_id = product_id
+
+class Blog_post(db.Model):
+    __tablename__ = 'blog_post'
+    id = db.Column(db.Integer, primary_key=True)
+    post_name = db.Column(db.String(500))
+    post_body = db.Column(db.String(10000))
+    post_summary = db.Column(db.String(500))
+    created_at = db.Column(db.DateTime)
+    image_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
+
+    def __init__(self, post_name, post_body, post_summary, created_at,image_id,user_id):
+        self.post_name = post_name
+        self.post_body = post_body
+        self.post_summary = post_summary
+        self.created_at = created_at
+        self.image_id = image_id
+        self.user_id = user_id
+
+class Blog_post_comment(db.Model):
+    __tablename__ = 'blog_post_comment'
+    id = db.Column(db.Integer,primary_key=True)
+    body = db.Column(db.String(500))
+    created_at = db.Column(db.DateTime)
+    blog_post_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
+    status_id = db.Column(db.Integer)
+
+    def __init__(self, body, created_at, blog_post_id, user_id, status_id):
+        self.body = body
+        self.created_at = created_at
+        self.blog_post_id = blog_post_id
+        self.user_id = user_id
+        self.status_id = status_id
+
+class User_save_feed(db.Model):
+    __tablename__ = 'user_save_feed'
+    id = db.Column(db.Integer,primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
+    feed_id = db.Column(db.Integer, primary_key=True)
+    comment = db.Column(db.String(500))
+
+    def __init__(self, user_id, feed_id, comment):
+        self.user_id = user_id
+        self.feed_id = feed_id
+        self.comment = comment
+
+class User_save_post(db.Model):
+    __tablename__ = 'user_save_post'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, primary_key=True)
+    comment = db.Column(db.String(500))
+
+    def __init__(self, user_id, post_id, comment):
+        self.user_id = user_id
+        self.post_id = post_id
+        self.comment = comment
+
+class User_save_product(db.Model):
+    __tablename__ = 'user_save_product'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, primary_key=True)
+    comment = db.Column(db.String(500))
+
+    def __init__(self, user_id, product_id, comment):
+        self.user_id = user_id
+        self.product_id = product_id
+        self.comment = comment
+
+class User_profile(db.Model):
+    __tablename__ = 'user_profile'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
+    image_id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime)
+
+    def __init__(self, user_id, image_id, created_at):
+        self.user_id = user_id
+        self.image_id = image_id
+        self.created_at = created_at

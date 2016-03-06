@@ -1,0 +1,45 @@
+<style>
+.main-comment-container {
+    padding: 5px 15px 5px 15px;
+}
+.main-comment-item {
+    height: 42px;
+    margin: 2px 0px 2px 0px;
+}
+.main-comment-profile {
+    position: absolute;
+    width: 50px;
+    margin-top: 4px;
+}
+.main-comment-body-top {
+    position: relative;
+    margin: 0px 0px 0px 50px;
+}
+.main-comment-body-bottom {
+    position: relative;
+    margin: 0px 0px 0px 50px;
+}
+</style>
+{% if session['user_id'] == 44 %}
+<div class="card_container">
+    <card_header>
+    <div class="bio">
+        <a href="{{ url_for('create_post') }}">
+            <div class="bg" style="background: #FFFFFF;margin-left:47%;height:130px;margin-top:85px;">
+                <i class="fa fa-plus fa-3x" style="vertical-align:middle;"></i>
+            </div>
+        </a>
+    </div>
+    </card_header>
+</div>
+<br>
+{% endif %}
+{% include "modal_save_post.html" %}
+{% for post in posts %}
+<div class="hidden-xs container">
+    {% include "main_blog_post.html" %}
+</div>
+<div class="visible-xs">
+    {% include "main_blog_post_mobile.html" %}
+</div>
+{% endfor %}

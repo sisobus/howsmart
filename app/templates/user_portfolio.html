@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-    <style type="text/css">
+<style type="text/css">
     * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -10,12 +10,11 @@ card_header {
   display: block;
   overflow: hidden;
   position: relative;
-  padding-bottom: 2em;
 
   }
 
 .card_container {
-    outline: 0; max-width:32%;
+    outline: 0; max-width:33%;
     position: relative;
     float: left;
     margin: 1px 1px 1px 1px;
@@ -25,8 +24,10 @@ card_header {
   }
 
 .card_custom_body {
+    padding-top: 15px;
     padding-left:25px;
     padding-right:25px;
+    height: 70px;
 }
 
 .bg {
@@ -37,43 +38,256 @@ card_header {
 
 .bio:hover > .card_desc {
   cursor: pointer;
-  opacity: 1; }
+  opacity: 1;
+}
 
-    </style>
-    {{ user.username }}
+.custom_jumbo{
+  width:100%;
+  z-index:1;
+  height:150px;
+  background-color:#576782;
+  position:relative;
+}
+.custom_jumbo_navbar {
+    width: 100%;
+    height: 50px;
+    background-color:#FFFFFF;
+    position: relative;
+}
+
+.custom_jumbo_container{
+  width:100%;
+    height:100%;
+  min-width:320px;
+  margin: 0px auto;
+  padding:20px 0;
+}
+.custom_jumbo_container h1{
+  font-size:40px;
+  color:#fff;
+    margin-top: 100px;
+    vertical-align: middle;
+}
+
+.custom_jumbo_container h2{
+  font-size:15px;
+  color:#ddd;
+  line-height: 23px;
+  vertical-align: middle;
+  text-align: center;
+}
+#leftside_container {
+    position: absolute;
+    width: 240px;
+    padding: 0;
+    margin: 0;
+    margin-top: 40px;
+}
+#rightside_container {
+    position: relative;
+    margin: 0px 0px 0px 240px;
+}
+#custom_jumbo_navbar_wrapper {
+    position: relative;
+    margin: 0px 0px 0px 200px;
+    vertical-align: middle;
+}
+.profile_container {
+    height:168px;
+    width: 168px;
+    z-index: 2;
+    background-color: #000;
+    margin-left: 20px;
+}
+#feed_container {
+    overflow: auto;
+}
+
+</style>
+{% include "user_portfolio_navbar.html" %}
+
+<div class="container main-container " style="margin-top:0px;background-color:#FFFFFF;border:1px solid #dddddd;border-top:0px;margin-bottom:10px;">
     <br>
-    {{ user.email }}
-    <br>
-    {% if session['is_company'] %}
-        <a href="/make_project"><button class="btn btn-default">프로젝트 만들기</button></a>
-    {% endif %}
-    <hr>
-<div class="container main-container" id="feed_container">
-    {% for feed in feeds %}
-    <div class="card_container ">
-        <card_header>
-            <div class="bio">
-                <a href="/feed_detail/{{ feed.feed.id }}">
-                    <div class="bg" style="background:  url({{ '/static/'+feed.image_path }});
-                            background-repeat:no-repeat;
-                            background-size: cover;
-                            background-position: center;
-                            ">
+
+    <div class="row">
+        <div class="col-lg-2 col-md-2 col-sm-12">
+            <div class="dummy-container" style="height:70px;">
+                <div class="col-md-6" style="padding-right:0px;margin:10px 0px 10px 0px;">
+                    <div style="height:50px;border:1px solid #dddddd;">
+                        <center>
+                        <h5 style="{% if ret.is_user_follow %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}vertical-align:middle;padding-bottom:0px;padding-top:7px;" id="follow-button-number">{{ ret.number_of_follow }}</h5>
+                        <h5 style="{% if ret.is_user_follow %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}vertical-align:middle;padding-bottom:0px;" id="follow-button">Followers</h5>
+                    </center>
                     </div>
-                    <div class="container" style="margin-top:10px;margin-left:10px;">
-                        <div class="row">
-                            <div calss="card_custom_body">
-                                <h4>{{ feed.feed.title }}</h4>
-                                <h5>{{ feed.user.username }}</h5>
-                                <h5>0 Likes    {{ feed.number_of_comment }} Comments</h5>
+                </div>
+                <div class="col-md-6" style="padding-left:0px;margin:10px 0px 10px 0px;">
+                    <div style="width:100%;height:50px;border:1px solid #dddddd;border-left:0px;">
+                        <center>
+                        <h5 style="vertical-align:middle;padding-bottom:0px;padding-top: 7px;">{{ ret.number_of_from_follow }}</h5>
+                        <h5 style="vertical-align:middle;padding-bottom:0px;">Following</h5>
+                    </center>
+                    </div>
+                </div>
+            </div>
+            <h5 style="padding-bottom:0px;padding-top:15px;">
+                <a onclick="followPost({{ret.user.id}});">팔로우 하기</a>
+            </h5>
+        </div>
+        <div class="col-lg-10 col-md-10 col-sm-12">
+            <h5 style="padding-bottom:0px;">
+                전체 {{ ret.number_of_projects }} 개의 프로젝트 저장됨
+            </h5>
+            <div  id="feed_container" style="margin-top:10px;">
+
+                {% for project in ret.projects %}
+                <div class="card_container ">
+                    <card_header>
+                    <div class="bio">
+                        <a href="/project_detail/{{ project.project.id }}">
+                            <div class="bg" style="background:  url({{ '/static/'+project.image_path }});
+                                background-repeat:no-repeat;
+                                background-size: cover;
+                                background-position: center;
+                                ">
+                            </div>
+                        </a>
+                        <div class="container" style="margin-top:10px;margin-left:10px;display:table-cell;">
+                            <div class="row">
+                                <div class="card_custom_body">
+                                    <h4>
+                                        <a href="/project_detail/{{ project.project.id }}">
+                                            {{ project.comment }}
+                                        </a>
+                                    </h4>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </a>
+                    </card_header>
+                </div>
+                {% endfor %}
             </div>
-        </card_header>
+            <center>
+                <a href="/user_portfolio/{{ ret.user.id }}/project">
+                    <button class="btn btn-lg btn-primary" style="width:100%;">더보기</button>
+                </a>
+            </center>
+            <hr/>
+            <h5 style="padding-bottom:0px;">
+                전체 {{ ret.number_of_products }} 개의 상품 저장됨
+            </h5>
+            <div  id="feed_container" style="margin-top:10px;">
+
+                {% for product in ret.products %}
+                <div class="card_container ">
+                    <card_header>
+                    <div class="bio">
+                        <a href="/product_detail/{{ product.product.id }}">
+                            <div class="bg" style="background:  url({{ '/static/'+product.image_path }});
+                                background-repeat:no-repeat;
+                                background-size: cover;
+                                background-position: center;
+                                ">
+                            </div>
+                        </a>
+                        <div class="container" style="margin-top:10px;margin-left:10px;display:table-cell;">
+                            <div class="row">
+                                <div class="card_custom_body">
+                                    <h4>
+                                            <a href="/product_detail/{{ product.product.id }}">
+                                                {{ product.comment }}
+                                            </a>
+                                        </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </card_header>
+                </div>
+                {% endfor %}
+            </div>
+            <center>
+                <a href="/user_portfolio/{{ ret.user.id }}/shop">
+                    <button class="btn btn-lg btn-primary" style="width:100%;">더보기</button>
+                </a>
+            </center>
+
+            <hr/>
+            <h5 style="padding-bottom:0px;">
+                전체 {{ ret.number_of_posts }} 개의 하우스토리 저장됨
+            </h5>
+            <div  id="feed_container" style="margin-top:10px;">
+
+                {% for post in ret.posts %}
+                <div class="card_container ">
+                    <card_header>
+                    <div class="bio">
+                        <a href="/blog_post/{{ post.post.id }}">
+                            <div class="bg" style="background:  url({{ '/static/'+post.image_path }});
+                                background-repeat:no-repeat;
+                                background-size: cover;
+                                background-position: center;
+                                ">
+                            </div>
+                        </a>
+                        <div class="container" style="margin-top:10px;margin-left:10px;display:table-cell;">
+                            <div class="row">
+                                <div class="card_custom_body">
+                                    <h4>
+                                        <a href="/blog_post/{{ post.post.id }}">
+                                            {{ post.comment }}
+                                        </a>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </card_header>
+                </div>
+                {% endfor %}
+            </div>
+            <center>
+                <a href="/user_portfolio/{{ ret.user.id }}/news">
+                    <button class="btn btn-lg btn-primary" style="width:100%;">더보기</button>
+                </a>
+            </center>
+            <hr>
+
+        </div>
     </div>
-    {% endfor %}
+
 </div>
-    <hr>
+<script type="text/javascript">
+function followPost(to_user_id) {
+    var data = {
+    "from_user_id": {{ session['user_id'] }},
+    "to_user_id": to_user_id
+    };
+    $.ajax({
+        url: '/follow_post',
+        data: data,
+        type: 'POST',
+        success: function(response) {
+            var jsonData = JSON.parse(response);
+console.log(jsonData);
+            if ( jsonData["is_followed"] ) {
+                $('#follow-button-number').css('color','#777777');
+                $('#follow-button-number').css('font-weight','400');
+                $('#follow-button').css('color','#777777');
+                $('#follow-button').css('font-weight','400');
+                $('#follow-button-number').text(jsonData['number_of_to_user_follow']);
+            } else {
+                $('#follow-button-number').css('color','#3B5998');
+                $('#follow-button-number').css('font-weight','600');
+                $('#follow-button').css('color','#3B5998');
+                $('#follow-button').css('font-weight','600');
+                $('#follow-button-number').text(jsonData['number_of_to_user_follow']);
+            }
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+}
+</script>
 {% endblock %}

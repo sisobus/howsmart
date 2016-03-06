@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block content %}
+<link href="{{ url_for('static',filename='css/summernote.css') }}" rel="stylesheet">
+<script src="{{ url_for('static',filename='js/summernote.min.js') }}"></script>
+<script src="{{ url_for('static',filename='js/summernote-ko-KR.js') }}"></script>
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-56ad8661d48c9c55" async="async"></script>
+
+<div class="container nav-margin" style="background:#ffffff;border:1px solid #dddddd;border-top:0px;">
+    <br>
+    <h3>{{ post.post.post_name }}</h3>
+    <h5>{{ post.post.post_summary}}</h5>
+    <h5>글쓴이 : {{ post.user.username }}&nbsp;&nbsp;&nbsp;{{post.post.created_at}}</h5>
+<!-- Go to www.addthis.com/dashboard to customize your tools -->
+<div class="addthis_native_toolbox"></div>
+<a id="kakao-link-btn" href="javascript:;" >
+      <img src="{{ url_for('static',filename='images/kakao-share.png') }}" style="height:21px;">
+    </a>
+    <a id="save-button" href="javascript:;" >
+        <button class="btn btn-primary" style="height:21px;vertical-align:middle;padding:0px 5px 0px 5px;font-size:13px;">스토리 저장</button>
+    </a>
+    <a id="comment-button" href="#comment-container" >
+        <button class="btn btn-primary" style="height:21px;vertical-align:middle;padding:0px 5px 0px 5px;font-size:13px;"><i class="fa fa-comment"></i> 댓글 {{ post.all_comments | length }}</button>
+    </a>
+
+
+    <script>
+    // 사용할 앱의 JavaScript 키를 설정해 주세요.
+    Kakao.init('YOUR APP KEY');
+
+    // 카카오톡 링크 버튼을 생성합니다. 처음 한번만 호출하면 됩니다.
+    Kakao.Link.createTalkLinkButton({
+      container: '#kakao-link-btn',
+      label: '카카오링크 샘플에 오신 것을 환영합니다.',
+      image: {
+        src: '{{ url_for('static',filename='images/kakao-share.png') }}',
+        width: '300',
+        height: '200'
+      },
+      webButton: {
+        text: '카카오 디벨로퍼스',
+        url: 'https://dev.kakao.com/docs/js' // 앱 설정의 웹 플랫폼에 등록한 도메인의 URL이어야 합니다.
+      }
+    });
+    </script>
+<hr/>
+    <div id="post_body" class="summernote" style="overflow-x: hidden;">
+    </div>
+</div>
+<style>
+.main-comment-container {
+    padding: 5px 15px 5px 15px;
+    background: #FFFFFF;
+    margin: 0px 10px 5px 10px;
+    border: 1px solid #dddddd;
+    border-top: 0px solid #dddddd;
+}
+.main-comment-item {
+    height: 42px;
+    margin: 2px 0px 2px 0px;
+}
+.main-comment-profile {
+    position: absolute;
+    width: 50px;
+    margin-top: 4px;
+}
+.main-comment-body-top {
+    position: relative;
+    margin: 0px 0px 0px 50px;
+}
+.main-comment-body-bottom {
+    position: relative;
+    margin: 0px 0px 0px 50px;
+}
+form input#body {
+    width:100%;
+    margin-top: 10px;
+    border: 1px solid #dddddd;
+}
+form input#body:hover {
+    border: 1px solid #eeeeee;
+    outline: none;
+}
+form input#body:focus {
+    border: 1px solid #eeeeee;
+    outline: none;
+}
+</style>
+{% if session.logged_in %}
+        <div class="container" style="background:#ffffff;border:1px solid #dddddd;border-top:0px;" id="comment-container">
+        <form action="{{ url_for('blog_post',post_id=post.post.id) }}" method="post">
+            {{ commentForm.hidden_tag() }}
+            <div class="form-group login-username">
+                <div>
+                    {% for message in commentForm.body.errors %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ commentForm.body(placeholder="의견을 남겨주세요 !") }}
+                </div>
+                <input name="submit" class="btn btn-block btn-lg btn-primary" value="댓글 달기 " type="submit">
+            </div>
+        </form>
+    </div>
+        {% endif %}
+    {% if post.all_comments | length != 0 %}
+        <div class="container" style="background:#ffffff;border:1px solid #dddddd;border-top:0px;margin-bottom:25px;" id="comment-container">
+            {% for comment in post.all_comments %}
+            <div class="main-comment-item">
+                <div class="main-comment-profile">
+                    {% if comment.user_profile_image_path %}
+                    <div style="background:url({{url_for('static',filename=comment.user_profile_image_path)}}); border:1px solid #dddddd;height:34px;width:34px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;"></div>
+                    {% else %}
+                    <div style="background-color:#dddddd; border:1px solid #dddddd;height:34px;width:34px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;"></div>
+                    {% endif %}
+                </div>
+                <div class="main-comment-body-top">
+                    <h5 style="padding:0px;">
+                        {% if comment.user.level >= 2 %}
+                        <a href="/company_portfolio/{{ comment.user.id }}" style="color:#72AFAD;">
+                        {% elif comment.user.level == 1 %}
+                        <a href="/user_portfolio/{{ comment.user.id }}" style="color:#72AFAD;">
+                        {% endif %}
+                            {{ comment.user.username }}
+                        </a> 
+                        {{ comment.comment.body}}
+                    </h5>
+                </div>
+                <div class="main-comment-body-bottom">
+                    <h5 style="padding:0px;">{{ comment.comment.created_at }}</h5>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+<script>
+$(document).ready(function() {
+    var html = "{{post.post.post_body}}";
+    $('#post_body').html($('<div/>').html(html).text());
+    $('a#comment-button').on('click',function() {
+        $.smoothScroll({
+            scrollTarget: '#comment-container'
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -155,13 +155,20 @@ card_header {
             </div>
         </div>
         <div class="col-lg-9 col-md-9 col-sm-12">
+            프로젝트 명
+            <br>
             <input type="text" id='project-name' value='{{ ret.project.project_name }}' placeholder='{{ ret.project.project_name }}' style="width: 75%;">
             <div class="pull-right"><button class="btn btn-primary" id='edit-button'>완료</button> <button class="btn btn-danger" id='cancel-button'>취소</button></div>
         <hr>
         <h5 style="padding-bottom:0px;" >
+            프로젝트 설명
+            <br>
             <input type="text" id='project-body' value='{{ ret.project.project_body }}' placeholder='{{ ret.project.project_body }}' style="width: 75%;">
         </h5>
         <hr>
+        드래그로 사진 순서를 바꿀 수 있습니다.
+        <br>
+        피드수정 및 태그수정은 사진 클릭 후 가능합니다.
                 <div class="container-shapeshift" style="position:relative;">
                     {% for feed in ret.feeds %}
                     <div class="card_container " id="container-{{feed.feed.id}}"> 

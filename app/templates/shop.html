@@ -46,7 +46,9 @@ card_header {
 
 .shop-contents-list-container {
     background-color: #FFFFFF;
+    /*
     margin-left: -20px;
+    */
     border: 1px solid #DDDDDD;
     margin-bottom: 10px;
 }
@@ -58,7 +60,8 @@ card_header {
 }
 
     </style>
-<div class="container main-container ">
+    {% include "shop_mobile.html" %}
+<div class="container main-container nav-margin hidden-xs">
     <div class="row">
         <div class="breadcrumbDiv col-lg-12">
             <ul class="breadcrumb" style="margin-bottom:10px;background-color:#FFFFFF;margin-top:10px;">
@@ -89,6 +92,7 @@ card_header {
                         </div>
                     </div>
 
+                    {% include "modal_save_product.html" %}
                     <div class="xsResponse clearfix">
                         <div ="feed-container" style="padding-top:10px;">
                             {% for product in ret.products %}
@@ -100,7 +104,52 @@ card_header {
                                                 background-repeat: no-repeat;
                                                 background-size: cover;
                                                 background-position: center;
-                                                ">
+                                                " id="image-{{product.product.id}}">
+                                                <div style="position: absolute;left:1%;top:170px;display:none;" id="button-container-{{product.product.id}}">
+                                                    <a href="#">
+                                                        <button class="btn " id="save-button-{{product.product.id}}" style="background: black;color:white;"><i class="fa fa-plus"></i> Save </button>
+                                                    </a>
+                                                    <a href="#">
+                                                        <button class="btn " id="share-button-{{product.product.id}}" style="background: black;color:white;">Share</button>
+                                                    </a>
+                                                </div>
+<script>
+$('#image-{{product.product.id}}').hover(function() {
+    $('#button-container-{{ product.product.id}}').fadeIn('slow');
+    }, function() {
+    $('#button-container-{{product.product.id}}').fadeOut('slow');
+});
+$('#save-button-{{product.product.id}}').bind('click',function(e) {
+        // Prevents the default action to be triggered. 
+    e.preventDefault();
+
+    // Triggering bPopup when click event is fired
+    $('#popup').bPopup({
+        contentContainer:'.content',
+    });
+    $('#image-preview').attr('src',"{{ url_for('static',filename=product.image_path) }}");
+    $('#save-button').click(function() {
+        var data = {
+            "product_id": "{{ product.product.id }}",
+            "comment": $('#comment-box').val(),
+            "user_id": "{{ session['user_id'] }}"
+        };
+        $.ajax({
+            url: '/save_product',
+            data: data,
+            type: 'POST',
+            success: function(response) {
+                var jsonData = JSON.parse(response);
+                console.log(jsonData);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+        $('#popup').bPopup().close();
+    });
+});
+</script>
                                             </div>
                                         </a>
                                         <div class="shop_body" style="margin-top:10px;margin-left:10px;">
