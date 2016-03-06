@@ -1,0 +1,44 @@
+{% include "company_portfolio_navbar_mobile.html" %}
+
+<div class="container main-container " style="margin-top:20px;">
+    <div class="row">
+        <h2 style="padding-bottom:0px;" id='project-name'>{{ ret.project.project_name }}</h2>
+        <hr>
+        <h5 style="padding-bottom:0px;" id="project-body">
+            {{ ret.project.project_body }}
+        </h5>
+        <hr>
+            <div  id="feed_container" style="margin-top:10px;overflow:hidden;">
+                    {% for feed in ret.feeds %}
+                        <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="card_container ">
+                        <card_header>
+                        <div class="bio">
+                            <script type="text/javascript">
+var previous_url = '?previous_url='+window.location.href;
+openFeed = function(feed_id) {
+    location.href="/company_feed_detail/"+feed_id+previous_url;
+}
+                            </script>
+                            <a href="javascript:openFeed({{ feed.feed.id }});">
+                                    <div class="bg" style="background: url({{ '/static/'+feed.image_path }});
+                                            background-repeat: no-repeat;
+                                            background-size: cover;
+                                            background-position: center;
+                                            ">
+                                    </div>
+                                </a>
+                            </div>
+                        </card_header>
+                    </div>
+                        </div>
+                    {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#edit-button').click(function() {
+        window.location.href = '/project_detail_edit/{{ ret.project.id }}';
+    });
+</script>

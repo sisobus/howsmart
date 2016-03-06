@@ -1,13 +1,42 @@
 {% include "company_portfolio_navbar_mobile.html" %}
-
-<div class="main-container nav-margin" style="margin-top:0px;background-color:#FFFFFF;border:1px solid #dddddd;border-top:0px;margin-bottom:10px;">
+    <style type="text/css">
+.mobile-card-container {
+    width: 100%;
+}
+.mobile-card-body-item {
+    padding-left: 10px;
+    padding-right:10px;
+    background:#ffffff;
+}
+mobile-card-header {
+    display: block;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #dddddd;
+    border-left: 0px;
+    border-right:0px;
+}
+    </style>
+<div class="main-container " style="margin-top:0px;background-color:#FFFFFF;border:1px solid #dddddd;border-top:0px;margin-bottom:10px;overflow-x:hidden;">
     <div class="row">
         <div class="col-lg-2 col-md-2 col-sm-12">
-            <h5 style="padding-bottom:0px;padding-top:15px;">
-                <a onclick="followPost({{ret.user.id}});">팔로우 하기</a>
-            </h5>
+            <br>
+            <div class="col-lg-6 col-md-6 col-xs-6">
+                <a onclick="followPost({{ret.user.id}});">
+                    <button class="btn btn-primary" style="width:100%;">
+                        팔로우 하기
+                    </button>
+                </a>
+            </div>
+            <div class="col-lg-6 col-md-6 col-xs-6">
+                <a >
+                    <button class="btn btn-warning" style="width:100%;">
+                        contact me
+                    </button>
+                </a>
+            </div>
         </div>
-        <div class="col-lg-10 col-md-10 col-sm-12">
+        <div class="col-lg-10 col-md-10 col-sm-12" style="padding-top:30px;padding-bottom:20px;">
                 <div class="col-lg-8 col-md-8 col-sm-12">
                     <h5 style="padding-bottom:0px;padding-top:15px;">
                     {{ ret.company.company_introduction }}
@@ -24,7 +53,9 @@
                     회사 웹사이트 : {{ ret.company.company_website }}
                 </h5>
                 {% if session and 'user_id' in session and session['user_id'] == ret.user.id %}
+                <!--
                 <button class="btn btn-primary" id="edit-button">수정하기</button>
+                -->
                 <script>
                 $('#edit-button').click(function() {
                         window.location.href = '/company_portfolio_edit/{{ret.user.id}}';
@@ -35,12 +66,11 @@
                 </div>
         </div>
     </div>
-    <hr>
 
     <div class="row">
         <div class="col-lg-2 col-md-2 col-sm-12">
-            <div class="dummy-container" style="height:70px;">
-                <div class="col-md-6" style="padding-right:0px;margin:10px 0px 10px 0px;">
+            <div class="dummy-container" style="height:70px;border-left:0px;border-right:0px;">
+                <div class="col-md-6 col-xs-6" style="padding-right:0px;margin:10px 0px 10px 0px;">
                     <div style="height:50px;border:1px solid #dddddd;">
                         <center>
                         <h5 style="{% if ret.is_user_follow %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}vertical-align:middle;padding-bottom:0px;padding-top:7px;" id="follow-button-number">{{ ret.number_of_follow }}</h5>
@@ -48,7 +78,7 @@
                     </center>
                     </div>
                 </div>
-                <div class="col-md-6" style="padding-left:0px;margin:10px 0px 10px 0px;">
+                <div class="col-md-6 col-xs-6" style="padding-left:0px;margin:10px 0px 10px 0px;">
                     <div style="width:100%;height:50px;border:1px solid #dddddd;border-left:0px;">
                         <center>
                         <h5 style="vertical-align:middle;padding-bottom:0px;padding-top: 7px;">{{ ret.number_of_from_follow }}</h5>
@@ -70,57 +100,31 @@
             전체 {{ ret.number_of_projects }} 개의 프로젝트
         </h5>
             <div  id="feed_container" style="margin-top:10px;">
-
-                {% if session and session['is_company'] and session['user_id'] == ret.user.id %}
-                <div class="card_container ">
-                    <card_header>
-                        <div class="bio">
-                            <a href="/create_project">
-                                <div class="bg" style="text-align: center;border-bottom:1px solid #dddddd;">
-                                    <i class="fa fa-plus fa-4x" style="color:#777777;margin:0;line-height:210px;"></i>
-                                </div>
-                            </a>
-                                <div class="container" style="margin-top:10px;margin-left:10px;display:table-cell;">
-                                    <div class="row">
-                                        <div class="card_custom_body">
-                                            <h4>
-                                            <a href="/create_project">
-                                                프로젝트 생성하기
-                                            </a>
-                                        </h4>
-                                        </div>
-                                    </div>
-                                </div>
-                        </div>
-                    </card_header>
-                </div>
-                {% endif %}
                 {% for project in ret.projects %}
-                <div class="card_container ">
-                    <card_header>
-                        <div class="bio">
-                            <a href="/project_detail/{{ project.project.id }}">
-                                <div class="bg" style="background:  url({{ '/static/'+project.image_path }});
-                                        background-repeat:no-repeat;
-                                        background-size: cover;
-                                        background-position: center;
-                                        ">
-                                </div>
-                            </a>
-                                <div class="container" style="margin-top:10px;margin-left:10px;display:table-cell;">
-                                    <div class="row">
-                                        <div class="card_custom_body">
-                                            <h4>
-                                            <a href="/project_detail/{{ project.project.id }}">
-                                                {{ project.project.project_name }}
-                                            </a>
-                                        </h4>
-                                        </div>
+                <div class="mobile-card-container ">
+                    <mobile-card-header>
+                        <a href="/project_detail/{{ project.project.id }}">
+                            <div class="bg" style="background:  url({{ '/static/'+project.image_path }});
+                                    background-repeat:no-repeat;
+                                    background-size: cover;
+                                    background-position: center;
+                                    ">
+                            </div>
+                        </a>
+                            <div class="container" style="margin-top:10px;margin-left:10px;display:table-cell;">
+                                <div class="row">
+                                    <div class="mobile-card-body-item">
+                                        <h4>
+                                        <a href="/project_detail/{{ project.project.id }}">
+                                            {{ project.project.project_name }}
+                                        </a>
+                                    </h4>
                                     </div>
                                 </div>
-                        </div>
-                    </card_header>
+                            </div>
+                    </mobile-card-header>
                 </div>
+                <br>
                 {% endfor %}
             </div>
         <center>
@@ -133,35 +137,9 @@
             전체 {{ ret.number_of_products }} 개의 상품
         </h5>
             <div  id="feed_container" style="margin-top:10px;">
-
-                {% if session and session['is_company'] and session['user_id'] == ret.user.id %}
-                <div class="card_container ">
-                    <card_header>
-                        <div class="bio">
-                            <a href="/create_product">
-                                <div class="bg" style="text-align: center;border-bottom:1px solid #dddddd;">
-                                    <i class="fa fa-plus fa-4x" style="color:#777777;margin:0;line-height:210px;"></i>
-                                </div>
-                            </a>
-                            <div class="container" style="margin-top:10px;margin-left:10px;display:table-cell;">
-                                <div class="row">
-                                    <div class="card_custom_body">
-                                        <h4>
-                                        <a href="/create_product">
-                                            상품 생성하기
-                                        </a>
-                                    </h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </card_header>
-                </div>
-                {% endif %}
                 {% for product in ret.products %}
-                <div class="card_container ">
-                    <card_header>
-                        <div class="bio">
+                <div class="mobile-card-container ">
+                    <mobile-card-header>
                             <a href="/product_detail/{{ product.product.id }}">
                                 <div class="bg" style="background:  url({{ '/static/'+product.image_path }});
                                         background-repeat:no-repeat;
@@ -172,7 +150,7 @@
                             </a>
                                 <div class="container" style="margin-top:10px;margin-left:10px;display:table-cell;">
                                     <div class="row">
-                                        <div class="card_custom_body">
+                                        <div class="mobile-card-body-item">
                                             <h4>
                                             <a href="/product_detail/{{ product.product.id }}">
                                                 {{ product.product.product_name }}
@@ -181,8 +159,7 @@
                                         </div>
                                     </div>
                                 </div>
-                        </div>
-                    </card_header>
+                    </mobile-card-header>
                 </div>
                 {% endfor %}
             </div>

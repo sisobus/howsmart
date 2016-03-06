@@ -1155,11 +1155,18 @@ def company_portfolio_project(user_id):
         projects.append(d)
     image   = Image.query.filter_by(id=company.image_id).first()
     image_path = utils.get_image_path(image.image_path)
+    user_profile_image_path = ''
+    user_profile = User_profile.query.filter_by(user_id=user.id).order_by(User_profile.created_at.desc()).first()
+    if user_profile:
+        image = Image.query.filter_by(id=user_profile.image_id).first()
+        user_profile_image_path = utils.get_image_path(image.image_path)
+
     ret = {
         'user': user,
         'company': company,
         'projects': projects,
-        'image_path': image_path
+        'image_path': image_path,
+        'user_profile_image_path': user_profile_image_path
     }
 
     return render_template('company_portfolio_project.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
@@ -1194,12 +1201,19 @@ def company_portfolio_shop(user_id):
         for second_category in category['child_categories']:
             if used_category[int(second_category['category_id'])]:
                 second_category['used'] = True
+    user_profile_image_path = ''
+    user_profile = User_profile.query.filter_by(user_id=user.id).order_by(User_profile.created_at.desc()).first()
+    if user_profile:
+        image = Image.query.filter_by(id=user_profile.image_id).first()
+        user_profile_image_path = utils.get_image_path(image.image_path)
+
     ret = {
         'user': user,
         'company': company,
         'products': products,
         'image_path': image_path,
-        'category': ret_category
+        'category': ret_category,
+        'user_profile_image_path': user_profile_image_path
     }
 
     return render_template('company_portfolio_shop.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
@@ -1237,12 +1251,19 @@ def company_portfolio_shop_detail(user_id,shop_category_id):
         for second_category in category['child_categories']:
             if used_category[int(second_category['category_id'])]:
                 second_category['used'] = True
+    user_profile_image_path = ''
+    user_profile = User_profile.query.filter_by(user_id=user.id).order_by(User_profile.created_at.desc()).first()
+    if user_profile:
+        image = Image.query.filter_by(id=user_profile.image_id).first()
+        user_profile_image_path = utils.get_image_path(image.image_path)
+
     ret = {
         'user': user,
         'company': company,
         'products': products,
         'image_path': image_path,
-        'category': ret_category
+        'category': ret_category,
+        'user_profile_image_path': user_profile_image_path
     }
 
     return render_template('company_portfolio_shop.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
@@ -1317,6 +1338,12 @@ def project_detail(project_id):
     feed_introduction = ''
     if len(feeds) != 0:
         feed_introduction = feeds[0]['feed'].body
+
+    user_profile_image_path = ''
+    user_profile = User_profile.query.filter_by(user_id=user.id).order_by(User_profile.created_at.desc()).first()
+    if user_profile:
+        image = Image.query.filter_by(id=user_profile.image_id).first()
+        user_profile_image_path = utils.get_image_path(image.image_path)
     ret = {
         'user': user,
         'company': company,
@@ -1324,7 +1351,8 @@ def project_detail(project_id):
         'projects': projects,
         'feeds': feeds,
         'feed_introduction': feed_introduction,
-        'image_path': company_image_path
+        'image_path': company_image_path,
+        'user_profile_image_path': user_profile_image_path
     }
     return render_template('project_detail.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
                            ret=ret)

@@ -133,6 +133,10 @@ card_header {
 
 </style>
 
+<div class="visible-xs">
+    {% include "project_detail_mobile.html" %}
+</div>
+<div class="hidden-xs">
 {% include "company_portfolio_navbar.html" %}
 
 <div class="container main-container " style="margin-top:20px;">
@@ -198,4 +202,5 @@ openFeed = function(feed_id) {
         window.location.href = '/project_detail_edit/{{ ret.project.id }}';
     });
 </script>
+</div>
 {% endblock %}

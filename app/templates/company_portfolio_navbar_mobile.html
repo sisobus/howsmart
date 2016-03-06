@@ -16,7 +16,7 @@
 <link href="{{ url_for('static',filename='css/image-crop.css') }}" rel="stylesheet">
 <script src="{{ url_for('static',filename='js/jquery.Jcrop.js') }}"></script>
 <script src="{{ url_for('static',filename='js/jquery.SimpleCropper.js') }}"></script>
-<div class="container nav-margin" style="padding: 0px 0px 0px 0px;height:200px;">
+<div class="container nav-margin" style="padding: 0px 0px 0px 0px;height:200px;" >
     <div class="custom_jumbo_container" style="background: url({{ '/static/'+ret.image_path }});
             background-repeat:no-repeat; background-size: cover; background-position: center;">
         <div id="mobile-leftside-container" style="height:80px;">
@@ -59,28 +59,32 @@ error: function(error) {
         </div>
     </div>
 </div>
-<div class="container" style="margin-bottom:0px;background:#ffffff;border: 1px solid #dddddd;">
-    <div id="custom_jumbo_navbar_wrapper">
+<div class="container" style="margin-bottom:0px;background:#ffffff;border: 1px solid #dddddd;overflow-x:hidden;">
         <div class="container-not">
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav" id="company-portfolio-navbar">
-                    <li>
+            <div class="navbar-collapse "> 
+                <ul class="nav navbar-nav" id="company-portfolio-navbar" style="overflow-x:scroll;">
+                    <li style="display:table-cell;">
                         <a href="/company_portfolio/{{ ret.user.id }}">회사소개</a>
                     </li>
-                    <li>
+                    <li style="display:table-cell;">
                         <a href="/company_portfolio/{{ ret.user.id }}/project">프로젝트</a>
                     </li>
-                    <li>
+                    <li style="display:table-cell;">
                         <a href="/company_portfolio/{{ ret.user.id }}/shop">스토어</a>
                     </li>
-                    <li>
+                    <li style="display:table-cell;">
+                        <a >질문/답변</a>
+                    <!--
                         <a href="/company_portfolio/{{ ret.user.id }}/qna">질문/답변</a>
+                        -->
                     </li>
-                    <li>
+                    <li style="display:table-cell;">
+                        <a>리뷰</a>
+                    <!--
                         <a href="/company_portfolio/{{ ret.user.id }}/review">리뷰</a>
+                        -->
                     </li>
                 </ul>
             </div>
-        </div>
     </div>
 </div>
