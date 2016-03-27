@@ -30,7 +30,7 @@
 <!-- Fixed navbar start -->
 
 <div class="navbar navbar-tshop navbar-fixed-top megamenu" role="navigation" style="margin-bottom: 0px;">
-    <div class="navbar-top hidden-xs" style="height:40px;margin-top:5px;">
+    <div class="navbar-top hidden-xs" style="height:37px;margin-top:11px;margin-bottom:11px;">
         <div class="container">
             <div class="row navbar-collapse collapse">
 <div class="navbar-header">
@@ -40,19 +40,19 @@
                         class="icon-bar"> </span> <span class="icon-bar"> </span></button>
                         -->
 
-                <a  href="/"> <img src="{{ url_for('static',filename='img/logo_40.png') }}"> </a>
+                <a  href="/"> <img src="{{ url_for('static',filename='img/crop_logo.jpg') }}" style="height:45px;margin-top:-8px;"> </a>
             </div>
 
 
-                    <div class="pull-left " style="margin-left:65px;">
+                    <div class="pull-left " style="margin-left:24px;">
                         <ul class="userMenu ">
-                            <li style="margin-bottom:5px;margin-top:5px;">
-                            <div style="width:30px;height:30px;background-color:white;border:1px solid #dddddd;border-right:0px;text-align:center;">
-                            <i class="fa fa-search fa-2x" style="color:#dddddd;margin:0;display:inline-block;text-align:center;vertical-align:bottom;line-height:30px;"></i>
+                            <li style="height:37px;">
+                            <div style="width:37px;height:37px;background-color:white;border:1px solid #dddddd;border-right:0px;text-align:center;">
+                            <i class="fa fa-search fa-2x" style="color:#dddddd;margin:0;display:inline-block;text-align:center;vertical-align:bottom;line-height:30px;margin-top:2px;"></i>
                         </div>
                             </li>
                             <li>
-                            <input type="text" id="search-bar" placeholder="사진, 전문가, 제품으로 검색하기" style="display:table-cell;">
+                            <input type="text" id="search-bar" placeholder="사진, 전문가, 제품으로 검색하기" style="display:table-cell;margin-top: 0px;margin-bottom: 0px;height: 37px;border-left: 0px;font-size:13px;width:663px;">
                             </li>
                         </ul>
                     </div>
@@ -98,21 +98,25 @@
                         <div class="pull-right">
                             <ul class="userMenu">
                                 <li>
-                                <a href="#" data-toggle="modal" data-target="#ModalLogin"> <span class="hidden-xs">
+                                <a href="#" data-toggle="modal" data-target="#ModalLogin" style="padding-right:0px;"> <span class="hidden-xs">
 
-                                        <i class="fa fa-sign-in 1x" style="color:#777777;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;display:table-cell;" > </i>
-                                        <div style="display:table-cell;">
+                                        <div style="display:table-cell;color:#ababab;">
                                             로그인
                                         </div>
                                     </span>
-                                    <i class="glyphicon glyphicon-log-in hide visible-xs "></i> </a>
+                                </a>
+                                </li>
+                                <li>
+                                    <div style="display:table-cell;padding-left:20px;padding-right:20px;line-height:40px;font-size:14px;color:#ababab;">
+                                        |
+                                    </div>
                                 </li>
                                 <li class="hidden-xs"><a href="#" data-toggle="modal" data-target="#ModalSignup" style="padding-right:15px;"> 
 
-                                    <i class="fa fa-user-plus 1x" style="color:#777777;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;display:table-cell;" > </i>
-                                        <div style="display:table-cell;">
+                                <div style="display:table-cell;color:#ababab;">
                                     회원가입 
                                 </div>
+                                    <i class="fa fa-user-plus 1x" style="color:#ababab;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);display:table-cell;padding-left:5px;" > </i>
                                 </a></li>
                             </ul>
                         </div>
@@ -204,66 +208,228 @@
                     <!-- user menu end -->
                     </div>
 
+                        <style>
+                        .dropdown-menu {
+                            min-width: 283px;
+                        }
+                        .megamenu .megamenu-content {
+                            padding: 5px 0px 5px 0px;
+                        }
+                        .megamenu-content ul li {
+                            border-bottom: 0px;
+                            margin-bottom: 0px;
+                            padding-right:0px;
+                        }
+                        .megamenu-content ul {
+                            padding-top:5px;
+                            padding-bottom:5px;
+                        }
+                        .megamenu-content ul li a {
+                            padding-right:0px;
+                            
+                        }
+                        .megamenu-content ul li ul li:hover {
+                            background: #eeeeee;
+                        }
+.nav-stacked li {
+    border-bottom:0px;
+}
+.panel-heading,
+.panel-body{
+    padding-left:16px;
+    padding-top: 16px;
+    padding-bottom:16px;
+}
+.panel-body {
+    padding-left:0px;
+}
+.panel-title {
+    font-size: 14px;
+    font-weight: bold;
+}
+.panel-default > .panel-heading {
+    background:#ffffff;
+    border-top:0px;
+    border-bottom:0px;
+}
+.nav-stacked > li a {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+}
+.panel-body ul li:hover {
+    background:#eeeeee;
+    color:#949c12;
+}
+.panel-body ul li a{
+    color: #6a6a6a;
+    font-size: 14px;
+}
+#nav-panel-body ul li a {
+    left: 20px;
+}
+.panel-title {
+    color: #949c12;
+}
+#dropdown-menu-1 ul li {
+    padding-bottom: 0px;
+}
+#dropdown-menu-2 ul li {
+    padding-bottom: 0px;
+}
+#dropdown-menu-3 ul li {
+    padding-bottom: 0px;
+}
+
+                        </style>
                         <div class="navbar-collapse collapse" id="navbar-collapse" style="overflow-x:hidden;">
                             <hr class="visible-xs" style="margin:0px 15px 0px -15px;width:2580px;"/>
                 <ul class="nav navbar-nav" >
-                    <li class="dropdown megamenu-20width"><a class="dropdown-toggle" href="/photos/"> 
-                        <i class="fa fa-camera fa-1x" style="color:#777777;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;display:table-cell;" > </i>
+                    <li class="dropdown megamenu-20width"><a id="nav-dropdown-toggle-1" class="dropdown-toggle nav-dropdown-toggle" href="/photos/" style="padding-top:9px;padding-bottom:11px;border-top:2px solid #ffffff;"> 
+                        <i class="fa fa-camera fa-1x" style="color:#777777;transform:scale(1.1);-webkit-transform: scale(1.1);-ms-transform: scale(1.1);padding-right:5px;display:table-cell;" > </i>
                         <div style="display:table-cell;padding-left:4px;padding-right:4px;">
                             갤러리 <b class="caret"> </b> </div></a>
-                    <ul class="dropdown-menu">
-                        <li class="megamenu-content ">
-                        <ul class="  unstyled noMarginLeft newCollectionUl">
-                            <li><a href="/photos/1"><strong>거실</strong></a></li>
-                            <li><a href="/photos/2"><strong>주방</strong></a></li>
-                            <li><a href="/photos/3"><strong>침실</strong></a></li>
-                            <li><a href="/photos/4"><strong>서재</strong></a></li>
-                            <li><a href="/photos/5"><strong>유아/주니어방</strong></a></li>
-                            <li><a href="/photos/6"><strong>욕실</strong></a></li>
-                            <li><a href="/photos/7"><strong>현관</strong></a></li>
-                            <li><a href="/photos/8"><strong>기타</strong></a></li>
-                            <li><a href="/photos/9"><strong>상업공간</strong></a></li>
-                            <li><a href="/photos/10"><strong>사무공간</strong></a></li>
-                        </ul>
-                        </li>
+                    <ul class="dropdown-menu" id="dropdown-menu-1" style="min-width:283px;border-top:0px;padding-top:0px;padding-bottom:0px;">
+                        <li class="megamenu-content " style="padding-top:0px;padding-bottom:0px;">
+                        <div class="panel panel-default" style="margin-bottom:0px;">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#navCategory-space" class="collapseWill">
+                                        공간
+                                        <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="navCategory-space" class="panel-collapse collapse in">
+                                <div id="nav-panel-body" class="panel-body" style="padding:0;">
+                                    <ul class="nav nav-pills nav-stacked tree" style="padding-bottom:10px;">
+                                        <li><a href="/photos/1"> 거실</a></li>
+                                        <li><a href="/photos/2"> 주방</a></li>
+                                        <li><a href="/photos/3"> 침실</a></li>
+                                        <li><a href="/photos/4"> 서재</a></li>
+                                        <li><a href="/photos/5"> 유아/주니어방</a></li>
+                                        <li><a href="/photos/6"> 욕실</a></li>
+                                        <li><a href="/photos/7"> 현관</a></li>
+                                        <li><a href="/photos/8"> 기타</a></li>
+                                        <li><a href="/photos/9"> 상업공간</a></li>
+                                        <li><a href="/photos/10"> 사무공간</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+<hr style="margin:0px;padding:0px;">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#" class="collapseWill">
+                                        타입
+                                        <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+                                    </a>
+                                </h4>
+                            </div>
+<hr style="margin:0px;padding:0px;">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#" class="collapseWill">
+                                        스타일
+                                        <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+                                    </a>
+                                </h4>
+                            </div>
+
+                        </div>
                     </ul>
                     </li>
-                    <li class="dropdown megamenu-20width"><a  class="dropdown-toggle" href="/find_pros/"> 
-                        <i class="fa fa-users fa-1x" style="color:#777777;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;display:table-cell;" > </i>
+                    <li class="dropdown megamenu-20width"><a  id="nav-dropdown-toggle-2" class="dropdown-toggle nav-dropdown-toggle" href="/find_pros/" style="padding-top:9px;padding-bottom:11px;border-top:2px solid #ffffff;"> 
+                        <i class="fa fa-users fa-1x" style="color:#777777;transform:scale(1.1);-webkit-transform: scale(1.1);-ms-transform: scale(1.1);padding-right:5px;display:table-cell;" > </i>
                         <div style="display:table-cell;padding-left:4px;padding-right:4px;">
                             전문가<b class="caret"> </b> </div></a>
-                    <ul class="dropdown-menu">
-                        <li class="megamenu-content ">
-                        <ul class="unstyled noMarginLeft newCollectionUl">
-                            <li><a href="/find_pros/1"> 주거 인테리어 회사</a></li>
-                            <li><a href="/find_pros/2"> 상업 인테리어 회사</a></li>
-                            <li><a href="/find_pros/4"> 인테리어 디자이너</a></li>
-                            <li><a href="/find_pros/3"> 가구 회사</a></li>
-                        </ul>
-                        </li>
+                    <ul class="dropdown-menu" id="dropdown-menu-2" style="min-width:283px;border-top:0px;padding-top:0px;padding-bottom:0px;">
+                        <li class="megamenu-content " style="padding-top:0px;padding-bottom:0px;">
+                        <div class="panel panel-default" style="margin-bottom:0px;">
+                            <div class="panel-heading" >
+                                <h4 class="panel-title">
+                                    <a href="/find_pros/1"> 주거 인테리어 회사</a>
+                                </h4>
+                            </div>
+<hr style="margin:0px;padding:0px;">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a href="/find_pros/2"> 상업 인테리어 회사</a>
+                                </h4>
+                            </div>
+<hr style="margin:0px;padding:0px;">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a href="/find_pros/4"> 인테리어 디자이너</a>
+                                </h4>
+                            </div>
+<hr style="margin:0px;padding:0px;">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a href="/find_pros/3"> 가구 회사</a>
+                                </h4>
+                            </div>
+                        </div>
                     </ul>
                     </li>
-                    <li class="dropdown megamenu-20width"><a  class="dropdown-toggle" href="/shop/">
-                        <i class="fa fa-tag fa-1x" style="color:#777777;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;display:table-cell;" > </i>
+                    <li class="dropdown megamenu-20width"><a  id="nav-dropdown-toggle-3" class="dropdown-toggle nav-dropdown-toggle" href="/shop/" style="padding-top:9px;padding-bottom:11px;border-top:2px solid #ffffff;">
+                        <i class="fa fa-tag fa-1x" style="color:#777777;transform:scale(1.1);-webkit-transform: scale(1.1);-ms-transform: scale(1.1);padding-right:5px;display:table-cell;" > </i>
                         <div style="display:table-cell;padding-left:4px;padding-right:4px;">
                             스토어<b class="caret"> </b> </div></a>
-                    <ul class="dropdown-menu">
-                        <li class="megamenu-content">
-                        <ul class="unstyled noMarginLeft newCollectionUl">
-                            <li><a href="/shop/1">거실가구</a></li>
-                            <li><a href="/shop/9">주방가구</a></li>
-                            <li><a href="/shop/15">침실가구</a></li>
-                            <li><a href="/shop/26">서재가구</a></li>
-                            <li><a href="/shop/33">유아/주니어가구</a></li>
-                            <li><a href="/shop/42">욕실</a></li>
-                            <li><a href="/shop/50">제작가구(빌트인)</a></li>
-                            <li><a href="/shop/56">인테리어소품</a></li>
-                            <li><a href="/shop/63">상업가구</a></li>
-                            <li><a href="/shop/69">사무가구</a></li>
-                        </ul>
-                        </li>
+                    <ul class="dropdown-menu" id="dropdown-menu-3" style="min-width:283px;border-top:0px;padding-top:0px;padding-bottom:0px;">
+                        <li class="megamenu-content"  style="padding-top:0px;padding-bottom:0px;"> 
+                        <div class="panel panel-default" style="margin-bottom:0px;">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#navCategory-furniture" class="collapseWill">
+                                        가구
+                                        <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="navCategory-furniture" class="panel-collapse collapse in">
+                                <div id="nav-panel-body" class="panel-body" style="padding:0;">
+                                    <ul class="nav nav-pills nav-stacked tree" style="padding-bottom:10px;">
+                                        <li><a href="/shop/1">거실가구</a></li>
+                                        <li><a href="/shop/9">주방가구</a></li>
+                                        <li><a href="/shop/15">침실가구</a></li>
+                                        <li><a href="/shop/26">서재가구</a></li>
+                                        <li><a href="/shop/33">유아/주니어가구</a></li>
+                                        <li><a href="/shop/42">욕실</a></li>
+                                        <li><a href="/shop/50">제작가구(빌트인)</a></li>
+                                        <li><a href="/shop/56">인테리어소품</a></li>
+                                        <li><a href="/shop/63">상업가구</a></li>
+                                        <li><a href="/shop/69">사무가구</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <hr style="margin:0px;padding:0px;">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#" class="collapseWill">
+                                        스타일
+                                        <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+                                    </a>
+                                </h4>
+                            </div>
+                            <hr style="margin:0px;padding:0px;">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#" class="collapseWill">
+                                        가격
+                                        <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+                                    </a>
+                                </h4>
+                            </div>
+
+                        </div>
                     </ul>
+                    
                     </li>
+                    <li class="dropdown megamenu-20width"><a  id="nav-dropdown-toggle-4" class="dropdown-toggle nav-dropdown-toggle" href="/find_pros/" style="padding-top:9px;padding-bottom:11px;border-top:2px solid #ffffff;"> 
+                        <div style="display:table-cell;padding-left:4px;padding-right:4px;">
+                            매거진</div></a>
+                    </li>
+
                 </ul>
                         </div>
         <!--/.nav-collapse -->
@@ -282,3 +448,46 @@
     <!--/.search-full-->
 
 </div>
+<script>
+$('#nav-dropdown-toggle-1').hover(function() {
+        $(this).css('border-top','2px solid #959d16');
+        }, function() {
+        var $cur = $(this);
+        $cur.css('border-top','2px solid #ffffff'); 
+        $('#dropdown-menu-1').hover(function() {
+            $cur.css('border-top','2px solid #959d16');
+            },function() {
+            $cur.css('border-top','2px solid #ffffff'); 
+            });
+        });
+$('#nav-dropdown-toggle-2').hover(function() {
+        $(this).css('border-top','2px solid #959d16');
+        }, function() {
+        var $cur = $(this);
+        $cur.css('border-top','2px solid #ffffff'); 
+        $('#dropdown-menu-2').hover(function() {
+            $cur.css('border-top','2px solid #959d16');
+            },function() {
+            $cur.css('border-top','2px solid #ffffff'); 
+            });
+        });
+$('#nav-dropdown-toggle-3').hover(function() {
+        $(this).css('border-top','2px solid #959d16');
+        }, function() {
+        var $cur = $(this);
+        $cur.css('border-top','2px solid #ffffff'); 
+        $('#dropdown-menu-3').hover(function() {
+            $cur.css('border-top','2px solid #959d16');
+            },function() {
+            $cur.css('border-top','2px solid #ffffff'); 
+            });
+        });
+$('#nav-dropdown-toggle-4').hover(function() {
+        $(this).css('border-top','2px solid #959d16');
+        }, function() {
+        $(this).css('border-top','2px solid #ffffff'); 
+        });
+
+
+</script>
+

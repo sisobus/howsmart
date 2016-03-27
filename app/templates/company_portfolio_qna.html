@@ -39,7 +39,6 @@ card_header {
   cursor: pointer;
   opacity: 1;
 }
-
 .custom_jumbo{
   width:100%;
   z-index:1;
@@ -64,7 +63,7 @@ card_header {
 .custom_jumbo_container h1{
   font-size:40px;
   color:#fff;
-    margin-top: 30px;
+    margin-top: 100px;
     vertical-align: middle;
 }
 
@@ -78,10 +77,9 @@ card_header {
 #leftside_container {
     position: absolute;
     width: 240px;
-    left: 0;
-    height: 100%;
     padding: 0;
     margin: 0;
+    margin-top: 150px;
 }
 #rightside_container {
     position: relative;
@@ -99,28 +97,21 @@ card_header {
     background-color: #000;
     margin-left: 20px;
 }
-
+#feed_container {
+    overflow: auto;
+}
 </style>
 {% include "company_portfolio_navbar.html" %}
 
-<div class="container main-container " style="margin-top:20px;">
-
-    <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12">
-            <div class="panel panel-default">
-                <div id="collapseCategory" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                        <ul class="nav nav-pills nav-stacked tree">
-                            <li><a href="/company_portfolio/{{ ret.user.id }}"><strong>Home</strong></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-9 col-md-9 col-sm-12">
-            개발 중입니다.
-        </div>
-    </div>
-
+<div class="container">
+<br>
+<br>
+<br>
+<br>
+none
+<br>
+<br>
+<br>
+<br>
 </div>
 {% endblock %}

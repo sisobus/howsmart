@@ -19,10 +19,9 @@ card_header {
     width: 100%;
     position: relative;
     float: left;
-    margin: 1px 1px 1px 1px;
 
   background-color: #ffffff;
-    border: 1px solid #dddddd;
+    border: 1px solid #eeeeee;
 
   }
 
@@ -34,10 +33,12 @@ card_header {
 }
 
 .bg {
-  border-bottom: 0px solid #5cc0ff;
   max-width: 100%;
-  height:200px;
+  height:300px;
+  margin-left: 10px;
+  margin-right:10px;
 }
+
 
 .bio:hover > .card_desc {
   cursor: pointer;
@@ -53,50 +54,48 @@ card_header {
     margin-bottom: 10px;
 }
 .shop-contents-list-container-items {
-    margin: 10px 10px 10px 10px;
 }
 .shop-contents-list-container-item {
-    margin: 5px 5px 5px 5px;
 }
 
     </style>
     {% include "shop_mobile.html" %}
 <div class="container main-container nav-margin hidden-xs">
-    <div class="row">
-        <div class="breadcrumbDiv col-lg-12">
-            <ul class="breadcrumb" style="margin-bottom:10px;background-color:#FFFFFF;margin-top:10px;">
-                <li><a href="/shop">스토어</a></li>
-                {% if ret.shop_category_id == 0 %}
-                    <li><a href="/shop/#">{{ ret.shop_category_name }}</a></li>
-                {% endif %}
-                {% if ret.shop_category_id != 0 %}
-                    <li><a href="/shop/{{ ret.shop_category_id }}">{{ ret.shop_category_name }}</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-2 col-md-2 col-sm-12">
+    <div class="row" style="padding-top:19px;">
+        <div class="col-lg-3 col-md-3 col-sm-12" style="padding-right:0px;width:20%;">
             {% include "shop_category.html" %}
         </div>
-        <div class="col-lg-10 col-md-10 col-sm-12">
-            <div class="shop-contents-list-container">
+        <div class="col-lg-9 col-md-9 col-sm-12" style="width:80%;">
+            <div class="shop-contents-list-container" style="padding-left:15px;padding-right:20px;">
                 <div class="shop-contents-list-container-items">
-                    <div class="w100 productFilter clearfix" style="border-top:0px;margin-bottom:0px;">
-                        <p class="pull-left" style="font-size:20px;margin-left:10px;"> {{ ret.shop_category_name }}  <strong>{{ ret.cur_category_product_count }}</strong> 제품  </p>
-
-                        <div class="pull-right ">
-                            <div class="change-view pull-right"><a href="#" title="Grid" class="grid-view"> <i
-                                        class="fa fa-th"></i> </a> <a href="#" title="List" class="list-view "><i
-                                        class="fa fa-th-list"></i></a></div>
+                    <ul class="breadcrumb" style="border:0px;margin:0px;padding:0px;padding-top:16px;padding-bottom:16px;padding-left:5px;">
+                        <li><a href="/shop" style="color:#949c12;">스토어</a></li>
+                        {% if ret.shop_category_id == 0 %}
+                        <li><a href="/shop/#" style="color:#949c12;">{{ ret.shop_category_name }}</a></li>
+                        {% endif %}
+                        {% if ret.shop_category_id != 0 %}
+                        <li><a href="/shop/{{ ret.shop_category_id }}" style="color:#949c12;">{{ ret.shop_category_name }}</a></li>
+                        {% endif %}
+                    </ul>
+                    <hr style="margin:0px;padding:0px;margin-left:5px;">
+                    <span class="pull-left" style="padding-top: 10px;padding-bottom:10px;padding-left:5px;">
+                        <div class="change-view ">
+                            <a style="margin-left:0px;" href="#" title="Grid" class=""> <i class="fa fa-th"></i> </a>
+                            <a style="margin-left:0px;"href="#" title="List" class=""><i class="fa fa-th-list"></i></a>
                         </div>
+                    </span>
+                    <div class="pull-right" style="padding:10px;">
+                        1-12페이지 총 {{ ret.shop_category_name }}  <strong>{{ ret.cur_category_product_count }}</strong> 제품 
+                        <button class="btn " style="background:#ffffff;border:1px solid #dddddd;width:35px;"><i
+                                class="fa fa-angle-right"></i></button>
                     </div>
+                    <hr style="margin:0px;padding:0px;margin-top:60px;margin-left:5px;">
 
                     {% include "modal_save_product.html" %}
-                    <div class="xsResponse clearfix">
+                    <div class="xsResponse clearfix" style="margin-bottom:40px;">
                         <div ="feed-container" style="padding-top:10px;">
                             {% for product in ret.products %}
-                            <div class="col-lg-4 col-md-4 col-sm-12" style="padding:1px 1px 1px 1px;">
+                            <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
                                 <div class="card_container">
                                     <div class="card_header" >
                                         <a href="/product_detail/{{ product.product.id }}">
@@ -105,12 +104,12 @@ card_header {
                                                 background-size: cover;
                                                 background-position: center;
                                                 " id="image-{{product.product.id}}">
-                                                <div style="position: absolute;left:1%;top:170px;display:none;" id="button-container-{{product.product.id}}">
+                                                <div style="position: absolute;left:23%;top:250px;display:none;" id="button-container-{{product.product.id}}">
                                                     <a href="#">
-                                                        <button class="btn " id="save-button-{{product.product.id}}" style="background: black;color:white;"><i class="fa fa-plus"></i> Save </button>
+                                                        <button class="btn " id="save-button-{{product.product.id}}" style="background: black;color:white;"><i class="fa fa-plus"></i> 저장</button>
                                                     </a>
                                                     <a href="#">
-                                                        <button class="btn " id="share-button-{{product.product.id}}" style="background: black;color:white;">Share</button>
+                                                        <button class="btn " id="share-button-{{product.product.id}}" style="background: black;color:white;background-color: rgba(200,200,200,0.5);border: 1px solid #ffffff;"><i class="fa fa-share-alt"></i> 공유</button>
                                                     </a>
                                                 </div>
 <script>
@@ -152,13 +151,22 @@ $('#save-button-{{product.product.id}}').bind('click',function(e) {
 </script>
                                             </div>
                                         </a>
+                                        <hr style="padding:0;margin:0;border-top:1px solid #eeeeee;"/>
                                         <div class="shop_body" style="margin-top:10px;margin-left:10px;">
+                                            <div style="height:40px;">
                                             <a href="/product_detail/{{ product.product.id }}">
-                                                <h4>{{ product.product.product_name }}</h4>
+                                                <h4 style="padding-bottom:5px;">{{ product.product.product_name }} by {{ product.user.username }}</h4>
                                             </a>
-                                            <h5>{{ product.product_real_price }} 원 </h5>
+                                        </div>
+                                            <h5 style="color:#a5ac4c;font-weight:bold;padding-bottom:5px;"><strike style="color:#dddddd;">{{ product.product_real_price }}원</strike> {{ product.product_real_sale_price }}원 </h5>
+                                            <h4 style="margin:0;padding:0;font-size:14px;color:#a5ac4c;">
+                                                <span style="display:table-cell;">
+                                                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i>&nbsp;
+                                                    제품에 대한 리뷰 136>
+                                                </span>
+                                            </h4>
                                             <a href="/product_detail/{{ product.product.id }}">
-                                                <h6>more colors</h6>
+                                                <h6 style="color:#ababab;font-weight:bold;">다른 색상 더보기 ></h6>
                                             </a>
                                         </div>
                                     </div>

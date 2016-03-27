@@ -6,22 +6,36 @@
 <link href="{{ url_for('static',filename='css/image-crop.css') }}" rel="stylesheet">
 <script src="{{ url_for('static',filename='js/jquery.Jcrop.js') }}"></script>
 <script src="{{ url_for('static',filename='js/jquery.SimpleCropper.js') }}"></script>
-<div class="container nav-margin" style="padding: 0px 0px 0px 0px;height:200px;">
+<div class="container nav-margin" style="padding: 0px 0px 0px 0px;height:300px;">
     <div class="custom_jumbo_container" style="background: url({{ '/static/'+ret.image_path }});
             background-repeat:no-repeat; background-size: cover; background-position: center;">
-        <div id="leftside_container">
+        <div id="leftside_container" >
             {% if ret.user_profile_image_path | length != 0 %}
+            {% if session['user_id'] == ret.user.id %}
             <div class="cropme" style="width:168px; height:168px; margin-left:20px;">
                 <div style="background: url({{ url_for('static',filename=ret.user_profile_image_path) }});
+                    border:1px solid #ffffff;
                     background-repeat:no-repeat; background-size: cover; background-position: center;z-index:10;height:168px;"></div>
             </div>
+            {% else %}
+            <div style="border:1px solid #dddddd;background:#ffffff;width:168px;height:168px; margin-left:20px;">
+                <div style="background: url({{ url_for('static',filename=ret.user_profile_image_path) }});
+                    border:1px solid #ffffff;
+                    background-repeat:no-repeat; background-size: cover; background-position: center;z-index:10;height:168px;"></div>
+            </div>
+            {% endif %}
+            <script>
+            $('.cropme').hover(function() {return false;});
+            </script>
             {% else %}
             <div class="cropme" style="width:168px; height:168px; margin-left:20px;">
             </div>
             {% endif %}
         </div>
         <script>
+                {% if session['user_id'] == ret.user.id %}
         $('.cropme').simpleCropper();
+                {% endif %}
         $('.ok').click(function() {
             console.log('ok click');
             var imageData = $('#preview img').attr('src');
@@ -44,33 +58,79 @@ error: function(error) {
             });
         
         </script>
+        <!--
         <div id="rightside_container">
             <h1>{{ ret.user.username }}</h1>
         </div>
+        -->
     </div>
 </div>
 <div class="container" style="margin-bottom:0px;background:#ffffff;border: 1px solid #dddddd;">
-    <div id="custom_jumbo_navbar_wrapper">
+    <div id="custom_jumbo_navbar_wrapper" style="margin-left:170px;">
         <div class="container-not">
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav" id="company-portfolio-navbar">
                     <li>
-                        <a href="/company_portfolio/{{ ret.user.id }}">회사소개</a>
+                        <a style="border-bottom:2px solid #ffffff;" id="nav-toggle-1" href="/company_portfolio/{{ ret.user.id }}">회사소개</a>
                     </li>
                     <li>
-                        <a href="/company_portfolio/{{ ret.user.id }}/project">프로젝트</a>
+                        <a id="nav-toggle-2" href="/company_portfolio/{{ ret.user.id }}/project">프로젝트</a>
                     </li>
                     <li>
-                        <a href="/company_portfolio/{{ ret.user.id }}/shop">스토어</a>
+                        <a id="nav-toggle-3" href="/company_portfolio/{{ ret.user.id }}/shop">스토어</a>
                     </li>
                     <li>
-                        <a href="/company_portfolio/{{ ret.user.id }}/qna">질문/답변</a>
+                        <a id="nav-toggle-4" href="#">질문/답변</a>
+                    <!--
+                        <a id="nav-toggle-4" href="/company_portfolio/{{ ret.user.id }}/qna">질문/답변</a>
+                        -->
                     </li>
                     <li>
-                        <a href="/company_portfolio/{{ ret.user.id }}/review">리뷰</a>
+                    <a id="nav-toggle-5" href="#">리뷰</a>
+                    <!--
+                        <a id="nav-toggle-5" href="/company_portfolio/{{ ret.user.id }}/review">리뷰</a>
+                        -->
                     </li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
+<script>
+$('#nav-toggle-1').hover(function() {
+    $(this).css('border-bottom','2px solid #959d16');
+},function() {
+    $(this).css('border-bottom','2px solid #ffffff');
+});
+$('#nav-toggle-2').hover(function() {
+    $(this).css('border-bottom','2px solid #959d16');
+},function() {
+    $(this).css('border-bottom','2px solid #ffffff');
+});
+$('#nav-toggle-3').hover(function() {
+    $(this).css('border-bottom','2px solid #959d16');
+},function() {
+    $(this).css('border-bottom','2px solid #ffffff');
+});
+$('#nav-toggle-4').hover(function() {
+    $(this).css('border-bottom','2px solid #959d16');
+},function() {
+    $(this).css('border-bottom','2px solid #ffffff');
+});
+$('#nav-toggle-5').hover(function() {
+    $(this).css('border-bottom','2px solid #959d16');
+},function() {
+    $(this).css('border-bottom','2px solid #ffffff');
+});
+$('#nav-dropdown-toggle-1').hover(function() {
+        $(this).css('border-top','2px solid #959d16');
+        }, function() {
+        var $cur = $(this);
+        $cur.css('border-top','2px solid #ffffff'); 
+        $('#dropdown-menu-1').hover(function() {
+            $cur.css('border-top','2px solid #959d16');
+            },function() {
+            $cur.css('border-top','2px solid #ffffff'); 
+            });
+        });
+</script>

@@ -73,6 +73,10 @@
             border-color: #EEEEEE;
             outline: 0 none;
         }
+        @import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+        html * {
+            font-family: 'Nanum Gothic', serif;
+        }
     </style>
     <script src="{{  url_for('static',filename='js/pace.min.js') }} "></script>
 </head>
@@ -84,6 +88,7 @@
 {% include "base_navbar.html" %}
 
 {% block content %}{% endblock %}
+{% include "footer.html" %}
 
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="{{  url_for('static',filename='bootstrap/js/bootstrap.min.js') }}"></script>

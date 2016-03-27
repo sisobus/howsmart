@@ -28,7 +28,6 @@
         margin-bottom: 10px;
     }
     .photos-contents-list-container-items {
-        margin: 10px 10px 10px 10px;
     }
     .photos-contents-list-container-item {
         margin: 5px 5px 5px 5px;
@@ -62,113 +61,179 @@ card_header {
 .bg {
   border-bottom: 0px solid #5cc0ff;
   max-width: 100%;
-  height:200px;
+  height:270px;
 } 
 
     </style>
 <div class="container main-container nav-margin">
-    <div class="row">
-        <div class="breadcrumbDiv col-lg-12">
-            <ul class="breadcrumb" style="margin-bottom:10px;background-color:#FFFFFF;margin-top:10px;">
-                <li><a href="/photos">갤러리</a></li>
-                {% if not feed_category_id %}
-                <li><a href="/photos/">{{ feed_category_name }}</a></li>
-                {% endif %}
-                {% if feed_category_id %}
-                <li><a href="/photos/{{ feed_category_id }}">{{ feed_category_name }}</a></li>
-                {% endif %} 
-            </ul>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-2 col-md-2 col-sm-12">
+ <style>
+    .nav-stacked li {
+        border-bottom:0px;
+    }
+    .panel-heading,
+    .panel-body{
+        padding-left:16px;
+        padding-top: 16px;
+        padding-bottom:16px;
+    }
+    .panel-title {
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .panel-default > .panel-heading {
+        background:#ffffff;
+        border-top:0px;
+        border-bottom:0px;
+    }
+    .nav-stacked > li a {
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-left: 0px;
+    }
+    </style>
+    <div class="row" style="padding-top:19px;">
+        <div class="col-lg-3 col-md-3 col-sm-12" style="padding-right:0px;width:20%;">
             <div class="panel panel-default">
-                <div id="collapseCategory" class="panel-collapse collapse in">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" href="#collapseCategory-space" class="collapseWill">
+                            공간
+                            <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseCategory-space" class="panel-collapse collapse in">
                     <div class="panel-body">
                         <ul class="nav nav-pills nav-stacked tree">
-                            <li class="active dropdown-tree open-tree"><a class="dropdown-tree-a">  공간 </a>
-                                <ul class="category-level-2 dropdown-menu-tree">
-                                    <li class="dropdown-tree"><a class="dropdown-tree-a" href="/photos/1">
-                                        거실</a></li>
-                                    <li><a href="/photos/2"> 주방</a></li>
-                                    <li><a href="/photos/3"> 침실</a></li>
-                                    <li><a href="/photos/4"> 서재</a></li>
-                                    <li><a href="/photos/5"> 유아/주니어방</a></li>
-                                    <li><a href="/photos/6"> 욕실</a></li>
-                                    <li><a href="/photos/7"> 현관</a></li>
-                                    <li><a href="/photos/8"> 기타</a></li>
-                                    <li><a href="/photos/9"> 상업공간</a></li>
-                                    <li><a href="/photos/10"> 사무공간</a></li>
-                                </ul>
-                            </li>
-                            <li class="active dropdown-tree "><a class="dropdown-tree-a"> 타입 </a>
-                                <ul class="category-level-2 dropdown-menu-tree">
-                                    <li><a href="#"> 원룸</a></li>
-                                    <li><a href="#"> 투베이</a></li>
-                                    <li><a href="#"> 오피스텔</a></li>
-                                    <li><a href="#"> 아파트</a></li>
-                                    <li><a href="#"> 빌라연립</a></li>
-                                    <li><a href="#"> 단독주택</a></li>
-                                    <li><a href="#"> 사무공간</a></li>
-                                    <li><a href="#"> 상업공간</a></li>
-                                    <li><a href="#"> 기타</a></li>
-                                </ul>
-                            </li>
-                            <li class="active dropdown-tree "><a class="dropdown-tree-a"> 스타일 </a>
-                                <ul class="category-level-2 dropdown-menu-tree">
-                                    <li><a href="#"> 모던 </a></li>
-                                    <li><a href="#"> 북유럽</a></li>
-                                    <li><a href="#"> 빈티지</a></li>
-                                    <li><a href="#"> 내츄럴</a></li>
-                                    <li><a href="#"> 프로방스</a></li>
-                                    <li><a href="#"> 클래식+앤틱</a></li>
-                                    <li><a href="#"> 오리엔탈</a></li>
-                                    <li><a href="#"> 유니크</a></li>
-                                    <li><a href="#"> 기타</a></li>
-                                </ul>
-                            </li>
-                            <li class="active dropdown-tree "><a class="dropdown-tree-a"> 면적 </a>
-                                <ul class="category-level-2 dropdown-menu-tree">
-                                    <li><a href="#"> 10평대 미만</a></li>
-                                    <li><a href="#"> 10평대</a></li>
-                                    <li><a href="#"> 20평대</a></li>
-                                    <li><a href="#"> 30평대</a></li>
-                                    <li><a href="#"> 40평대</a></li>
-                                    <li><a href="#"> 50평대 이상</a></li>
-                                </ul>
-                            </li>
+                            <li><a href="/photos/1"> 거실</a></li>
+                            <li><a href="/photos/2"> 주방</a></li>
+                            <li><a href="/photos/3"> 침실</a></li>
+                            <li><a href="/photos/4"> 서재</a></li>
+                            <li><a href="/photos/5"> 유아/주니어방</a></li>
+                            <li><a href="/photos/6"> 욕실</a></li>
+                            <li><a href="/photos/7"> 현관</a></li>
+                            <li><a href="/photos/8"> 기타</a></li>
+                            <li><a href="/photos/9"> 상업공간</a></li>
+                            <li><a href="/photos/10"> 사무공간</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <hr style="margin:0px;padding:0px;">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" href="#collapseCategory-type" class="collapseWill">
+                            타입 
+                            <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseCategory-type" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <ul class="nav nav-pills nav-stacked tree">
+                            <li><a href="#"> 원룸</a></li>
+                            <li><a href="#"> 투베이</a></li>
+                            <li><a href="#"> 오피스텔</a></li>
+                            <li><a href="#"> 아파트</a></li>
+                            <li><a href="#"> 빌라연립</a></li>
+                            <li><a href="#"> 단독주택</a></li>
+                            <li><a href="#"> 사무공간</a></li>
+                            <li><a href="#"> 상업공간</a></li>
+                            <li><a href="#"> 기타</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <hr style="margin:0px;padding:0px;">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" href="#collapseCategory-style" class="collapseWill">
+                            스타일
+                            <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseCategory-style" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <ul class="nav nav-pills nav-stacked tree">
+                            <li><a href="#"> 모던 </a></li>
+                            <li><a href="#"> 북유럽</a></li>
+                            <li><a href="#"> 빈티지</a></li>
+                            <li><a href="#"> 내츄럴</a></li>
+                            <li><a href="#"> 프로방스</a></li>
+                            <li><a href="#"> 클래식+앤틱</a></li>
+                            <li><a href="#"> 오리엔탈</a></li>
+                            <li><a href="#"> 유니크</a></li>
+                            <li><a href="#"> 기타</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <hr style="margin:0px;padding:0px;">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" href="#collapseCategory-area" class="collapseWill">
+                            면적
+                            <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseCategory-area" class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <ul class="nav nav-pills nav-stacked tree">
+                            <li><a href="#"> 10평대 미만</a></li>
+                            <li><a href="#"> 10평대</a></li>
+                            <li><a href="#"> 20평대</a></li>
+                            <li><a href="#"> 30평대</a></li>
+                            <li><a href="#"> 40평대</a></li>
+                            <li><a href="#"> 50평대 이상</a></li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-10 col-md-10 col-sm-12">
-            <div class="photos-contents-list-container">
-                <div class="photos-contents-list-container-items">
-                    <div class="w100 productFilter clearfix" style="border-top:0;margin-bottom:0px;">
-                        <p class="pull-left" style="font-size:20px;margin-left:10px;"> {{ feed_category_name }}  <strong>{{ feed_count }}</strong> 사진 </p>
 
-                        <div class="pull-right ">
+        <div class="col-lg-9 col-md-9 col-sm-12" style="width:80%;">
+            <div class="photos-contents-list-container" style="padding-left:15px;padding-right:20px;">
+                <div class="photos-contents-list-container-items">
+                    <ul class="breadcrumb" style="border:0px;margin:0px;padding:0px;padding-top:16px;padding-bottom
+:16px;padding-left:5px;">
+                        <li><a href="/photos" style="color:#949c12;">갤러리</a></li>
+                        {% if feed_category_id %}
+                        <li><a href="/photos/{{ feed_category_id }}" style="color:#949c12;">{{ feed_category_name }}</a></li>
+                        {% endif %}
+                        {% if not feed_category_id %}
+                        <li><a href="/photos/" style="color:#949c12;">{{ feed_category_name }}</a></li>
+                        {% endif %}
+                    </ul>
+                    <hr style="margin:0px;padding:0px;margin-left:5px;">
+                    <div style="padding-left:5px;">
+                        <span class="pull-left" style="padding-top: 10px;padding-bottom:10px;">
                             {% if feed_category_id %}
-                            <div class="change-view pull-right">
-                                <a href="/photos/{{ feed_category_id }}/grid" title="Grid" class=""> <i class="fa fa-th"></i> </a> 
-                                <a href="/photos/{{ feed_category_id }}" title="List" class=""><i class="fa fa-th-list"></i></a>
+                            <div class="change-view ">
+                                <a style="margin-left:0px;" href="/photos/{{ feed_category_id }}/grid" title="Grid"
+ class=""> <i class="fa fa-th"></i> </a> 
+                                <a style="margin-left:0px;" href="/photos/{{ feed_category_id }}" title="List" clas
+s=""><i class="fa fa-th-list"></i></a>
                             </div>
                             {% endif %}
                             {% if not feed_category_id %}
-                            <div class="change-view pull-right">
-                                <a href="/photos/grid" title="Grid" class=""> <i class="fa fa-th"></i> </a> 
-                                <a href="/photos" title="List" class=""><i class="fa fa-th-list"></i></a>
+                            <div class="change-view ">
+                                <a style="margin-left:0px;" href="/photos/grid" title="Grid" class=""> <i class="fa
+ fa-th"></i> </a> 
+                                <a style="margin-left:0px;"href="/photos" title="List" class=""><i class="fa fa-th-list"></i></a>
                             </div>
                             {% endif %}
-
+                        </span>
+                        <div class="pull-right" style="padding:10px;">
+                            1-12페이지 총 {{ feed_category_name }}  <strong>{{ feed_count }}</strong>장 사진
+                            <button class="btn " style="background:#ffffff;border:1px solid #dddddd;width:35px;"><i
+ class="fa fa-angle-right"></i></button>
                         </div>
                     </div>
+                    <hr style="margin:0px;padding:0px;margin-top:60px;margin-left:5px;">
 
-                    <div class="xsResponse clearfix">
+                    <div class="xsResponse clearfix" style="margin-bottom:40px;">
                         <div id="all_photos_container" style="padding-top:10px;">
                             {% for feed in feeds %}
-                            <div class="col-lg-4 col-md-4 col-sm-12" style="padding:1px 1px 1px 1px;">
+                            <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
                                 <div class="card_container"> 
                                     <div class="card_header">
                                         <script type="text/javascript">
@@ -185,15 +250,13 @@ openFeed = function(feed_id) {
                                             ">
                                         </div>
                                     </a>
-                                    <div id="photos_body">
-                                        <a href="javascript:openFeed({{ feed.feed.id }});">
-                                            <h4 style="padding: 3px 0px 2px 10px;">{{ feed.feed.title }}</h4>
-                                        </a>
-                                        <div style="display:table-cell;vertical-align:middle;padding-left:10px;">
-                                            <strong>
-                                            <a href="/company_portfolio/{{ feed.user.id }}"><h5 style="vertical-align:middle; padding-bottom:3px;font-weight:700;">{{ feed.user.username }}</h5></a>
-                                            </strong>
+                                    <div id="photos_body" style="height:68px;">
+                                        <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:10px;">
+                                            <a href="/company_portfolio/{{ feed.user.id }}"><h4 style="vertical-align:middle; padding-bottom:0px;color:#ababab;">{{ feed.user.username }}</h4></a>
                                         </div>
+                                        <a href="javascript:openFeed({{ feed.feed.id }});">
+                                            <h5 style="font-weight:bold;padding: 3px 0px 2px 10px;">{{ feed.feed.title }}</h5>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

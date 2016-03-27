@@ -14,12 +14,13 @@ card_header {
   }
 
 .card_container {
-    outline: 0; max-width:33%;
+    outline: 0;
+    width: 100%;
     position: relative;
     float: left;
     margin: 1px 1px 1px 1px;
 
-  background-color: #ffffff;
+    background-color: #ffffff;
 
   }
 
@@ -81,7 +82,7 @@ card_header {
     width: 240px;
     padding: 0;
     margin: 0;
-    margin-top: 40px;
+    margin-top: 150px;
 }
 #rightside_container {
     position: relative;
@@ -89,7 +90,7 @@ card_header {
 }
 #custom_jumbo_navbar_wrapper {
     position: relative;
-    margin: 0px 0px 0px 200px;
+    margin: 0px 0px 0px 160px;
     vertical-align: middle;
 }
 .profile_container {
@@ -111,20 +112,38 @@ card_header {
 {% include "company_portfolio_navbar.html" %}
 
 <div class="container main-container " style="margin-top:0px;background-color:#FFFFFF;border:1px solid #dddddd;border-top:0px;margin-bottom:10px;">
-    <div class="row">
-        <div class="col-lg-2 col-md-2 col-sm-12">
-            <h5 style="padding-bottom:0px;padding-top:15px;">
-                <a onclick="followPost({{ret.user.id}});">팔로우 하기</a>
-            </h5>
+    <div class="row" style="padding-top:20px;height:222px;">
+        <div class="col-lg-2 col-md-2 col-sm-12" style="padding-left:20px;padding-right:8px;">
+            <div style="height:56px;border:1px solid #dddddd;width:100%;">
+                <div class="col-lg-6 col-md-6 col-sm-6" style="padding:0;margin:0;vertical-align:middle;border-right:1px solid #dddddd;height:100%;">
+                    <center>
+                    <h5 style="{% if ret.is_user_follow %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}vertical-align:middle;padding-bottom:0px;padding-top:7px;" id="follow-button-number">{{ ret.number_of_follow }}</h5>
+                    <a onclick="followPost({{ret.user.id}});">
+                    <h5 style="{% if ret.is_user_follow %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}vertical-align:middle;padding-bottom:0px;" id="follow-button">{% if ret.is_user_follow %}팔로워{% else %}팔로우{% endif %}</h5>
+                </a>
+                </center>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6" style="padding:0;margin:0;vertical-align:middle;height:100%;">
+                    <center>
+                    <h5 style="vertical-align:middle;padding-bottom:0px;padding-top: 7px;">{{ ret.number_of_from_follow }}</h5>
+                    <h5 style="vertical-align:middle;padding-bottom:0px;">팔로잉</h5>
+                    </center>
+                </div>
+            </div>
         </div>
-        <div class="col-lg-10 col-md-10 col-sm-12">
+        <div class="col-lg-10 col-md-10 col-sm-12" style="padding-left:0px;">
                 <div class="col-lg-8 col-md-8 col-sm-12">
-                    <h5 style="padding-bottom:0px;padding-top:15px;">
+                    <h5 style="padding-bottom:0px;">
                     {{ ret.company.company_introduction }}
                 </h5>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12">
-                    <h5 style="padding-bottom:0px;padding-top:15px;">
+                    <h5 style="padding-bottom:0px;">
+                        <strong style="font-weight:800;">
+                    회사정보
+                </strong>
+                    <br>
+                    <br>
                     회사이름 : {{ ret.user.username }}
                     <br>
                     회사주소 : {{ ret.company.company_address }}
@@ -145,43 +164,19 @@ card_header {
                 </div>
         </div>
     </div>
-    <hr>
+    <hr style="padding:0;margin:0;margin-left:-15px;margin-right:-15px;">
 
-    <div class="row">
-        <div class="col-lg-2 col-md-2 col-sm-12">
-            <div class="dummy-container" style="height:70px;">
-                <div class="col-md-6" style="padding-right:0px;margin:10px 0px 10px 0px;">
-                    <div style="height:50px;border:1px solid #dddddd;">
-                        <center>
-                        <h5 style="{% if ret.is_user_follow %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}vertical-align:middle;padding-bottom:0px;padding-top:7px;" id="follow-button-number">{{ ret.number_of_follow }}</h5>
-                        <h5 style="{% if ret.is_user_follow %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}vertical-align:middle;padding-bottom:0px;" id="follow-button">팔로워</h5>
-                    </center>
-                    </div>
-                </div>
-                <div class="col-md-6" style="padding-left:0px;margin:10px 0px 10px 0px;">
-                    <div style="width:100%;height:50px;border:1px solid #dddddd;border-left:0px;">
-                        <center>
-                        <h5 style="vertical-align:middle;padding-bottom:0px;padding-top: 7px;">{{ ret.number_of_from_follow }}</h5>
-                        <h5 style="vertical-align:middle;padding-bottom:0px;">팔로잉</h5>
-                    </center>
-                    </div>
-                </div>
-                <!--
-                <div class="followers" style="border:1px solid #dddddd;width:49%;height:100px;margin: 10px 10px 10px 10px;">
-                    ?
-                </div>
-                <div class="followings">
-                </div>
-                -->
-            </div>
+    <div class="row" style="padding-top:20px;">
+        <div class="col-lg-2 col-md-2 col-sm-12" style="padding-left:20px;padding-right:8px;">
         </div>
-        <div class="col-lg-10 col-md-10 col-sm-12">
-            <h5 style="padding-bottom:0px;">
-            전체 {{ ret.number_of_projects }} 개의 프로젝트
+        <div class="col-lg-10 col-md-10 col-sm-12" style="padding-left:0px;padding-right:10px;">
+            <h5 style="padding-bottom:0px;padding-left:10px;">
+            {{ ret.number_of_projects }} 개의 프로젝트
         </h5>
-            <div  id="feed_container" style="margin-top:10px;">
+            <div  id="feed_container" style="margin-top:8px;">
 
                 {% if session and session['is_company'] and session['user_id'] == ret.user.id %}
+                <div class="col-lg-4 col-md-4 col-sm-12" style="padding:12px 10px 12px 10px;">
                 <div class="card_container ">
                     <card_header>
                         <div class="bio">
@@ -204,8 +199,10 @@ card_header {
                         </div>
                     </card_header>
                 </div>
+                </div>
                 {% endif %}
                 {% for project in ret.projects %}
+                <div class="col-lg-4 col-md-4 col-sm-12" style="padding:12px 10px 12px 10px;">
                 <div class="card_container ">
                     <card_header>
                         <div class="bio">
@@ -231,20 +228,25 @@ card_header {
                         </div>
                     </card_header>
                 </div>
+                </div>
                 {% endfor %}
             </div>
         <center>
             <a href="/company_portfolio/{{ ret.user.id }}/project">
-            <button class="btn btn-lg btn-primary" style="width:100%;">더보기</button>
+                <div style="color:#000000;background:#f0f0f0;height:44px;vertical-align:middle;padding: 10px 10px 0px 10px;margin-left:10px;margin-right:10px;">
+                    모든 프로젝트 보기 >
+
+                </div>
             </a>
         </center>
-        <hr/>
-            <h5 style="padding-bottom:0px;">
-            전체 {{ ret.number_of_products }} 개의 상품
+        <hr style="padding:0;margin-left:10px;margin-right:10px;">
+        <h5 style="padding-bottom:0px;padding-left:10px;">
+            {{ ret.number_of_products }} 개의 상품
         </h5>
-            <div  id="feed_container" style="margin-top:10px;">
+            <div  id="feed_container" style="margin-top:8px;">
 
                 {% if session and session['is_company'] and session['user_id'] == ret.user.id %}
+                 <div class="col-lg-4 col-md-4 col-sm-12" style="padding:12px 10px 12px 10px;">
                 <div class="card_container ">
                     <card_header>
                         <div class="bio">
@@ -267,8 +269,10 @@ card_header {
                         </div>
                     </card_header>
                 </div>
+                </div>
                 {% endif %}
                 {% for product in ret.products %}
+                <div class="col-lg-4 col-md-4 col-sm-12" style="padding:12px 10px 12px 10px;">
                 <div class="card_container ">
                     <card_header>
                         <div class="bio">
@@ -294,15 +298,19 @@ card_header {
                         </div>
                     </card_header>
                 </div>
+                </div>
                 {% endfor %}
             </div>
             <center>
                 <a href="/company_portfolio/{{ ret.user.id }}/shop">
-                    <button class="btn btn-lg btn-primary" style="width:100%;">더보기</button>
+                    <div style="color:#000000;background:#f0f0f0;height:44px;vertical-align:middle;padding: 10px 10px 0px 10px;margin-left:10px;margin-right:10px;">
+                        모든 제품 보기 >
+
+                    </div>
                 </a>
             </center>
 
-            <hr/>
+            <br>
         </div>
     </div>
 

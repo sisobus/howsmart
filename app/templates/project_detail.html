@@ -16,7 +16,7 @@ card_header {
 .card_container {
     outline: 0;
     width: 100%;
-    height: 250px;
+    height: 450px;
     /*
     max-width:32%;
     */
@@ -36,7 +36,7 @@ card_header {
 .bg {
   border-bottom: 0px solid #5cc0ff;
   max-width: 100%;
-  height:250px;
+  height:450px;
 }
 
 .bio:hover > .card_desc {
@@ -84,7 +84,7 @@ card_header {
     width: 240px;
     padding: 0;
     margin: 0;
-    margin-top: 40px;
+    margin-top: 150px;
 }
 #rightside_container {
     position: relative;
@@ -139,38 +139,72 @@ card_header {
 <div class="hidden-xs">
 {% include "company_portfolio_navbar.html" %}
 
-<div class="container main-container " style="margin-top:20px;">
-    <div class="row">
-        <div class="col-lg-3 col-md-3 col-sm-12">
+<style>
+    .nav-stacked li {
+        border-bottom:0px;
+    }
+    .panel {
+        border: 0px;
+    }
+    .panel-heading,
+    .panel-body{
+        padding-left:0px;
+        padding-top: 0px;
+        padding-bottom:16px;
+        padding-right: 0px;
+    }
+    .panel-title {
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .panel-default > .panel-heading {
+        background:#ffffff;
+        border-top:0px;
+        border-bottom:0px;
+    }
+    .nav-stacked > li a {
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-left: 0px;
+    }
+    </style>
+<div class="container main-container " style="margin-top:0px;background-color:#FFFFFF;border:1px solid #dddddd;border-top:0px;margin-bottom:10px;">
+    <div class="row" style="padding-top:25px;height:222px;">
+        <div class="col-lg-2 col-md-2 col-sm-12" style="padding-left:20px;padding-right:8px;">
             <div class="panel panel-default">
-                <div id="collapseCategory" class="panel-collapse collapse in">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" href="#collapseCategory-space" class="collapseWill">
+                            프로젝트
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseCategory-space" class="panel-collapse collapse in">
                     <div class="panel-body">
                         <ul class="nav nav-pills nav-stacked tree">
-                            <li class="active dropdown-tree open-tree"><a class="dropdown-tree-a" > <span
-                                    class="badge pull-right">{{ ret.projects | length }}</span> 프로젝트</a>
-                                <ul class="category-level-2 dropdown-menu-tree">
-                                    {% for project in ret.projects %}
-                                    <li class="dropdown-tree"><a class="dropdown-tree-a" href="/project_detail/{{ project.id }}">
-                                        {{ project.project_name }}
-                                    </a></li>
-                                    {% endfor %}
-                                </ul>
+                            {% for project in ret.projects %}
+                            <li>
+                            <a href="/project_detail/{{project.id}}">
+                                {{ project.project_name }}
+                            </a>
                             </li>
+                            {% endfor %}
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-9 col-md-9 col-sm-12">
-            <h2 style="padding-bottom:0px;" id='project-name'>{{ ret.project.project_name }}{% if session and 'user_id' in session and session['user_id'] == ret.user.id %}<div class="pull-right"><button class="btn btn-primary" id='edit-button'>수정하기</button><button class="btn btn-danger">삭제하기</button></div>{% endif %}</h2>
-        <hr>
-        <h5 style="padding-bottom:0px;" id="project-body">
+        <div class="col-lg-10 col-md-10 col-sm-12" style="padding-right:10px;padding-left:0px;">
+            <h5 style="padding-bottom:30px; font-size:23px;font-weight:bold;color:#323232;padding-left:10px;padding-right:10px;">
+{{ ret.project.project_name }}{% if session and 'user_id' in session and session['user_id'] == ret.user.id %}<div class="pull-right"><button class="btn btn-primary" id='edit-button'>수정하기</button><button class="btn btn-danger">삭제하기</button></div>{% endif %}
+            </h5>
+        <h5 style="padding-bottom:0px;padding-left:10px;padding-right:10px;" id="project-body">
             {{ ret.project.project_body }}
         </h5>
-        <hr>
+        <hr style="margin-left:10px;margin-right:10px;">
             <div  id="feed_container" style="margin-top:10px;overflow:hidden;">
                     {% for feed in ret.feeds %}
-                        <div class="col-lg-6 col-md-6 col-sm-12">
+                        <div class="col-lg-6 col-md-6 col-sm-12" style="padding:10px 10px 10px 10px;">
                     <div class="card_container ">
                         <card_header>
                         <div class="bio">

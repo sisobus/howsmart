@@ -442,6 +442,7 @@ def merge_image_for_product(createProductForm):
         product = Product(createProductForm.product_name.data,int(createProductForm.product_price.data),createProductForm.product_color.data,\
                           createProductForm.product_desc.data,createProductForm.product_size.data,createProductForm.product_model_name.data,\
                           createProductForm.product_meterial.data,int(createProductForm.shop_category.data),user.id,datetime.utcnow())
+        product.product_sale_price = product.price
         product.status_id = 1
         db.session.add(product)
         db.session.commit()
@@ -673,6 +674,10 @@ def feed_detail(feed_id):
 def company_feed_detail(feed_id):
     with app.app_context():
         commentForm = CommentForm()
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+
     if request.args.get('previous_url'):
         session['previous_url'] = request.args.get('previous_url')
         print '@@#!@#!#'+request.args.get('previous_url')
@@ -763,10 +768,10 @@ def company_feed_detail(feed_id):
         'user_profile_image_path': user_profile_image_path
     }
     if request.method == 'GET':
-        return render_template('company_feed_detail.html',commentForm=commentForm,ret=ret)
+        return render_template('company_feed_detail.html',commentForm=commentForm,ret=ret,signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm)
     elif request.method == 'POST':
         if not commentForm.validate():
-            return render_template('company_feed_detail.html',commentForm=commentForm,ret=ret)
+            return render_template('company_feed_detail.html',commentForm=commentForm,ret=ret,signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm)
         if commentForm.validate_on_submit():
             comment = Comment(commentForm.body.data, datetime.utcnow())
             comment_user = User.query.filter_by(email=session['email'].lower()).first()
@@ -1150,7 +1155,8 @@ def company_portfolio_project(user_id):
         cur_image_path = utils.get_image_path(cur_image.image_path)
         d = {
             'project': project,
-            'image_path': cur_image_path
+            'image_path': cur_image_path,
+            'number_of_feed': Project_has_feed.query.filter_by(project_id=project.id).count()
         }
         projects.append(d)
     image   = Image.query.filter_by(id=company.image_id).first()
@@ -1193,7 +1199,9 @@ def company_portfolio_shop(user_id):
         cur_image_path = utils.get_image_path(cur_image.image_path)
         d = {
             'product': t_product,
-            'image_path': cur_image_path
+            'image_path': cur_image_path,
+            'product_real_price': utils.convert_price_to_won(t_product.product_price),
+            'product_real_sale_price': utils.convert_price_to_won(t_product.product_sale_price),
         }
         products.append(d)
     ret_category = utils.get_all_category()
@@ -1279,10 +1287,17 @@ def company_portfolio_qna(user_id):
     company = Company.query.filter_by(user_id=user.id).first()
     image   = Image.query.filter_by(id=company.image_id).first()
     image_path = utils.get_image_path(image.image_path)
+
+    user_profile_image_path = ''
+    user_profile = User_profile.query.filter_by(user_id=user.id).order_by(User_profile.created_at.desc()).first()
+    if user_profile:
+        image = Image.query.filter_by(id=user_profile.image_id).first()
+        user_profile_image_path = utils.get_image_path(image.image_path)
     ret = {
         'user': user,
         'company': company,
-        'image_path': image_path
+        'image_path': image_path,
+        'user_profile_image_path': user_profile_image_path
     }
 
     return render_template('company_portfolio_qna.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
@@ -1298,10 +1313,17 @@ def company_portfolio_review(user_id):
     company = Company.query.filter_by(user_id=user.id).first()
     image   = Image.query.filter_by(id=company.image_id).first()
     image_path = utils.get_image_path(image.image_path)
+
+    user_profile_image_path = ''
+    user_profile = User_profile.query.filter_by(user_id=user.id).order_by(User_profile.created_at.desc()).first()
+    if user_profile:
+        image = Image.query.filter_by(id=user_profile.image_id).first()
+        user_profile_image_path = utils.get_image_path(image.image_path)
     ret = {
         'user': user,
         'company': company,
-        'image_path': image_path
+        'image_path': image_path,
+        'user_profile_image_path': user_profile_image_path
     }
 
     return render_template('company_portfolio_review.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,\
@@ -1437,6 +1459,7 @@ def product_detail(product_id):
         d = {
             'product': t_product,
             'product_real_price': utils.convert_price_to_won(t_product.product_price),
+            'product_real_sale_price': utils.convert_price_to_won(t_product.product_sale_price),
             'image_path': cur_product_image_path
         }
         same_company_other_products.append(d)
@@ -1454,6 +1477,7 @@ def product_detail(product_id):
         d = {
             'product': t_product,
             'product_real_price': utils.convert_price_to_won(t_product.product_price),
+            'product_real_sale_price': utils.convert_price_to_won(t_product.product_sale_price),
             'image_path': cur_product_image_path
         }
         same_category_other_products.append(d)
@@ -1468,6 +1492,7 @@ def product_detail(product_id):
         'company': company,
         'product': product,
         'product_real_price': utils.convert_price_to_won(product.product_price),
+        'product_real_sale_price': utils.convert_price_to_won(product.product_sale_price),
         'image_paths': image_paths,
         'colors': colors,
         'other_image_paths': other_image_paths,
@@ -1548,6 +1573,7 @@ def find_pros():
                 d['over_introduction'] = True
             d['company'] = company
             d['image_path'] = image_path
+            d['user_profile_image_path'] = get_user_profile_image_path(user)
             ret_pros.append(d)
 
         ret_pros = sorted(ret_pros, key=lambda k: k['last_project_created'], reverse=True)
@@ -1599,6 +1625,7 @@ def find_pros_detail(pros_category_id):
 
             d['company'] = company
             d['image_path'] = image_path
+            d['user_profile_image_path'] = get_user_profile_image_path(user)
             ret_pros.append(d)
 
         ret_pros = sorted(ret_pros, key=lambda k: k['last_project_created'], reverse=True)
@@ -1640,6 +1667,7 @@ def find_pros_detail(pros_category_id):
                 d['over_introduction'] = True
             d['company'] = company
             d['image_path'] = image_path
+            d['user_profile_image_path'] = get_user_profile_image_path(user)
             ret_pros.append(d)
 
         ret_pros = sorted(ret_pros, key=lambda k: k['last_project_created'], reverse=True)
@@ -2012,6 +2040,7 @@ def shop():
         d = {
             'product': t_product,
             'product_real_price': utils.convert_price_to_won(t_product.product_price),
+            'product_real_sale_price': utils.convert_price_to_won(t_product.product_sale_price),
             'user': user,
             'image_path': image_path
         }
@@ -2056,6 +2085,7 @@ def shop_detail(shop_category_id):
                 d = {
                     'product': t_product,
                     'product_real_price': utils.convert_price_to_won(t_product.product_price),
+                    'product_real_sale_price': utils.convert_price_to_won(t_product.product_sale_price),
                     'user': user,
                     'image_path': image_path
                 }
@@ -2072,6 +2102,7 @@ def shop_detail(shop_category_id):
             d = {
                 'product': t_product,
                 'product_real_price': utils.convert_price_to_won(t_product.product_price),
+                'product_real_sale_price': utils.convert_price_to_won(t_product.product_sale_price),
                 'user': user,
                 'image_path': image_path
             }

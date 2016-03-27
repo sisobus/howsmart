@@ -299,8 +299,176 @@ hr.photos {
 
     <script src="{{  url_for('static',filename='js/pace.min.js') }} "></script>
 </head>
-<body>
-<div id="container" >
+<body style="margin-bottom: 20px;">
+<div class="visible-xs">
+<style>
+body {
+
+}
+.megamenu-content ul li a, .megamenu-content ul li p, .megamenu-content ul li, .navbar-nav .dropdown a, .navbar-nav .dropdown {
+    color: #777777;
+}
+.navbar-tshop {
+    border-bottom: 1px solid #dddddd;
+}
+form input#username,
+form input#email,
+form input#password,
+form input#password_check,
+form textarea#introduction,
+form input#address,
+form input#tel,
+form input#website {
+    border-color: #DDDDDD;
+    -webkit-border-radius: 3px 0 0 3px;
+    -moz-border-radius: 3px 0 0 3px;
+    border-radius: 3px 0 0 3px;
+    border-style: solid;
+    border-width: 1px 1px 1px 1px;
+    color: #888888;
+    font-size: 14px;
+    height: 36px;
+    width: 100%;
+}
+form textarea#introduction {
+    height: 100px;
+}
+form input#website {
+    margin-bottom: 10px;
+}
+form input#username:hover,
+form input#email:hover,
+form input#password:hover,
+form input#password_check:hover,
+form input#address:hover,
+form textarea#introduction:hover,
+form input#tel:hover,
+form input#website:hover {
+    border-color: #EEEEEE;
+    outline: 0 none;
+}
+
+form input#username:focus,
+form input#email:focus,
+form input#password:focus,
+form input#password_check:focus,
+form textarea#introduction:focus,
+form input#address:focus,
+form input#tel:focus,
+form input#website:focus {
+    border-color: #EEEEEE;
+    outline: 0 none;
+}
+.mobile-feed-container {
+    width: 100%;
+    overflow: auto;
+}
+.mobile-card-body-item {
+    padding-left: 10px;
+    padding-right:10px;
+    background:#ffffff;
+}
+mobile-card-header {
+    display: block;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #dddddd;
+    border-left: 0px;
+    border-right:0px;
+    background: #ffffff;
+}
+.nav-margin {
+    margin-top:56px;
+}
+.bg {
+    border-bottom: 0px solid #5cc0ff;
+    max-height: 100%;
+    height: 200px;
+}
+@media (max-width: 767px) {
+    body {
+        overflow: auto;
+        overflow-x: hidden;
+    }
+}
+</style>
+{% include "modal_login.html" %}
+{% include "modal_company_singup.html" %}
+{% include "modal_signup.html" %}
+{% include "base_navbar.html" %}
+    <div class="mobile-feed-container nav-margin " style="overflow-x:hidden;padding-top: 10px;overflow-y:scroll;">
+        <mobile-card-header>
+        <div class="mobile-card-body-item" style="margin-top:10px;margin-bottom:20px;">
+         {% if ret.user_profile_image_path %}
+            <div style="background:url({{url_for('static',filename=ret.user_profile_image_path)}}); border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
+            {% else %}
+            <div style="background-color:#dddddd; border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
+            {% endif %}
+            <h1 style="padding-bottom:0px;display:table-cell;padding-left:5px;"><a href="/company_portfolio/{{ ret.user.id }}" target="_blank">{{ ret.user.username }} &nbsp;</a></h1>
+        </div>
+
+        <div class="bg" id="" style="background: url({{ '/static/'+ret.image_path }});
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            ">
+        </div>
+        </mobile-card-header>
+        <div class="mobile-card-body-item" style="border-bottom:1px solid #dddddd;padding-bottom:10px;">
+            <div class="col-xs-10" style="margin-top:10px;margin-bottom:20px;padding:0px;padding-right:5px;">
+                <button class="btn btn-primary" style="width:100%;">
+                    <i class="fa fa-plus"></i> Save
+                </button>
+            </div>
+            <div class="col-xs-2" style="margin-top:10px;margin-bottom:20px;padding:0px;padding-left:5px;">
+                <button class="btn btn-warning" style="width:100%;">
+                <i class="fa fa-envelope-o"></i> 
+                </button>
+            </div>
+            <h3>{{ ret.feed.title }}</h3>
+            <h4>{{ ret.feed.body }}</h4>
+            <h5>카테고리: <a href="/photos/{{ ret.feed.feed_category_id }}" target="_blank">{{ ret.feed_category_name }}</a></h5>
+            <h5 style="padding-bottom:0px;">주소: </h5>
+            <a id="comment-button" href="#main-comment-container"> 
+                <button class="btn btn-primary" style="height:21px;vertical-align:middle;padding:0px 5px 0px 5px;font-size:13px;"><i class="fa fa-comment"></i> 댓글 {{ ret.all_comments | length }}</button>
+            </a>
+        </div>
+    </div>
+    <div class="mobile-feed-container" style="margin-top: 10px;">
+        <div class="mobile-card-body-item" style="border-top: 1px solid #dddddd;border-bottom:1px solid #dddddd; padding-bottom:10px;">
+            <h5 style="padding-bottom:5px;padding-top:5px;"><a href="/project_detail/{{ ret.project.id }}" target="_blank">{{ ret.project.project_name }}</a>의 다른 사진들 </h5>
+            <div style="overflow-x: scroll; overflow-y: hidden; white-space:nowrap;">
+                {% for other_feed in ret.other_feeds_in_same_project %}
+                <a href="/company_feed_detail/{{ other_feed.feed.id }}" style="margin-right:10px;">
+                    <img src="{{ url_for('static',filename=other_feed.image_path) }}" style="height:100px;width:100px;max-height:100px;max-width:100px;">
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="mobile-feed-container" style="margin-top: 10px;">
+        <div class="mobile-card-body-item" style="border-top: 1px solid #dddddd;border-bottom:1px solid #dddddd; padding-bottom:10px;">
+            <h5 style="padding-bottom:5px;padding-top:5px;"><a href="/company_portfolio/{{ ret.user.id }}">{{ ret.user.username }}</a>의 다른 프로젝트 </h5>
+            <div style="overflow-x: scroll; overflow-y: hidden; white-space:nowrap;">
+                {% for other_project in ret.other_projects %}
+                <a href="/project_detail/{{ other_project.project.id }}" target="_blank" style="margin-right:10px;">
+                    <img src="{{ url_for('static',filename=other_project.image_path) }}" style="height:100px;width:100px;max-height:100px;max-width:100px;" >
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="mobile-feed-container" style="margin-top: 10px;">
+        <div class="mobile-card-body-item" style="border-top: 1px solid #dddddd;border-bottom:1px solid #dddddd; padding-bottom:10px;">
+            <h5 style="padding-top: 5px; padding-bottom: 5px;">다른 <a href="/photos/{{ ret.feed.feed_category_id }}">{{ ret.feed_category_name }}</a> 추천 사진 </h5>
+            <div style="overflow-x: scroll; overflow-y: hidden; white-space:nowrap;">
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<div id="container" class="hidden-xs" >
     <div id="content-container">
         <div id="content-form-container">
             <div id="content-form-header" style="height:50px;border-bottom:1px solid #dddddd;">
@@ -429,7 +597,7 @@ hr.photos {
 
         </div>
     </div>
-    <div id="image-container">
+    <div id="image-container" class="hidden-xs">
         <div id="image-real-container">
             <img id="uploadImagePreview" src="{{ url_for('static',filename=ret.image_path) }}" class="img-responsive "/>
         </div>
