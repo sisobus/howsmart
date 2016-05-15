@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="{{  url_for('static',filename='bootstrap/css/bootstrap.css') }}" />
+    <link rel="stylesheet" href="{{  url_for('static',filename='css/style_feed_detail.css') }}" />
+    <link rel="stylesheet" href="{{  url_for('static',filename='css/style-add-20151122.css') }}" />
+    <link rel="stylesheet" href="{{  url_for('static',filename='css/fa-shake.css') }}" />
+    <style>
+    </style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
+</script>
+<script src="{{ url_for('static',filename='js/jquery.smooth-scroll.js') }}"></script>
+    <script>
+        paceOptions = {
+            elements: true
+        };
+        function createTag() {
+            var image_width = $('#uploadImagePreview').width();
+            var image_height = $('#uploadImagePreview').height();
+            var image_left = $('#uploadImagePreview').offset().left;
+            var image_top = $('#uploadImagePreview').offset().top;
+            {% for tag in ret.tags %}
+                console.log({{tag.id}});
+                $('body').append($('<div/>', {
+                    id: 'tagging-container-'+{{tag.id}},
+                    style: 'position:absolute;display:block;z-index:1000;cursor:pointer;'
+                }));
+                $('#tagging-container-'+{{tag.id}}).append($('<i/>', {
+                    class: 'fa fa-tag fa-2x',
+                    style: 'color:#92CFCD'
+                }));
+                $('#tagging-container-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}}))
+                    .css('top',image_top+image_height*({{tag.tag_y}}))
+                    .show()
+                $('body').append($('<div/>', {
+                    id: 'tagging-container-information-'+{{tag.id}},
+                    style: 'position:absolute;display:block;z-index:1000;'
+                }));
+                $('#tagging-container-information-'+{{tag.id}}).append($('<div/>', {
+                    style: 'background:#f5f5f5;'
+                }));
+                $('#tagging-container-information-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}})+35)
+                    .css('top',image_top+image_height*({{tag.tag_y}}))
+                    .css('background','#f5f5f5')
+                    .css('border','1px solid #dddddd')
+                    .css('padding','2px 2px 2px 2px')
+                    .text('{{tag.tag_name}}')
+                    .hide()
+                $('#tagging-container-'+{{tag.id}}).mouseover(function() {
+                        $('#tagging-container-information-'+{{tag.id}}).fadeIn('slow');
+                    }).mouseout(function() {
+                        $('#tagging-container-information-'+{{tag.id}}).hide();
+                    }).click(function() {
+                        var url = '{{tag.tag_link}}';
+                        if ( url.search('http://') == -1 || url.search('https://') == -1) 
+                            url = 'http://'+url;
+                        window.location.href = url;
+                    });
+            {% endfor %}
+        }
+        function rePositionTag() {
+            var image_width = $('#uploadImagePreview').width();
+            var image_height = $('#uploadImagePreview').height();
+            var image_left = $('#uploadImagePreview').offset().left;
+            var image_top = $('#uploadImagePreview').offset().top;
+            {% for tag in ret.tags %}
+                $('#tagging-container-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}}))
+                    .css('top',image_top+image_height*({{tag.tag_y}}))
+                    .show()
+                $('#tagging-container-information-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}})+35)
+                    .css('top',image_top+image_height*({{tag.tag_y}}))
+            {% endfor %}
+        }
+        function shakeAllTag() {
+            {% for tag in ret.tags %}
+                $('#tagging-container-'+{{tag.id}}).find('i').addClass('faa-shake').addClass('animated')
+            {% endfor %}
+        }
+        $(document).ready(function() {
+                createTag();
+                shakeAllTag();
+                // .main-comment-container
+                $('a#comment-button').on('click',function() {
+                    $.smoothScroll({
+                        scrollTarget: '#main-comment-container'
+                    });
+                });
+            })
+        $(window).resize(function() {
+                rePositionTag();
+        })
+    </script>
+    <style type="text/css">
+
+        body {
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+        #image-container {
+            position: absolute;
+            width: 70%;
+            height: 100%;
+            left: 0;
+            padding: 0;
+            margin: 5px 5px 5px 5px;
+            background: #f5f5f5;
+            display: table;
+        }
+        #image-real-container {
+            display: table-cell;
+            width: 100%;
+            margin: 0;
+            vertical-align: middle;
+        }
+        #content-container {
+            position: absolute;
+            width: 30%;
+            right: 0;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            background: #f5f5f5;
+
+            overflow-y: scroll;
+        }
+        #content-form-container {
+            height: inherit;
+            overflow-y: scroll;
+            padding-bottom: 0px;
+            -ms-overflow-style: none;
+            border-color: #DDDDDD;
+            border-style: solid;
+            border-width: 1px 1px 1px 1px;
+
+            margin: 10px 10px 0px 10px;
+            background: #ffffff;
+        }
+        #content-container::-webkit-scrollbar {
+            display: none;
+        }
+        #content-form-container::-webkit-scrollbar {
+            display: none;
+        }
+        #content-form-body {
+            white-space: normal;
+            word-break: break-all;
+        }
+
+        form input#title,
+        form textarea#body,
+        form input#uploadImageContainer {
+            border-color: #DDDDDD;
+            -webkit-border-radius: 3px 0 0 3px;
+            -moz-border-radius: 3px 0 0 3px;
+            border-radius: 3px 0 0 3px;
+            border-style: solid;
+            border-width: 1px 1px 1px 1px;
+            color: #888888;
+            font-size: 14px;
+            height: 36px;
+            width: 100%;
+        }
+        form input#title {
+            margin-top: 100px;
+        }
+        form textarea#body {
+            height: 300px;
+        }
+        form input#uploadImageContainer {
+            margin-bottom: 10px;
+        }
+        form input#title:hover,
+        form textarea#body:hover,
+        form input#uploadImageContainer:hover {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+        form input#title:focus,
+        form textarea#body:focus,
+        form input#uploadImageContainer:focus {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+        img#uploadImagePreview {
+            max-width:100%;
+            max-height:100%;
+            position: absolute;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+        }
+
+        form input#body {
+            width: 100%;
+            border: 1px solid #dddddd;
+        }
+        form input#body:hover {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+        form input#body:focus {
+            border-color: #EEEEEE;
+            outline: 0 none;
+        }
+        #comment-container {
+            margin-left: 10px;
+        }
+
+        .bar {
+    opacity: 0;
+    background: rgba(255,255,255,.0);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    transition: opacity 1s;
+}
+
+div#image-container:hover .bar {
+    opacity: 1;
+}
+
+#image-container a {
+    position: absolute;
+}
+
+#image-container a:nth-of-type(1) {
+    left: 0;
+}
+
+#image-container a:nth-of-type(2) {
+    right: 0;
+}
+#other-image-container {
+    overflow: auto;
+}
+#tagging-container {
+    display: block;
+    position: absolute;
+    z-index: 1000;
+}
+.main-comment-container {
+    padding: 5px 15px 5px 15px;
+    background: #FFFFFF;
+    margin: 0px 10px 5px 10px;
+    border: 1px solid #dddddd;
+    border-top: 0px solid #dddddd;
+}
+.main-comment-item {
+    height: 42px;
+    margin: 2px 0px 2px 0px;
+}
+.main-comment-profile {
+    position: absolute;
+    width: 50px;
+    margin-top: 4px;
+}
+.main-comment-body-top {
+    position: relative;
+    margin: 0px 0px 0px 50px;
+}
+.main-comment-body-bottom {
+    position: relative;
+    margin: 0px 0px 0px 50px;
+}
+/*
+#content-form-header {
+    z-index: 3;
+}
+#content-form-header a {
+    position: absolute;
+}
+#content-form-header a:nth-of-type(1) {
+    left: 15px;
+}
+#content-form-header a:nth-of-type(2){
+    right: 15px;
+}
+        #other-image-container {
+            height: 50px;
+        }
+        */
+
+
+hr.photos {
+    margin: 10px 10px 10px 10px;
+    color: #f5f5f5; border: thin solid #f5f5f5;
+}
+	</style>
+
+    <script src="{{  url_for('static',filename='js/pace.min.js') }} "></script>
+</head>
+<body style="margin-bottom: 20px;">
+<div class="visible-xs">
+<style>
+body {
+
+}
+.megamenu-content ul li a, .megamenu-content ul li p, .megamenu-content ul li, .navbar-nav .dropdown a, .navbar-nav .dropdown {
+    color: #777777;
+}
+.navbar-tshop {
+    border-bottom: 1px solid #dddddd;
+}
+form input#username,
+form input#email,
+form input#password,
+form input#password_check,
+form textarea#introduction,
+form input#address,
+form input#tel,
+form input#website {
+    border-color: #DDDDDD;
+    -webkit-border-radius: 3px 0 0 3px;
+    -moz-border-radius: 3px 0 0 3px;
+    border-radius: 3px 0 0 3px;
+    border-style: solid;
+    border-width: 1px 1px 1px 1px;
+    color: #888888;
+    font-size: 14px;
+    height: 36px;
+    width: 100%;
+}
+form textarea#introduction {
+    height: 100px;
+}
+form input#website {
+    margin-bottom: 10px;
+}
+form input#username:hover,
+form input#email:hover,
+form input#password:hover,
+form input#password_check:hover,
+form input#address:hover,
+form textarea#introduction:hover,
+form input#tel:hover,
+form input#website:hover {
+    border-color: #EEEEEE;
+    outline: 0 none;
+}
+
+form input#username:focus,
+form input#email:focus,
+form input#password:focus,
+form input#password_check:focus,
+form textarea#introduction:focus,
+form input#address:focus,
+form input#tel:focus,
+form input#website:focus {
+    border-color: #EEEEEE;
+    outline: 0 none;
+}
+.mobile-feed-container {
+    width: 100%;
+    overflow: auto;
+}
+.mobile-card-body-item {
+    padding-left: 10px;
+    padding-right:10px;
+    background:#ffffff;
+}
+mobile-card-header {
+    display: block;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #dddddd;
+    border-left: 0px;
+    border-right:0px;
+    background: #ffffff;
+}
+.nav-margin {
+    margin-top:56px;
+}
+.bg {
+    border-bottom: 0px solid #5cc0ff;
+    max-height: 100%;
+    height: 200px;
+}
+@media (max-width: 767px) {
+    body {
+        overflow: auto;
+        overflow-x: hidden;
+    }
+}
+</style>
+{% include "modal_login.html" %}
+{% include "modal_company_singup.html" %}
+{% include "modal_signup.html" %}
+{% include "base_navbar.html" %}
+    <div class="mobile-feed-container nav-margin " style="overflow-x:hidden;padding-top: 10px;overflow-y:scroll;">
+        <mobile-card-header>
+        <div class="mobile-card-body-item" style="margin-top:10px;margin-bottom:20px;">
+         {% if ret.user_profile_image_path %}
+            <div style="background:url({{url_for('static',filename=ret.user_profile_image_path)}}); border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
+            {% else %}
+            <div style="background-color:#dddddd; border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
+            {% endif %}
+            <h1 style="padding-bottom:0px;display:table-cell;padding-left:5px;"><a href="/company_portfolio/{{ ret.user.id }}" target="_blank">{{ ret.user.username }} &nbsp;</a></h1>
+        </div>
+
+        <div class="bg" id="" style="background: url({{ '/static/'+ret.image_path }});
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            ">
+        </div>
+        </mobile-card-header>
+        <div class="mobile-card-body-item" style="border-bottom:1px solid #dddddd;padding-bottom:10px;">
+            <div class="col-xs-10" style="margin-top:10px;margin-bottom:20px;padding:0px;padding-right:5px;">
+                <button class="btn btn-primary" style="width:100%;">
+                    <i class="fa fa-plus"></i> Save
+                </button>
+            </div>
+            <div class="col-xs-2" style="margin-top:10px;margin-bottom:20px;padding:0px;padding-left:5px;">
+                <button class="btn btn-warning" style="width:100%;">
+                <i class="fa fa-envelope-o"></i> 
+                </button>
+            </div>
+            <h3>{{ ret.feed.title }}</h3>
+            <h4>{{ ret.feed.body }}</h4>
+            <h5>카테고리: <a href="/photos/{{ ret.feed.feed_category_id }}" target="_blank">{{ ret.feed_category_name }}</a></h5>
+            <h5 style="padding-bottom:0px;">주소: </h5>
+            <a id="comment-button" href="#main-comment-container"> 
+                <button class="btn btn-primary" style="height:21px;vertical-align:middle;padding:0px 5px 0px 5px;font-size:13px;"><i class="fa fa-comment"></i> 댓글 {{ ret.all_comments | length }}</button>
+            </a>
+        </div>
+    </div>
+    <div class="mobile-feed-container" style="margin-top: 10px;">
+        <div class="mobile-card-body-item" style="border-top: 1px solid #dddddd;border-bottom:1px solid #dddddd; padding-bottom:10px;">
+            <h5 style="padding-bottom:5px;padding-top:5px;"><a href="/project_detail/{{ ret.project.id }}" target="_blank">{{ ret.project.project_name }}</a>의 다른 사진들 </h5>
+            <div style="overflow-x: scroll; overflow-y: hidden; white-space:nowrap;">
+                {% for other_feed in ret.other_feeds_in_same_project %}
+                <a href="/company_feed_detail/{{ other_feed.feed.id }}" style="margin-right:10px;">
+                    <img src="{{ url_for('static',filename=other_feed.image_path) }}" style="height:100px;width:100px;max-height:100px;max-width:100px;">
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="mobile-feed-container" style="margin-top: 10px;">
+        <div class="mobile-card-body-item" style="border-top: 1px solid #dddddd;border-bottom:1px solid #dddddd; padding-bottom:10px;">
+            <h5 style="padding-bottom:5px;padding-top:5px;"><a href="/company_portfolio/{{ ret.user.id }}">{{ ret.user.username }}</a>의 다른 프로젝트 </h5>
+            <div style="overflow-x: scroll; overflow-y: hidden; white-space:nowrap;">
+                {% for other_project in ret.other_projects %}
+                <a href="/project_detail/{{ other_project.project.id }}" target="_blank" style="margin-right:10px;">
+                    <img src="{{ url_for('static',filename=other_project.image_path) }}" style="height:100px;width:100px;max-height:100px;max-width:100px;" >
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="mobile-feed-container" style="margin-top: 10px;">
+        <div class="mobile-card-body-item" style="border-top: 1px solid #dddddd;border-bottom:1px solid #dddddd; padding-bottom:10px;">
+            <h5 style="padding-top: 5px; padding-bottom: 5px;">다른 <a href="/photos/{{ ret.feed.feed_category_id }}">{{ ret.feed_category_name }}</a> 추천 사진 </h5>
+            <div style="overflow-x: scroll; overflow-y: hidden; white-space:nowrap;">
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<div id="container" class="hidden-xs" >
+    <div id="content-container">
+        <div id="content-form-container">
+            <div id="content-form-header" style="height:50px;border-bottom:1px solid #dddddd;">
+                <div class="pull-left">
+                    <div style="margin-left: 4px;margin-top:4px;">
+                    <a href="/"><img src="{{ url_for('static',filename='img/logo_40.png') }}"></a>
+                </div>
+            </div>
+            <a href="{{ session['previous_url'] }}">
+                <div class="pull-right" style="width:50px; height:50px;border-left:1px solid #dddddd;">
+                    <div style="background: url({{ url_for('static',filename='img/icons/remove11.png') }});background-repeat:no-repeat;background-size:cover;background-position:center;height:30px;margin-top:10px;">
+                    </div>
+                </div>
+            </a>
+            </div>
+            <!--
+            <hr class="photos">
+            -->
+            <div id="content-form-body">
+                <div class="content-margin-container">
+                    {% if ret.user_profile_image_path %}
+                    <div style="background:url({{url_for('static',filename=ret.user_profile_image_path)}}); border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
+                    {% else %}
+                    <div style="background-color:#dddddd; border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
+                    {% endif %}
+                    <h1 style="padding-bottom:0px;display:table-cell;padding-left:5px;"><a href="/company_portfolio/{{ ret.user.id }}" target="_blank">{{ ret.user.username }} &nbsp;</a>{% if session and 'user_id' in session and session['user_id'] == ret.user.id %}<button class='btn btn-primary' id='edit-button'><a href="/project_edit/{{ret.feed.id}}" style="display:block;color:#FFFFFF;">수정하기</a></button> <button class="btn btn-danger">삭제하기 </button>{% endif %}</h1>
+            </div>
+            <hr style="margin:0px 0px 0px 0px;">
+                <div class="content-margin-container">
+                <h3>{{ ret.feed.title }}</h3>
+                <h4>{{ ret.feed.body }}</h4>
+                <h5>카테고리: <a href="/photos/{{ ret.feed.feed_category_id }}" target="_blank">{{ ret.feed_category_name }}</a></h5>
+                <h5 style="padding-bottom:0px;">주소: </h5>
+                <a id="comment-button" href="#main-comment-container"> 
+                    <button class="btn btn-primary" style="height:21px;vertical-align:middle;padding:0px 5px 0px 5px;font-size:13px;"><i class="fa fa-comment"></i> 댓글 {{ ret.all_comments | length }}</button>
+                </a>
+            </div>
+            <hr style="margin:0px 0px 0px 0px;">
+            <div class="content-margin-container">
+                <h5 style="padding-bottom:0px;"><a href="/project_detail/{{ ret.project.id }}" target="_blank">{{ ret.project.project_name }}</a>의 다른 사진들 </h5>
+            </div>
+            <div id="other-image-container"> 
+                {% for other_feed in ret.other_feeds_in_same_project %}
+                    <div class="col-xs-6 col-sm-3" style="height:80px;padding:0px 5px 0px 5px;">
+                        <a href="/company_feed_detail/{{ other_feed.feed.id }}" >
+                            <img src="{{ url_for('static',filename=other_feed.image_path) }}" style="height:100px;width:100px;max-height:80px;max-width:80px;margin:0px 0px 0px 0px;">
+                        </a>
+                    </div>
+                {% endfor %}
+                </div>
+                <div class="content-margin-container">
+            <br>
+                <h5 style="padding-bottom:0px;"><a href="/company_portfolio/{{ ret.user.id }}">{{ ret.user.username }}</a>의 다른 프로젝트 </h5>
+            </div>
+                <div id="other-image-container" >
+                {% for other_project in ret.other_projects %}
+                    <div class="col-xs-6 col-sm-3" style="height:80px;padding: 0px 5px 0px 5px;">
+                        <a href="/project_detail/{{ other_project.project.id }}" target="_blank">
+                            <img src="{{ url_for('static',filename=other_project.image_path) }}" style="height:100px;width:100px;max-height:80px;max-width:80px;">
+                        </a>
+                    </div>
+                {% endfor %}
+                </div>
+                <div class="content-margin-container">
+
+                    <h5>다른 <a href="/photos/{{ ret.feed.feed_category_id }}">{{ ret.feed_category_name }}</a> 추천 사진 </h5>
+                    <div class="feed_like_comment" style="margin-top:10px;margin-left:5px;margin-bottom:10px;">
+                        <span class="fa-stack " style="display:table-cell;padding-right:15px;" >
+                            <i class="fa  fa-circle-thin fa-stack-2x" style="{% if ret.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}top:0;" id="like-button-icon-circle-{{ ret.feed.id }}"> </i>
+                            <i class="fa   fa-thumbs-o-up fa-stack-1x" style="{% if ret.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}top:0;" id="like-button-icon-thumb-{{ ret.feed.id }}"> </i>
+                        </span>
+                        <h5 style="display:table-cell;padding-bottom:0px;padding-left:4px;padding-right:8px;vertical-align:middle;" ><a onclick="likePost({{ ret.feed.id }});" style="{% if ret.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}" id="like-button-{{ ret.feed.id }}"> {{ ret.number_of_like }} 좋아요</a></h5>
+                        <span class="fa-stack " style="display:table-cell;padding-right:15px;">
+                            <i class="fa  fa-circle-thin fa-stack-2x" style="color:#777777;top:0;" > </i>
+                            <i class="fa   fa-comment fa-stack-1x" style="color:#777777;top:0;" > </i>
+                        </span>
+                        <h5 style="vertical-align:middle;display:table-cell;padding-bottom:0px;padding-left:4px;">{{ ret.all_comments | length }} 댓글</h5>
+                    </div>
+                </div>
+            </div>
+        {% if session.logged_in %}
+        <form action="{{ url_for('company_feed_detail',feed_id=ret.feed.id) }}" method="post">
+            {{ commentForm.hidden_tag() }}
+            <div class="form-group login-username">
+                <div>
+                    {% for message in commentForm.body.errors %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ commentForm.body(placeholder="의견을 남겨주세요 !") }}
+                </div>
+                <input name="submit" class="btn btn-block btn-lg btn-primary" value="댓글 달기 " type="submit">
+            </div>
+        </form>
+        {% endif %}
+                    </div>
+        {% if ret.all_comments | length != 0 %}
+        <div class="main-comment-container" id="main-comment-container">
+            {% for comment in ret.all_comments %}
+            <div class="main-comment-item">
+                <div class="main-comment-profile">
+                    {% if comment.user_profile_image_path %}
+                    <div style="background:url({{url_for('static',filename=comment.user_profile_image_path)}}); border:1px solid #dddddd;height:34px;width:34px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;"></div>
+                    {% else %}
+                    <div style="background-color:#dddddd; border:1px solid #dddddd;height:34px;width:34px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;"></div>
+                    {% endif %}
+                </div>
+                <div class="main-comment-body-top">
+                    <h5 style="padding:0px;">
+                        {% if comment.user.level >= 2 %}
+                        <a href="/company_portfolio/{{ comment.user.id }}" style="color:#72AFAD;">
+                        {% elif comment.user.level == 1 %}
+                        <a href="/user_portfolio/{{ comment.user.id }}" style="color:#72AFAD;">
+                        {% endif %}
+                            {{ comment.user.username }}
+                        </a> 
+                        {{ comment.comment.body}}
+                    </h5>
+                </div>
+                <div class="main-comment-body-bottom">
+                    <h5 style="padding:0px;">{{ comment.comment.created_at }}</h5>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        </div>
+    </div>
+    <div id="image-container" class="hidden-xs">
+        <div id="image-real-container">
+            <img id="uploadImagePreview" src="{{ url_for('static',filename=ret.image_path) }}" class="img-responsive "/>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
+</script>
+<script src="{{  url_for('static',filename='bootstrap/js/bootstrap.min.js') }}"></script>
+
+<!-- include jqueryCycle plugin -->
+<script src="{{  url_for('static',filename='js/jquery.cycle2.min.js') }}"></script>
+<!-- include easing plugin -->
+<script src="{{  url_for('static',filename='js/jquery.easing.1.3.js') }}"></script>
+
+<!-- include  parallax plugin -->
+<script src="{{  url_for('static',filename='js/jquery/parallax-1.1.js') }}"></script>
+
+<!-- optionally include helper plugins -->
+<script src="{{  url_for('static',filename='js/helper-plugins/jquery.mousewheel.min.js') }}"></script>
+
+<!-- include mCustomScrollbar plugin //Custom Scrollbar  -->
+
+<script src="{{  url_for('static',filename='js/jquery.mCustomScrollbar.js') }}"></script>
+
+<!-- include checkRadio plugin //Custom check & Radio  -->
+<script src="{{  url_for('static',filename='js/ion-checkRadio/ion.checkRadio.min.js') }}"></script>
+
+<!-- include grid.js // for equal Div height  -->
+<script src="{{  url_for('static',filename='js/grids.js') }}"></script>
+
+<!-- include carousel slider plugin  -->
+<script src="{{  url_for('static',filename='js/owl.carousel.min.js') }}"></script>
+
+<!-- jQuery minimalect // custom select   -->
+<script src="{{  url_for('static',filename='js/jquery.minimalect.min.js') }}"></script>
+
+<!-- include touchspin.js // touch friendly input spinner component   -->
+<script src="{{  url_for('static',filename='js/bootstrap.touchspin.js') }}"></script>
+
+<!-- include custom script for only homepage  -->
+<script src="{{  url_for('static',filename='js/home.js') }}"></script>
+<!-- include custom script for site  -->
+<script src="{{  url_for('static',filename='js/script.js') }}"></script>
+<script>
+function readURL(input){
+    if ( input.files && input.files[0] ) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $('#uploadImagePreview').attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+$('#uploadImageContainer').change(function() {
+    readURL(this);
+});
+
+</script>
+<script type="text/javascript">
+function likePost(feed_id) {
+    var data = {
+    "user_id": {{ session['user_id'] }},
+    "feed_id": feed_id
+    };
+    $.ajax({
+        url: '/like_post',
+        data: data,
+        type: 'POST',
+        success: function(response) {
+            var jsonData = JSON.parse(response);
+            if ( jsonData["is_liked"] ) {
+                $('#like-button-'+feed_id).css('color','#777777');
+                $('#like-button-'+feed_id).css('font-weight','400');
+                $('#like-button-'+feed_id).text(jsonData['number_of_like']+' 좋아요');
+                $('#like-button-icon-circle-'+feed_id).css('color','#777777');
+                $('#like-button-icon-thumb-'+feed_id).css('color','#777777');
+            } else {
+                $('#like-button-'+feed_id).css('color','#3B5998');
+                $('#like-button-'+feed_id).css('font-weight','600');
+                $('#like-button-'+feed_id).text(jsonData['number_of_like']+' 좋아요');
+                $('#like-button-icon-circle-'+feed_id).css('color','#3B5998');
+                $('#like-button-icon-thumb-'+feed_id).css('color','#3B5998');
+            }
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+}
+</script>
+</body>
+</html>

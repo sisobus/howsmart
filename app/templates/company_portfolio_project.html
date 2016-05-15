@@ -87,7 +87,7 @@ card_header {
 }
 #rightside_container {
     position: relative;
-    margin: 0px 0px 0px 240px;
+    margin: 180px 0px 0px 240px;
 }
 #custom_jumbo_navbar_wrapper {
     position: relative;
@@ -156,7 +156,7 @@ card_header {
                     <div class="panel-body" id="panel-body">
                         <ul class="nav nav-pills nav-stacked tree">
                             {% for project in ret.projects %}
-                            <li>
+                            <li style="text-align:justify;">
                             <a href="/project_detail/{{project.project.id}}">
                                 {{ project.project.project_name }}
                             </a>
@@ -205,7 +205,7 @@ card_header {
                     <card_header>
                         <div class="bio">
                             <a href="/project_detail/{{ project.project.id }}">
-                                <div class="bg" style="background:  url({{ '/static/'+project.image_path }});
+                                <div class="bg" style="background:  url({{ ('/static/'+project.image_path)|resize('500x400') }});
                                         background-repeat:no-repeat;
                                         background-size: cover;
                                         background-position: center;

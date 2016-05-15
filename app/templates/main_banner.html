@@ -1,6 +1,6 @@
-<div class="banner" >
-    <div class="full-container">
-        <div class="slider-content">
+<div class="banner" style="height:610px;">
+    <div class="full-container" style="height:inherit;">
+        <div class="slider-content" style="height:inherit;">
             <!--
             <ul id="pager2" class="container">
             </ul>
@@ -13,7 +13,7 @@
             <div class="slider slider-v1"
                  data-cycle-swipe=true
                  data-cycle-prev=".prevControl"
-                 data-cycle-next=".nextControl" data-cycle-loader="wait">
+                 data-cycle-next=".nextControl" data-cycle-loader="wait" style="height:inherit;">
                  {% for ret_banner_feed in ret_banner_feeds %}
                 <div class="slider-item slider-item-img1">
                     {% if not session.logged_in %}
@@ -31,18 +31,18 @@
                                         a#email-signup:hover,
                                         a#email-signup:focus {
                                             color: #FFFFFF;
-                                            background-color: #72AFAD;
+                                            background-color: #73ac4d;
                                         }
                                         a#fb-signup:hover,
                                         a#fb-signup:focus {
                                             color: #FFFFFF;
                                         }
                                         </style>
-                                        <a class="btn btn-primary btn-lg bottomAnima animated opacity0" data-toggle="modal" data-target="#ModalSignup" style="{background-color:#92CFCD;} :hover {background-color:#72AFAD}" id="email-signup">
+                                        <a class="btn btn-primary btn-lg bottomAnima animated opacity0" data-toggle="modal" data-target="#ModalSignup" style="{background-color:#84bd5e;} :hover {background-color:#73ac4d;}" id="email-signup">
                                         <i class="fa fa-envelope-o fa-1x" style="color:#FFFFFF;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;" > </i>
                                         이메일로 가입하기
                                         <span class="arrowUnicode">►</span></a>
-                                    <a class="btn btn-fb btn-lg bottomAnima animated opacity0"  id="fb-signup" href="#"> 
+                                    <a class="btn btn-fb btn-lg bottomAnima animated opacity0"  id="fb-signup" href="/facebook_login" scope="email"> 
                                         <i class="fa fa-facebook-square fa-1x" style="color:#FFFFFF;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;" > </i>
                                         페이스북으로 가입하기 <span class="arrowUnicode">►</span></a>
                                         </div>
@@ -51,7 +51,7 @@
                         </div>
                     </div>
                     {% endif %}
-                    <img src="{{ url_for('static',filename=ret_banner_feed.image_path) }}" class="img-responsive parallaximg sliderImg" style="width:100%;margin-top:0px;" alt="img">
+                    <img src="{{ url_for('static',filename=ret_banner_feed.image_path)|resize('1280x800') }}" class="img-responsive parallaximg sliderImg" style="width:100%;margin-top:0px;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);-webkit-transform: translate(-50%,-50%);-ms-transform: translate(-50%,-50%);height:610px;" alt="img">
                     <!--
                     <img src="{{ url_for('static',filename=ret_banner_feed.image_path) }}" class="img-responsive parallaximg sliderImg" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);-webkit-transform: translate(-50%,-50%);-ms-transform: translate(-50%,-50%);width:100%;" alt="img">
                     -->
@@ -68,18 +68,18 @@
 a#email-signup:hover,
 a#email-signup:focus {
     color: #FFFFFF;
-    background-color: #72AFAD;
+    background-color: #73ac4d;
 }
 a#fb-signup:hover,
 a#fb-signup:focus {
     color: #FFFFFF;
 }
     </style>
-    <a class="btn btn-primary btn-lg bottomAnima animated opacity0" data-toggle="modal" data-target="#ModalSignup" style="{background-color:#92CFCD;} :hover {background-color:#72AFAD}; width:100%;margin-bottom:5px;" id="email-signup">
+    <a class="btn btn-primary btn-lg bottomAnima animated opacity0" data-toggle="modal" data-target="#ModalSignup" style="{background-color:#84bd5e;} :hover {background-color:#73ac4d;}; width:100%;margin-bottom:5px;" id="email-signup">
         <i class="fa fa-envelope-o fa-1x" style="color:#FFFFFF;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;" > </i>
         이메일로 가입하기
         <span class="arrowUnicode">►</span></a>
-    <a class="btn btn-fb btn-lg bottomAnima animated opacity0" style="width:100%;" id="fb-signup" href="#"> 
+    <a class="btn btn-fb btn-lg bottomAnima animated opacity0" style="width:100%;" id="fb-signup" href="/facebook_login"> 
         <i class="fa fa-facebook-square fa-1x" style="color:#FFFFFF;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;" > </i>
         페이스북으로 가입하기 <span class="arrowUnicode">►</span></a>
 </div>

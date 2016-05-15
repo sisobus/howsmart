@@ -8,90 +8,447 @@
     }
     input#project_name,
     input#project_credit,
-    textarea#project_body {
+    textarea#project_body,
+    input#hash_tag {
         border-color: #DDDDDD;
         -webkit-border-radius: 3px 0 0 3px;
         -moz-border-radius: 3px 0 0 3px;
-        border-radius: 3px 0 0 3px;
+        border-radius: 3px;
         border-style: solid;
-        border-width: 2px 1px 1px 2px;
+        border-width: 1px 1px 1px 1px;
         color: #888888;
         font-size: 14px;
         height: 36px;
-        width: 96%;
-        margin: 10px 2% 10px 2%;
+        width: 100%;
         vertical-align: middle;
         display: block;
     }
     textarea#project_body {
         height: 300px;
     }
+#project_si,
+#project_gu,
+#project_dong,
+#project_type_category,
+#project_style_category,
+#project_area {
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    width: 80px;
+    height:30px;
+    border-radius: 3px;
+    overflow: hidden;
+    background-color: #fff;
+    padding-left: 10px;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+
+    background: #fff url( {{ url_for('static',filename='img/arrowdown.gif') }} ) no-repeat 90% 50%;
+}
+#project_si select,
+#project_gu select,
+#project_dong select,
+#project_type_category select,
+#project_style_category select,
+#project_area select {
+    padding: 5px 8px;
+    width: 130%;
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+    background-image: none;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+}
+#project_si:disabled,
+#project_gu:disabled,
+#project_dong:disabled,
+#project_type_category:disabled,
+#project_style_category:disabled,
+#project_area:disabled {
+border: 1px solid #987654;
+}
+
+#project_si:focus,
+#project_gu:focus,
+#project_dong:focus,
+#project_type_category:focus,
+#project_style_category:focus,
+#project_area:focus{
+ outline: none;
+}
+.flash {
+    color: red;
+}
+
+.bs-wizard {margin-top: 40px;}
+
+/*Form Wizard*/
+.bs-wizard {border-bottom: solid 1px #e0e0e0; padding: 0 0 10px 0;}
+.bs-wizard > .bs-wizard-step {padding: 0; position: relative;}
+.bs-wizard > .bs-wizard-step + .bs-wizard-step {}
+.bs-wizard > .bs-wizard-step .bs-wizard-stepnum {color: #595959; font-size: 16px; margin-bottom: 5px;}
+.bs-wizard > .bs-wizard-step .bs-wizard-info {color: #999; font-size: 14px;}
+.bs-wizard > .bs-wizard-step > .bs-wizard-dot {position: absolute; width: 30px; height: 30px; display: block; background: #84bd5e; top: 45px; left: 50%; margin-top: -15px; margin-left: -15px; border-radius: 50%;} 
+.bs-wizard > .bs-wizard-step > .bs-wizard-dot:after {content: ' '; width: 14px; height: 14px; background: #74ad4e; border-radius: 50px; position: absolute; top: 8px; left: 8px; } 
+.bs-wizard > .bs-wizard-step > .progress {position: relative; border-radius: 0px; height: 8px; box-shadow: none; margin: 20px 0;}
+.bs-wizard > .bs-wizard-step > .progress > .progress-bar {width:0px; box-shadow: none; background: #fbe8aa;}
+.bs-wizard > .bs-wizard-step.complete > .progress > .progress-bar {width:100%;}
+.bs-wizard > .bs-wizard-step.active > .progress > .progress-bar {width:50%;}
+.bs-wizard > .bs-wizard-step:first-child.active > .progress > .progress-bar {width:0%;}
+.bs-wizard > .bs-wizard-step:last-child.active > .progress > .progress-bar {width: 100%;}
+.bs-wizard > .bs-wizard-step.disabled > .bs-wizard-dot {background-color: #f5f5f5;}
+.bs-wizard > .bs-wizard-step.disabled > .bs-wizard-dot:after {opacity: 0;}
+.bs-wizard > .bs-wizard-step:first-child  > .progress {left: 50%; width: 50%;}
+.bs-wizard > .bs-wizard-step:last-child  > .progress {width: 50%;}
+.bs-wizard > .bs-wizard-step.disabled a.bs-wizard-dot{ pointer-events: none; }
+/*END Form Wizard*/
     </style>
-<div class="container main-container">
-    <div id="create_project_form">
+<div class="container main-container nav-margin" style="padding-top:25px;">
+    <div id="create_project_form" style="border-top:1px solid #dddddd;">
         <br>
         <div>
-            <h3 style="padding-left:10px;"><font color=red>step1. 프로젝트 정보 작성&nbsp;&nbsp;</font>
-            step2. 사진별 피드 작성&nbsp;&nbsp;
-            step3. 프로젝트 생성 완료</h3>
-        </div>
-            <h3 style="padding-left:10px;">사진 등록(필수)</h3>
-        <form action="{{ url_for('create_project') }}" method="POST" enctype="multipart/form-data" class="dropzone" style="border:0px;border-top:1px solid #dddddd;border-bottom:1px solid #dddddd;">
-            <div id='uploadme' class="fallback">
-                <input name="file" type="file" multiple/>
+            <div class="row bs-wizard" style="border-bottom:0;">
+                <div class="col-xs-4 bs-wizard-step active">
+                    <div class="text-center bs-wizard-stepnum">Step 1</div>
+                    <div class="progress"><div class="progress-bar"></div></div>
+                    <a href="#" class="bs-wizard-dot"></a>
+                    <div class="bs-wizard-info text-center">프로젝트 정보 입력</div>
+                </div>
+                <div class="col-xs-4 bs-wizard-step disabled">
+                    <div class="text-center bs-wizard-stepnum">Step 2</div>
+                    <div class="progress"><div class="progress-bar"></div></div>
+                    <a href="#" class="bs-wizard-dot"></a>
+                    <div class="bs-wizard-info text-center">사진 정보 입력</div>
+                </div>
+                <div class="col-xs-4 bs-wizard-step disabled">
+                    <div class="text-center bs-wizard-stepnum">Step 3</div>
+                    <div class="progress"><div class="progress-bar"></div></div>
+                    <a href="#" class="bs-wizard-dot"></a>
+                    <div class="bs-wizard-info text-center">프로젝트 생성 완료</div>
+                </div>
             </div>
-        </form>
-        <form action="{{ url_for('create_project') }}" method="POST" style="margin-left:10px;margin-right:10px;">
-            <br>
-            <h3>필수입력사항(*)</h3>
-            {{ createProjectForm.hidden_tag() }}
-            {{ createProjectForm.project_name(placeholder='프로젝트 명') }}
-            {% for message in createProjectForm.project_name.errors %}
-                <div class="flash">{{ message }}</div>
-            {% endfor %}
-            <hr/>
-            {{ createProjectForm.project_body(placeholder='이 프로젝트에 대한 설명을 해주세요.') }}
-            {% for message in createProjectForm.project_body.errors %}
-                <div class="flash">{{ message }}</div>
-            {% endfor %}
-            <hr/>
-            {{ createProjectForm.project_credit(placeholder="사진 저작권이 누구에게 있나요? (ex. "+session['username']+")") }}
-            {% for message in createProjectForm.project_credit.errors %}
-                <div class="flash">{{ message }}</div>
-            {% endfor %}
-            <hr/>
-            <h3>선택사항</h3>
-            <div style="margin-left:20px;margin-right:20px;">
-            프로젝트 타입 : {{ createProjectForm.project_type_category }}
-            <br>
-            프로젝트 지역 주소 : 
-            <br>
-            프로젝트 스타일 : {{ createProjectForm.project_style_category }}
-            <br>
-            프로젝트 면적 : {{ createProjectForm.project_area }}
-            <br>
-            활동 지역(수기작성) : {{ createProjectForm.project_location }}
-            <br>
-            <style>
-            input#hash_tag {
-                width: 100%;
-            }
-            </style>
-            {{ createProjectForm.hash_tag(placeholder='해시태그(#으로 구분. ex. #액자 #차가운)') }}
         </div>
+        <hr class="" style="margin-top:40px;"/>
+        <!--
+        <div style="padding-left:15px;width:570px;">
+        -->
+        <div style="padding-left:15px;width:100%;padding-right:15px;">
+            <h1 style="padding-top:20px;font-size:25px;color:#333333;">
+                <strong>
+                프로젝트 생성
+            </strong>
+            </h1>
+            <h3 style="font-size:16px;color:#333333;">프로젝트 사진 올리기 </h3>
+            <h5><strong>* 최소 한장 이상의 사진을 올려주세요. 나중에 사진을 추가할 수 있습니다.</strong></h5>
+            <form action="{{ url_for('create_project') }}" method="POST" enctype="multipart/form-data" class="dropzone" style="border:4px dashed #dddddd;height:200px;">
+                <div class="dz-message" data-dz-message style="margin:0;">
+                    <img src="{{url_for('static',filename='icon/cloud-upload-2-128x128.png')}}"><br>
+                    <span style="color:#cccccc;font-size:15px;"> 사진을 이 곳으로 드래그하세요. </span>
+                </div>
+                <div id='uploadme' class="fallback">
+                    <input name="file" type="file" multiple/>
+                </div>
+            </form>
+            <form action="{{ url_for('create_project') }}" method="POST" style="">
+                <br>
+                <h3 style="padding-bottom:5px;font-size:16px;color:#333333;">프로젝트 명</h3>
+                {{ createProjectForm.hidden_tag() }}
+                {% for message in createProjectForm.project_name.errors %}
+                <div class="flash">{{ message }}</div>
+                {% endfor %}
+                {{ createProjectForm.project_name(placeholder='프로젝트 명') }}
+                <h3 style="padding-bottom:5px;font-size:16px;color:#333333;">프로젝트 설명</h3>
+                {{ createProjectForm.project_body(placeholder='이 프로젝트에 대한 설명을 해주세요.') }}
+                {% for message in createProjectForm.project_body.errors %}
+                <div class="flash">{{ message }}</div>
+                {% endfor %}
+                <h3 style="padding-top:5px;padding-bottom:5px;font-size:16px;color:#333333;">프로젝트 저작권</h3>
+                {{ createProjectForm.project_credit(placeholder="사진 저작권이 누구에게 있나요? (ex. "+session['username']+")") }}
+                {% for message in createProjectForm.project_credit.errors %}
+                <div class="flash">{{ message }}</div>
+                {% endfor %}
+                <hr/>
+                <div style="">
+                    <h3 style="padding-bottom:5px;font-size:16px;color:#333333;">
+                        프로젝트 지역 주소
+                    </h3>
+                    <div class="local-search" id="local-search">
+                        <div class="project-region" id="sigudong-search" style="display:table-cell;;">
+                        {% for message in createProjectForm.project_si.errors %}
+                        <div class="flash">{{message}}</div>
+                        {% endfor %}
+                            {{ createProjectForm.project_si }}
+                        {% for message in createProjectForm.project_gu.errors %}
+                        <div class="flash">{{message}}</div>
+                        {% endfor %}
+                            {{ createProjectForm.project_gu }}
+                        {% for message in createProjectForm.project_dong.errors %}
+                        <div class="flash">{{message}}</div>
+                        {% endfor %}
+                            {{ createProjectForm.project_dong }}
+                        </div>
+                    </div>
+                    <h3 style="padding-top:5px;padding-bottom:5px;font-size:16px;color:#333333;">
+                        프로젝트 타입
+                    </h3>
+                    {% for message in createProjectForm.project_type_category.errors %}
+                    <div class="flash">{{message}}</div>
+                    {% endfor %}
+                    {{ createProjectForm.project_type_category }}
+                    <h3 style="padding-top:5px;padding-bottom:5px;font-size:16px;color:#333333;">
+                        프로젝트 스타일
+                    </h3>
+                    {% for message in createProjectForm.project_style_category.errors %}
+                    <div class="flash">{{message}}</div>
+                    {% endfor %}
+                    {{ createProjectForm.project_style_category }}
+                    <h3 style="padding-top:5px;padding-bottom:5px;font-size:16px;color:#333333;">
+                        프로젝트 면적
+                    </h3>
+                    {% for message in createProjectForm.project_area.errors %}
+                    <div class="flash">{{message}}</div>
+                    {% endfor %}
+                    {{ createProjectForm.project_area(style="width:140px;") }}
+                    <h3 style="padding-top:5px;padding-bottom:5px;font-size:16px;color:#333333;">
+                        프로젝트 견적(선택사항)
+                    </h3>
+                    {% for message in createProjectForm.project_estimate_from.errors %}
+                    <div class="flash">{{message}}</div>
+                    {% endfor %}
+                    {{ createProjectForm.project_estimate_from(placeholder='숫자만 입력') }} ~
+                    {% for message in createProjectForm.project_estimate_to.errors %}
+                    <div class="flash">{{message}}</div>
+                    {% endfor %}
+                    {{ createProjectForm.project_estimate_to(placeholder='숫자만 입력') }} 비공개
+                    {{ createProjectForm.project_estimate_hide }}
+                    <h3 style="padding-top:5px;padding-bottom:5px;font-size:16px;color:#333333;">
+                    시공기간(선택사항)
+                    </h3>
+                    {% for message in createProjectForm.project_buildtime_from.errors %}
+                    <div class="flash">{{message}}</div>
+                    {% endfor %}
+                    {{ createProjectForm.project_buildtime_from(placeholder='숫자만 입력') }} ~
+                    {% for message in createProjectForm.project_buildtime_to.errors %}
+                    <div class="flash">{{message}}</div>
+                    {% endfor %}
+                    {{ createProjectForm.project_buildtime_to(placeholder='숫자만 입력') }} 비공개
+                    {{ createProjectForm.project_buildtime_hide }}
 
-            <hr/>
-            <div>
-                <input name="submit" class="btn   btn-lg btn-primary" value="다음" type="submit" style="width:100%;">
-            </div>
-            <br>
-        </form>
+
+                    <div style="display:none;">
+                        활동 지역(수기작성) : {{ createProjectForm.project_location }}
+                    </div>
+                    <br>
+                </div>
+                <h3 style="padding-bottom:5px;font-size:16px;color:#333333;">검색키워드 입력하기(해시태그, #으로 구분. ex. #액자 #차가운)</h3>
+                {{ createProjectForm.hash_tag(placeholder='검색 키워드 입력하기 (해시태그, #으로 구분. ex. #액자 #차가운)') }}
+
+                <hr/>
+                <div>
+                    <input name="submit" class="btn   btn-lg btn-primary" value="다음" type="submit" style="width:100%;">
+                </div>
+                <br>
+            </form>
+        </div>
     </div>
 </div>
     <br>
     <br>
     <br>
     <br>
-<script>
+<script type="text/javascript">
+    window.state = {};
+function bindLocal1(obj) {
+        var map = window.state.map;
+        var selects = $(".local-search " + obj + " select");
+        var local1 = $(selects[0]);
+        var local2 = $(selects[1]);
+        var local3 = $(selects[2]);
+
+        local1.attr("disabled", false);
+        local2.attr("disabled", true);
+        local3.attr("disabled", true);
+
+        local1.children().remove();
+        var items = window.state.addresses;       
+        $(items).each(function (i, item) {
+            local1.append($("<option />").text(item.name).val(item.name));
+        });
+        
+    }
+
+    function bindLocal2(obj) {
+        var selects = $(".local-search " + obj + " select");
+        var local1 = $(selects[0]);
+        var local2 = $(selects[1]);
+        var local3 = $(selects[2]);
+
+        var v1 = local1.val();
+        var node = findNode(v1);
+
+        var option = $("<option />").text("전체");
+        local2.children().remove();
+        local2.append(option);
+
+        if (node && node.items) {
+            for (var j = 0; j < node.items.length; j++) {
+                var item2 = node.items[j];
+                var option = $("<option />").text(item2.name);
+                local2.append(option);
+
+                local2.attr("disabled", false);
+            }
+        } else {
+            local2.attr("disabled", true);
+        }
+    }
+
+    function bindLocal3(obj) {
+        var selects = $(".local-search " + obj + " select");
+        var local1 = $(selects[0]);
+        var local2 = $(selects[1]);
+        var local3 = $(selects[2]);
+
+        var v1 = local1.val();
+        var v2 = local2.val();
+        var node = findNode(v1, v2);
+
+        if (node) {
+            var option = $("<option />").text("전체");
+            local3.children().remove();
+            local3.append(option);
+        }
+
+        if (node && node.items) {
+            for (var j = 0; j < node.items.length; j++) {
+                var item2 = node.items[j];
+                var option = $("<option />").text(item2.name);
+                local3.append(option);
+
+                local3.attr("disabled", false);
+            }
+        } else {
+            var option = $("<option />").text("전체");
+            local3.children().remove();
+            local3.append(option);
+            local3.attr("disabled", true);
+        }
+
+        
+    }
+
+function findNode(v1, v2, v3) {
+        if (v1) {
+            var local1s = window.state.addresses;
+            for (var i = 0; i < local1s.length; i++) {
+                var local1 = local1s[i];
+
+                if (local1.name == v1) {
+                    if (v2) {
+                        var local2s = local1.items;
+                        for (var j = 0; j < local2s.length; j++) {
+                            var local2 = local2s[j];
+
+                            if (local2.name == v2) {
+                                if (v3) {
+                                    var local3s = local2.items;
+                                    for (var k = 0; k < local3s.items; k++) {
+                                        var local3 = local3s[k];
+
+                                        if (local3 == v3) {
+                                            return local3;
+                                        }
+                                    }
+                                    return null;
+                                }
+                                return local2;
+                            }
+                        }
+                        return null;
+                    }
+                    return local1;
+                }
+            }
+        }
+        return null;
+    }
+
+
+function initLocalSearch() {
+    var items = $(".local-search .project-region select");
+        var local1 = $(items[0]);
+        local1.children().remove();
+        local1.append($("<option />").text("로딩 중"))
+        local1.attr("disabled", true);
+        local1.change(function () {
+            bindLocal2(".project-region");
+            bindLocal3(".project-region");
+        });
+
+        var local2 = $(items[1]);
+        local2.attr("disabled", true);
+        local2.change(function () {
+            bindLocal3(".project-region");
+        });
+
+        var local3 = $(items[2]);
+        local3.attr("disabled", true);
+
+        $.when(
+             $.ajax({
+                 url: "/json/address"
+             })
+        ).done(function (data) {
+            data = data.results;
+            var new_data = [];
+            new_data.push(data[8]);
+            new_data.push(data[1]);
+            new_data.push(data[11]);
+            new_data.push(data[7]);
+            new_data.push(data[5]);
+            new_data.push(data[6]);
+            new_data.push(data[10]);
+            new_data.push(data[9]);
+            new_data.push(data[4]);
+            new_data.push(data[0]);
+            new_data.push(data[16]);
+            new_data.push(data[15]);
+            new_data.push(data[3]);
+            new_data.push(data[2]);
+            new_data.push(data[13]);
+            new_data.push(data[12]);
+            new_data.push(data[14]);
+            window.state.addresses = new_data
+
+            bindLocal1(".project-region");
+            bindLocal2(".project-region");
+            bindLocal3(".project-region");
+
+            $(".item_submit").removeAttr("disabled");
+
+        });
+    $(".local-search .project-region button").click(function () {
+            var selects = $(".local-search .project-region select");
+
+            var local1 = $(selects[0]);
+            var local2 = $(selects[1]);
+            var local3 = $(selects[2]);
+
+            var selected = !local3.is(":disabled") ? local3.find("option:selected") : local2.find("option:selected");
+            var lat = selected.data("lat");
+            var lng = selected.data("lng");
+            var zoom = 20 - parseInt(selected.data("zoom"));
+
+            location.href = "/search/map?lat=" + lat + "&lng=" + lng + "&zoom="+ zoom;
+        });
+
+}
+$(document).ready(function () {
+initLocalSearch();
+});
 </script>
 {% endblock %}

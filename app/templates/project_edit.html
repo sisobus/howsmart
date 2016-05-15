@@ -59,6 +59,8 @@
 
             margin: 10px 10px 10px 10px;
             background: #ffffff;
+            padding-left:5px;
+            padding-right:5px;
         }
         #content-form-container::-webkit-scrollbar {
             display: none;
@@ -76,6 +78,8 @@
             font-size: 14px;
             height: 36px;
             width: 100%;
+            padding-left:15px;
+            padding-right:15px;
         }
         form input#title {
         }
@@ -164,7 +168,7 @@
                 <br>
             </div>
             <div>
-                <h4 style="padding-left:5px;"> 사진을 클릭하시면 태그를 달 수 있습니다.</h4>
+                <h4 style="padding-left:5px;color:red;"><strong> 사진을 클릭하시면 태그를 달 수 있습니다.</strong></h4>
             <form action="{{ url_for('project_edit',feed_id=ret.feed.id) }}" method="post" enctype="multipart/form-data">
                 {{ writeFeedForm.hidden_tag() }}
                 <div>
@@ -186,7 +190,11 @@
                     {% for message in writeFeedForm.feed_category.errors %}
                         <div class="flash">{{ message }}</div>
                     {% endfor %}
-                    {{ writeFeedForm.feed_category }}
+                    {% for category in writeFeedForm.feed_category %}
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    {{ category }} {{ category.label }}
+                </div>
+                    {% endfor %}
                 </div>
                 {% if ret.next != -1 %}
                 <div>
@@ -196,17 +204,17 @@
             </form>
 
             <br>
+                {% if ret.next == -1 %}
+                <a href="/project_detail/{{ ret.project_id }}">
+                    <button class="btn btn-lg btn-primary" style="width:100%;margin-bottom:10px;">완료</button>
+                </a>
+                {% endif %}
                 {% if ret.prev != -1 %}
                     <a href="/project_edit/{{ ret.prev }}">
-                        <button class="btn btn-lg btn-info">이전</button>
+                        <button class="btn btn-lg btn-info" style="width:100%;margin-bottom:10px;">이전</button>
                     </a>
                 {% endif %}
 
-                {% if ret.next == -1 %}
-                <a href="/project_detail/{{ ret.project_id }}">
-                    <button class="btn btn-lg btn-primary">완료</button>
-                </a>
-                {% endif %}
 
                 {% if ret.next != -1 %}
                 <!--
@@ -221,12 +229,13 @@
     <div id="image-container">
         <div id="image-real-container">
             <img id="uploadImagePreview" src="{{ url_for('static',filename=ret.image_path) }}" class="img-responsive parallaximg sliderImg"/>
-            <div id='mapper' ><a><button class="btn btn-primary" onclick='openDialog()' />태그달기</button></a></div>
+            <div id='mapper' ><a><button class="btn btn-primary" onclick='openDialog()' style="width:100%;height:100%;" />태그달기<br>클릭</button></a></div>
             <div id='form_panel'>
-                <input type='text'  placeholder='title' id="tag-name">
-                <input type='text' placeholder='url' id="tag-link" >
+                <input type='text'  placeholder='브랜드' id="tag-name">
+                <input type='text' placeholder='홈페이지' id="tag-link" >
                 <button class='btn btn-primary' onclick='addTag()' >저장하기</button>
                 <button class='btn btn-danger' onclick='closeDialog()' >닫기</button>
+                <button class="btn btn-warning" onclick='addTagAndCreateProduct()'>상품 등록하기</button>
             </div>
         </div>
     </div>
@@ -395,13 +404,24 @@ var openDialog = function() {
 var closeDialog = function() {
     $('#form_panel').fadeOut('slow');
 };
+var addTagAndCreateProduct = function() {
+    var data = {
+        "tag_x": clicked_x_ratio,
+        "tag_y": clicked_y_ratio,
+        "feed_id": {{ ret.feed.id }},
+        "tag_name": $('#tag-name').val(),
+        "tag_link": $('#tag-link').val(),
+    };
+    var url = '/create_product?tag_x='+clicked_x_ratio+'&tag_y='+clicked_y_ratio+'&feed_id='+{{ ret.feed.id }}+'&next=/project_edit/{{ret.feed.id}}';
+    window.location.href = url;
+}
 var addTag = function() {
     var data = {
         "tag_x": clicked_x_ratio,
         "tag_y": clicked_y_ratio,
         "feed_id": {{ ret.feed.id }},
         "tag_name": $('#tag-name').val(),
-        "tag_link": $('#tag-link').val()
+        "tag_link": $('#tag-link').val(),
     };
     $.ajax({
         url: '/add_tag',

@@ -48,15 +48,16 @@
 }
 </style>
 <div class="modal signUpContent fade" id="ModalCompanySignup" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="width:780px;max-width:780px;">
         <div class="modal-content">
             <div class="modal-header" style="margin-bottom:0px;">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
-                <h3 class="modal-title-site text-center"> 기업으로 가입하기 </h3>
+                <h3 class="modal-title-site text-center" style="font-size:22px;color:#333333;font-weight:bold;"> 기업회원 가입 </h3>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="height:400px;">
                 <!-- User form start-->
                 <form action="{{ url_for('company_signup') }}" method=post enctype="multipart/form-data">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     {{ companySignupForm.hidden_tag() }}
                 <div class="form-group reg-username" style="margin-bottom:0px;">
                     <div>
@@ -99,6 +100,16 @@
                         {{ companySignupForm.introduction(placeholder="회사 소개") }}
                     </div>
                 </div>
+                <div>
+                    <div>
+                        <a data-toggle="modal" data-dismiss="modal"  href="#ModalSignup" class="btn btn-block btn-lg btn-primary"  style="background-color:#ffffff;border: 1px solid #84bd5e;color:#84bd5e;margin-top:9px;">
+                            < 개인회원으로 가입하기
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                 <div class="modal-item-region" style="display:table-cell;padding-bottom:10px;">
                     {% for message in companySignupForm.company_si.errors %}
                     <div class="flash">{{ message }}</div>
@@ -137,16 +148,19 @@
                         {{ companySignupForm.website(placeholder="회사 웹사이트") }}
                     </div>
                 </div>
-                <div class="form-group" style="margin-bottom:0px;">
+                <div class="form-group" style="margin-bottom:0px;height:52px;">
                     <div>
                         {% for message in companySignupForm.pros_category.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.pros_category }}
+                        {% for category in companySignupForm.pros_category %}
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            {{ category }} {{ category.label }}
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
-                <hr>
-                <div class="form-group">
+                <div class="form-group" style="margin-top:30px;">
                     전문가 찾기에 보일 회사 대표 이미지를 올려주세요(필수)
                     <div>
                     {% for message in companySignupForm.filename.errors %}
@@ -158,15 +172,16 @@
 
                 <div>
                     <div>
-                        <input name="submit" class="btn  btn-block btn-lg btn-primary" value="가입신청하기" type="submit">
+                        <input name="submit" class="btn  btn-block btn-lg btn-primary" value="기업회원으로 가입하기" type="submit" style="background-color:#193271;">
                     </div>
                 </div>
                 </form>
                 <!--userForm-->
+            </div>
 
             </div>
-            <div class="modal-footer">
-                <p class="text-center"> 이미 하우스마트 회원이세요 ? <a data-toggle="modal" data-dismiss="modal" href="#ModalLogin">
+            <div class="modal-footer" style="background:#ffffff;">
+                <p class="text-center" style="padding-top:5px;"> 이미 하우스마트 회원이세요 ? <a data-toggle="modal" data-dismiss="modal" href="#ModalLogin" style="color:#84bd5e;">
                     로그인 </a></p>
             </div>
         </div>
@@ -313,7 +328,7 @@ function modal_initLocalSearch() {
 
         $.when(
              $.ajax({
-                 url: "//1.234.80.248/json/address"
+                 url: "/json/address"
              })
         ).done(function (data) {
             data = data.results;

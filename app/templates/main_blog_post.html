@@ -8,10 +8,11 @@ openpost = function(post_id) {
 }
             </script>
             <a href="javascript:openpost({{ post.post.id }});">
-                <div class="bg" style="background:  url({{ '/static/'+post.image_path }});
+                <div class="bg" style="background:  url({{ ('/static/'+post.image_path)|resize('800x400') }});
                     background-repeat:no-repeat;
                     background-size: cover;
                     background-position: center;
+                    cursor:pointer;
                     " id="image-{{post.post.id}}">
                     <div style="position: absolute;left:40%;top:260px;display:none;" id="button-container-{{post.post.id}}">
                         <a href="#">
@@ -61,10 +62,13 @@ openpost = function(post_id) {
 <br>
 <script>
 $('#image-{{post.post.id}}').hover(function() {
-    $('#button-container-{{post.post.id}}').fadeIn('slow');
+    $('#button-container-{{post.post.id}}').fadeIn('fast');
     }, function() {
-    $('#button-container-{{post.post.id}}').fadeOut('slow');
+    $('#button-container-{{post.post.id}}').fadeOut('fast');
 });
+$('#image-{{post.post.id}}').click(function() {
+        openpost({{ post.post.id }});
+        });
 $('#save-button-{{post.post.id}}').bind('click',function(e) {
         // Prevents the default action to be triggered. 
     e.preventDefault();
@@ -94,5 +98,6 @@ $('#save-button-{{post.post.id}}').bind('click',function(e) {
         });
         $('#popup').bPopup().close();
     });
+     e.stopPropagation();
 });
 </script>

@@ -10,19 +10,19 @@
         width: 100%;
         float: left;
         margin:0;
-        height: 340px;
+        height: 240px;
         border-bottom: 1px solid #DDDDDD;
         padding-top: 20px;
         padding-bottom: 20px;
     }
     #pros_background_image {
         position: absolute;
-        width: 440px;
-        height: 290px;
+        width: 330px;
+        height: 200px;
     }
     #pros_body {
         position: relative;
-        margin: 5px 0px 5px 450px;
+        margin: 0px 0px 0px 345px;
         height: 330px;
     }
     hr.find_pros {
@@ -106,10 +106,25 @@
         padding-bottom: 0px;
         padding-left: 0px;
     }
+    form select#company_si,
+    form select#company_gu,
+    form select#company_dong {
+        height:30px;
+    }
     </style>
     <div class="row" style="padding-top:19px;">
         <div class="col-lg-3 col-md-3 col-sm-12" style="padding-right:0px;width:20%;">
             <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/find_pros/4"> 
+                            홈스타일링
+                            <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+                        </a>
+                    </h4>
+                </div>
+                <hr style="margin:0px;padding:0px;">
+
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         <a href="/find_pros/1"> 
@@ -131,23 +146,34 @@
 
                 <div class="panel-heading">
                     <h4 class="panel-title">
-                        <a href="/find_pros/3"> 
+                        <a href="/find_pros/6"> 
                             인테리어 디자이너
                             <span class="pull-right"><i class="fa fa-caret-right"></i></span>
                         </a>
                     </h4>
                 </div>
                 <hr style="margin:0px;padding:0px;">
-
+                
                 <div class="panel-heading">
                     <h4 class="panel-title">
-                        <a href="/find_pros/4"> 
-                            가구 회사
+                        <a href="/find_pros/3"> 
+                            가구(제작 가구)
                             <span class="pull-right"><i class="fa fa-caret-right"></i></span>
                         </a>
                     </h4>
                 </div>
                 <hr style="margin:0px;padding:0px;">
+                <!--
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a href="/find_pros/5"> 
+                            소품 및 Deco
+                            <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+                        </a>
+                    </h4>
+                </div>
+                <hr style="margin:0px;padding:0px;">
+                -->
             </div>
         </div>
         <div class="col-lg-9 col-md-9 col-sm-12" style="width:80%;">
@@ -155,37 +181,44 @@
             <div class="findpros-contents-list-container" style="padding-left:20px;padding-right:20px;">
                 <div class="findpros-contents-list-container-items">
                     <ul class="breadcrumb" style="border:0px;margin:0px;padding:0px;padding-top:16px;padding-bottom:16px;">
-                        <li><a href="/find_pros" style="color:#949c12;">전문가 </a></li>
-                        <li style="color:#949c12;">{{ pros_category_name }}</li>
+                        <li><a href="/find_pros" style="color:#84bd5e;">전문가 </a></li>
+                        <li style="color:#84bd5e;">{{ pros_category_name }}</li>
                     </ul>
                     <hr style="margin:0px;padding:0px;">
 
                     <div class="w100 productFilter clearfix" style="border-top:0px;margin-bottom:0px;margin-top:0px;padding-bottom:10px;">
                         <span class="pull-right">
+                            <!--
                         <h5 style="margin-left:10px;padding-bottom:0px;padding-top:5px;">주소 또는 회사명을 입력하여 전문가를 찾아보세요. </h5>
+                        -->
                     </span>
 
                         <form action="{% if pros_category_name == '전체' %}{{ url_for('find_pros') }}{% endif %}{% if pros_category_name != '전체' %}/find_pros/{{ pros_category_id }}{% endif %}" method=post enctype="multipart/form-data">
                         <div class="local-search" id="local-search">
+                            <!--
                             <div class="type-select" id="type-select" style="display:table-cell;">
-                                <select class="select-style" style="width:90px;">
+                                <select class="select-style" style="width:90px;height:30px;">
                                     <option disabled selected value>검색 구분</option>
                                     <option>주소 검색</option>
                                     <option>이름 검색 </option>
                                 </select>
                             </div>
-                            <div class="company-item-region" id="sigudong-search" style="display:none;padding-left:10px;">
+                            -->
+                            <div class="company-item-region" id="sigudong-search" style="display:table-cell;;">
                                 {{ findProsForm.company_si }}
                                 {{ findProsForm.company_gu }}
                                 {{ findProsForm.company_dong }}
-                                    <input name="submit" class="btn   btn-sm btn-primary"  value="검색" type="submit" style="width:70px;">
+                                    <input placeholder="회사 이름으로 찾기" style="width:250px;height:30px;border:1px solid #dddddd;border-radius:3px;">
+                                    <input name="submit" class="btn   btn-sm btn-primary"  value="검색" type="submit" style="width:70px;height:30px;">
                                 </h5>
                             </div>
+                            <!--
                             <div class="item-name" id="name-search" style="display:table-cell;padding-left:10px;">
-                                    <input placeholder="회사 이름으로 찾기" style="width:250px;">
-                                    <input name="submit" class="btn   btn-sm btn-primary"  value="검색" type="submit" style="width:70px;">
+                                    <input placeholder="회사 이름으로 찾기" style="width:250px;height:30px;border:1px solid #dddddd;border-radius:3px;">
+                                    <input name="submit" class="btn   btn-sm btn-primary"  value="검색" type="submit" style="width:70px;height:30px;">
                                 </h5>
                             </div>
+                            -->
                         </div>
                         </form>
                         
@@ -201,7 +234,7 @@
                             {% endif %}
                                 <div class="findpros-contents-list-container-item">
                                     <a href="/company_portfolio/{{ pros.user.id }}">
-                                        <div id="pros_background_image" style="background: url({{ '/static/'+pros.image_path }});
+                                        <div id="pros_background_image" style="background: url({{ ('/static/'+pros.image_path)|resize('600x300') }});
                                             background-repeat: no-repeat;
                                             background-size: cover;
                                             background-position: center;
@@ -215,18 +248,25 @@
                                                     <div class="pull-left">
                                                         <h2>
                                                             {% if pros.user_profile_image_path %}
-                                                            <div style="background:url({{url_for('static',filename=pros.user_profile_image_path)}}); border:1px solid #dddddd;height:50px;width:50px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;"></div>
+                                                            <div style="background:url({{url_for('static',filename=pros.user_profile_image_path)|resize('60x60')}}); border:1px solid #dddddd;height:50px;width:50px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;"></div>
                                                             {% else %}
                                                             <div style="background-color:#dddddd; border:1px solid #dddddd;height:50px;width:50px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;"></div>
                                                             {% endif %}
                                                             <div style="display:table-cell;vertical-align:middle;padding-left:10px;">
-                                                                <h5 style="vertical-align:top; padding-bottom:0px;font-size:21px;line-height:23px;">
+                                                                <h5 style="vertical-align:top; padding-bottom:0px;font-size:18px;line-height:23px;">
+                                                                    <strong>
                                                                     {{ pros.user.username }}
+                                                                </strong>
                                                                 </h5>
-                                                                <h4 style="margin:0;padding:0;font-size:14px;color:#a5ac4c;">
+                                                                <h4 style="margin:0;padding:0;font-size:14px;color:#84bd5e;" >
                                                                     <span style="display:table-cell;">
-                                                                        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i>&nbsp;
-                                                                    전문가에 대한 리뷰 136>
+                                                                        {% for i in range(pros.average_star) %}
+                                                                        <i class="fa fa-star"></i>
+                                                                        {% endfor %}
+                                                                        {% for i in range(5-pros.average_star) %}
+                                                                        <i class="fa fa-star-o"></i>
+                                                                        {% endfor %}
+                                                                        전문가에 대한 리뷰 {{pros.reviews|length}}>
                                                                     </span>
                                                                 </h4>
                                                             </div>
@@ -235,17 +275,16 @@
                                                 </a>
                                                 <div class="pull-right">
                                                     <h5>
-                                                        <i class="fa fa-phone-square 1x" style="color:#777777;display:table-cell;vertical-align:middle;" > </i>
                                                         <div style="display:table-cell;vertical-align:middle;padding-left:5px;">
                                                             {{ pros.company.company_tel }}
                                                         </div>
                                                     </h5>
                                                 </div>
                                             </div>
-                                        <h4 style="color:#000000;font-weight:bold;padding-top:20px;">{{ pros.company.company_si }} {{ pros.company.company_gu }} {{ pros.company.company_dong }} {{ pros.company.company_address }}</h4>
+                                        <h4 style="color:#000000;font-weight:bold;padding-top:5px;">{{ pros.company.company_si }} {{ pros.company.company_gu }} {{ pros.company.company_dong }} {{ pros.company.company_address }}</h4>
                                         <h5>{{ pros.company.company_introduction }}
                                         {% if pros.over_introduction %}
-                                        <a href="/company_portfolio/{{ pros.user.id }}">...더보기</a>
+                                        <a href="/company_portfolio/{{ pros.user.id }}" style="color:#84bd5e">...더보기</a>
                                         {% endif %}
                                     </h5>
                                     </div>
@@ -313,7 +352,7 @@ mobile-card-header {
             <div class="mobile-pros-container" style="margin-bottom:10px;">
                 <mobile-card-header>
                     <a href="/company_portfolio/{{ pros.user.id }}">
-                        <div class="bg" style="background: url({{ '/static/'+pros.image_path }});
+                        <div class="bg" style="background: url({{ ('/static/'+pros.image_path)|resize('600x600') }});
                             background-repeat: no-repeat;
                             background-size: cover;
                             background-position: center;
@@ -327,7 +366,7 @@ mobile-card-header {
                                         <div class="pull-left">
                                             <h2 style="padding-bottom:0px;">
                                                 {% if pros.user_profile_image_path %}
-                                                <div style="background:url({{url_for('static',filename=pros.user_profile_image_path)}}); border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
+                                                <div style="background:url({{url_for('static',filename=pros.user_profile_image_path)|resize('40x40')}}); border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
                                                 {% else %}
                                                 <div style="background-color:#dddddd; border:1px solid #dddddd;height:35px;width:35px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 17.5px;border-radius:17.5px;-webkit-border-radius:17.5px;-moz-border-radius:17.5px;"></div>
                                                 {% endif %}
@@ -501,7 +540,7 @@ function initLocalSearch() {
 
         $.when(
              $.ajax({
-                 url: "//1.234.80.248/json/address"
+                 url: "/json/address"
              })
         ).done(function (data) {
             data = data.results;
@@ -560,6 +599,9 @@ $(document).ready(function () {
                 $('#sigudong-search').hide();
             }
             });
+        });
+$('#nav-dropdown-toggle-2').css('color','#84bd5e');
+$('#nav-dropdown-toggle-2').hover(function() {
         });
 </script>
 {% endblock %}

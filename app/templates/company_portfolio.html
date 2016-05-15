@@ -86,7 +86,7 @@ card_header {
 }
 #rightside_container {
     position: relative;
-    margin: 0px 0px 0px 240px;
+    margin: 180px 0px 0px 240px;
 }
 #custom_jumbo_navbar_wrapper {
     position: relative;
@@ -143,14 +143,71 @@ card_header {
                     회사정보
                 </strong>
                     <br>
-                    <br>
-                    회사이름 : {{ ret.user.username }}
-                    <br>
-                    회사주소 : {{ ret.company.company_address }}
-                    <br>
-                    회사번호 : {{ ret.company.company_tel }}
-                    <br>
-                    회사 웹사이트 : {{ ret.company.company_website }}
+                    <style>
+#company-info td{
+    padding-right:8px;
+    vertical-align: top;
+}
+#company-info img {
+    height: 15px;
+    vertical-align: top;
+    margin-top:3px;
+}
+                    </style>
+                    <table style="border:0;margin-top:10px;" id="company-info">
+                        <tr>
+                            <td>
+                                <center>
+                                <img src="{{url_for('static',filename='icon/company_name.png')}}" style="height:12px;margin-top:4px;">
+                                </center>
+                            </td>
+                            <td>
+                                회사이름
+                            </td>
+                            <td>
+                                {{ ret.user.username }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <center>
+                                <img src="{{url_for('static',filename='icon/company_address.png')}}" >
+                                </center>
+                            </td>
+                            <td>
+                                회사주소
+                            </td>
+                            <td>
+                                {{ret.company.company_si}} {{ret.company.company_gu}} {{ret.company.company_dong}} <br>{{ ret.company.company_address }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <center>
+                                <img src="{{url_for('static',filename='icon/phone.png')}}" >
+                                </center>
+                            </td>
+                            <td>
+                                회사번호 
+                            </td>
+                            <td>
+                                {{ ret.company.company_tel }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <center>
+                                <img src="{{url_for('static',filename='icon/website.png')}}" >
+                                </center>
+                            </td>
+                            <td>
+                                웹사이트
+                            </td>
+                            <td>
+                                <a href="{{ ret.company.company_website }}" target="_blank"><ins>{{ret.company.company_website}}</ins></a>
+                            </td>
+                        </tr>
+                    </table>
                 </h5>
                 {% if session and 'user_id' in session and session['user_id'] == ret.user.id %}
                 <button class="btn btn-primary" id="edit-button">수정하기</button>
@@ -207,7 +264,7 @@ card_header {
                     <card_header>
                         <div class="bio">
                             <a href="/project_detail/{{ project.project.id }}">
-                                <div class="bg" style="background:  url({{ '/static/'+project.image_path }});
+                                <div class="bg" style="background:  url({{ ('/static/'+project.image_path)|resize('500x400') }});
                                         background-repeat:no-repeat;
                                         background-size: cover;
                                         background-position: center;
@@ -239,6 +296,7 @@ card_header {
                 </div>
             </a>
         </center>
+        {% if ret.has_furniture_cateogry %}
         <hr style="padding:0;margin-left:10px;margin-right:10px;">
         <h5 style="padding-bottom:0px;padding-left:10px;">
             {{ ret.number_of_products }} 개의 상품
@@ -277,7 +335,7 @@ card_header {
                     <card_header>
                         <div class="bio">
                             <a href="/product_detail/{{ product.product.id }}">
-                                <div class="bg" style="background:  url({{ '/static/'+product.image_path }});
+                                <div class="bg" style="background:  url({{ ('/static/'+product.image_path)|resize('500x400') }});
                                         background-repeat:no-repeat;
                                         background-size: cover;
                                         background-position: center;
@@ -310,6 +368,7 @@ card_header {
                 </a>
             </center>
 
+        {% endif %}
             <br>
         </div>
     </div>

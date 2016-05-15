@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+.flash {
+color: red;
+}
+</style>
+<div class="container main-container nav-margin" style="background:white;border-bottom:1px solid #dddddd;margin-bottom:10px;padding:35px 170px 40px 170px;">
+    <h1 style="padding-bottom:54px;">
+        회원가입에 실패하였습니다.
+    </h1>
+        <form action="{{ url_for('signup') }}" method=post>
+    <div class="col-md-6 col-sm-6 col-xs-12" style="border-right:1px solid #dddddd;">
+        <!-- User form start-->
+            {{ signupForm.hidden_tag() }}
+            <div class="form-group reg-username" style="margin-bottom:0px;">
+                <h5 style="padding-bottom:5px;">이름</h5>
+                <div>
+                    {% for message in signupForm.username.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ signupForm.username(placeholder="") }}
+                </div>
+            </div>
+            <div class="form-group reg-email" style="margin-bottom:0px;">
+                <h5 style="padding-bottom:5px;">이메일 주소</h5>
+                <div>
+                    {% for message in signupForm.email.errors %}
+                    <div class="flash">{{  message }}</div>
+                    {% endfor %}
+                    {{ signupForm.email(placeholder="") }}
+                </div>
+            </div>
+            <div class="form-group reg-password" style="margin-bottom:0px;">
+                <h5 style="padding-bottom:5px;">비밀번호</h5>
+                <div>
+                    {% for message in signupForm.password.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ signupForm.password(placeholder="") }}
+                </div>
+            </div>
+            <div class="form-group reg-password" style="margin-bottom:0px;">
+                <h5 style="padding-bottom:5px;">비밀번호 확인</h5>
+                <div>
+                    {% for message in signupForm.password_check.errors %}
+                    <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                    {{ signupForm.password_check(placeholder="") }}
+                </div>
+            </div>
+
+        <!--userForm-->
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+        <div>
+            <div>
+                <input name="submit" style="background:#84bd5e;" class="btn  btn-block btn-lg btn-primary" value="이메일로 가입" type="submit">
+            </div>
+        </div>
+        <a class="btn btn-fb btn-lg " style="width:100%;margin-top:15px;" id="fb-signup" href="/facebook_login" scope="email"> 
+            <i class="fa fa-facebook-square fa-1x" style="color:#FFFFFF;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;" > </i>
+            페이스북으로 가입하기 <span class="arrowUnicode">►</span>
+        </a>
+        <hr style="margin:0;margin-top:30px;margin-bottom:15px;"/>
+        <p style="padding-top:15px;padding-bottom:10px;"> 기업회원으로 가입하시겠습니까? <a data-toggle="modal" data-dismiss="modal" href="#ModalCompanySignup" class="btn btn-block btn-primary btn-lg" style="background-color:#193271;">기업 회원으로 가입하기</a></p>
+
+        <p style="margin-top:10px;"> 이미 하우스마트 회원이세요 ? <a data-toggle="modal" data-dismiss="modal" href="#ModalLogin" style="color:#84bd5e;">
+            로그인 </a></p>
+    </div>
+        </form>
+</div>
+<script>
+$(document).ready(function() {
+    $('body').css('background','white');
+});
+</script>
+{% endblock %}

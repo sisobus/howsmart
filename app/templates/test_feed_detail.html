@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <!--
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    -->
+    <link rel="stylesheet" href="{{  url_for('static',filename='bootstrap/css/bootstrap.css') }}" />
+    <link rel="stylesheet" href="{{  url_for('static',filename='css/style.css') }}" />
+    <link rel="stylesheet" href="{{  url_for('static',filename='css/twitter_card.css') }}" />
+    <link rel="stylesheet" href="{{  url_for('static',filename='css/style-add-20151122.css') }}" />
+    <link rel="stylesheet" href="{{  url_for('static',filename='css/jquery-ui.min.css') }}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="{{ url_for('static',filename='js/jquery-ui.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/jquery.smooth-scroll.js') }}"></script>
+    <script src="{{  url_for('static',filename='js/dropzone.js') }}"></script>
+    <script src="{{  url_for('static',filename='js/parse-1.3.5.min.js') }}"></script>
+    <link rel="stylesheet" href="{{  url_for('static',filename='css/dropzone.css') }}" />
+    <script>
+        paceOptions = {
+            elements: true
+        };
+    </script>
+    <style>
+        @import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+        html * {
+            font-family: 'Nanum Gothic', serif;
+        }
+        html {
+            height: 100%;
+        }
+        body {
+            overflow: hidden;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+        }
+        #content-container {
+            position: absolute;
+            right: 0;
+            width: 420px;
+            height: 100%;
+            background: white;
+            border-left:1px solid #dddddd;
+            overflow-y : scroll;
+        }
+        #image-container {
+            position: absolute;
+            margin-right: 420px;
+            width: 100%;
+            height: 100%;
+            background: #f4f4f4;
+            display: table;
+        }
+        #image-real-container {
+            display: table-cell;
+            width: 100%;
+            margin: 0;
+            vertical-align: middle;
+        }
+        img#uploadImagePreview {
+            max-width:100%;
+            max-height:100%;
+            position: absolute;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+        }
+        .no-margin {
+            margin:0;
+        }
+        .no-padding {
+            padding:0;
+        }
+        #content-body-container {
+            width:100%;
+            overflow-y: scroll;
+            margin-bottom: 50px;
+        }
+        #content-comment-container {
+            position:fixed;
+            width:100%;
+            height:50px;
+            bottom: 0;
+            background: blue;
+            overflow-y: hidden;
+        }
+        form input#body {
+            width:100%;
+            border:0;
+            border-radius:0;
+            height:50px;
+            padding-left:10px;
+        }
+        form input#body:hover {
+            border: 0;
+        }
+        form input#body:focus {
+            outline: 0;
+        }
+    </style>
+    <script src="{{  url_for('static',filename='js/pace.min.js') }} "></script>
+    <script>
+        function createTag() {
+            var image_width = $('#uploadImagePreview').width();
+            var image_height = $('#uploadImagePreview').height();
+            var image_left = $('#uploadImagePreview').offset().left;
+            var image_top = $('#uploadImagePreview').offset().top;
+            {% for tag in ret.tags %}
+                console.log({{tag.id}});
+                $('body').append($('<div/>', {
+                    id: 'tagging-container-'+{{tag.id}},
+                    style: 'position:absolute;display:block;z-index:1000;cursor:pointer;'
+                }));
+                $('#tagging-container-'+{{tag.id}}).append($('<i/>', {
+                    class: 'fa fa-tag fa-2x',
+                    style: 'color:#949c12'
+                }));
+                $('#tagging-container-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}}))
+                    .css('top',image_top+image_height*({{tag.tag_y}}))
+                    .show()
+                $('body').append($('<div/>', {
+                    id: 'tagging-container-information-'+{{tag.id}},
+                    style: 'position:absolute;display:block;z-index:1000;'
+                }));
+                $('#tagging-container-information-'+{{tag.id}}).append($('<div/>', {
+                    style: 'background:#f5f5f5;'
+                }));
+                $('#tagging-container-information-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}})+35)
+                    .css('top',image_top+image_height*({{tag.tag_y}}))
+                    .css('background','#f5f5f5')
+                    .css('border','1px solid #dddddd')
+                    .css('padding','2px 2px 2px 2px')
+                    .text('{{tag.tag_name}}')
+                    .hide()
+                $('#tagging-container-'+{{tag.id}}).mouseover(function() {
+                        $('#tagging-container-information-'+{{tag.id}}).fadeIn('slow');
+                    }).mouseout(function() {
+                        $('#tagging-container-information-'+{{tag.id}}).hide();
+                    }).click(function() {
+                        var url = '{{tag.tag_link}}';
+                        if ( url.search('http://') == -1 || url.search('https://') == -1) 
+                            url = 'http://'+url;
+                        window.location.href = url;
+                    });
+            {% endfor %}
+        }
+        function rePositionTag() {
+            var image_width = $('#uploadImagePreview').width();
+            var image_height = $('#uploadImagePreview').height();
+            var image_left = $('#uploadImagePreview').offset().left;
+            var image_top = $('#uploadImagePreview').offset().top;
+            {% for tag in ret.tags %}
+                $('#tagging-container-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}}))
+                    .css('top',image_top+image_height*({{tag.tag_y}}))
+                    .show()
+                $('#tagging-container-information-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}})+35)
+                    .css('top',image_top+image_height*({{tag.tag_y}}))
+            {% endfor %}
+        }
+        function shakeAllTag() {
+            {% for tag in ret.tags %}
+                $('#tagging-container-'+{{tag.id}}).find('i').addClass('faa-shake').addClass('animated')
+            {% endfor %}
+        }
+        function image_container_width_resize() {
+            var image_container_width = $(document).width() - 420;
+            $("#image-container").css("width",image_container_width);
+        }
+        $(document).ready(function() {
+            image_container_width_resize();
+            createTag();
+            shakeAllTag();
+            // .main-comment-container
+            $('#comment-button').on('click',function() {
+                $.smoothScroll({
+                    scrollTarget: '#comment-container'
+                });
+            });
+            $('#image-container').hover(function() {
+                $('#image-button-container').fadeIn('fast');
+                $('#right-arrow').fadeIn('fast');
+                $('#left-arrow').fadeIn('fast');
+                },function() {
+                $('#image-button-container').fadeOut('fast');
+                $('#right-arrow').fadeOut('fast');
+                $('#left-arrow').fadeOut('fast');
+            });
+            $('#tag-button').on('click',function() {
+                {% for tag in ret.tags %}
+                if ( $('#tagging-container-'+{{tag.id}}).is(':visible') ) {
+                    $('#tagging-container-'+{{tag.id}}).fadeOut('fast');
+                } else {
+                    $('#tagging-container-'+{{tag.id}}).fadeIn('fast');
+                    }
+                {% endfor %}
+                });
+            $('#save-button-first').bind('click',function(e) {
+                // Prevents the default action to be triggered. 
+                e.preventDefault();
+                // Triggering bPopup when click event is fired
+                $('#popup').bPopup({
+                    contentContainer:'.content',
+                });
+                $('#image-preview').attr('src',"{{ url_for('static',filename=ret.image_path) }}");
+                $('#save-button').click(function() {
+                    var data = {
+                        "feed_id": "{{ ret.feed.id }}",
+                        "comment": $('#comment-box').val(),
+                        "user_id": "{{ session['user_id'] }}"
+                    };
+                    $.ajax({
+                        url: '/save_feed',
+                        data: data,
+                        type: 'POST',
+                        success: function(response) {
+                            var jsonData = JSON.parse(response);
+                            console.log(jsonData);
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
+                    $('#popup').bPopup().close();
+                });
+    });
+        });
+        $(window).resize(function() {
+            image_container_width_resize();
+            rePositionTag();
+        });
+    </script>
+</head>
+<body oncontextmenu="return false;" style="padding-right:0px;padding-left:0px;margin-top:0px;">
+{% include "modal_save_feed.html" %}
+    <div id="image-container">
+        <div id="image-real-container">
+            <img id="uploadImagePreview" src="{{ url_for('static',filename=ret.image_path) }}" class="img-responsive "/>
+            <div id="image-button-container" style="position:absolute;left:38%;bottom:10px;display:none;">
+                <a href="#">
+                    <button class="btn " id="save-button-first" style="background: #949c12;color:white;"><i class="fa fa-plus"></i> 저장</button>
+                </a>
+                <a href="#">
+                    <button class="btn " id="share-button" style="background: #383431;color:white;"><i class="fa fa-share-alt"></i> 공유</button>
+                </a>
+                <a href="#">
+                    <button class="btn " id="tag-button" style="background: #383431;color:#949c12;"><i class="fa fa-tag fa-rotate-270" style="font-size:1.3em;"></i> </button>
+                </a>
+
+            </div>
+            <div id="right-arrow" style="position:absolute;right:30px;color:black;display:none;">
+                <i class="fa fa-angle-right fa-5x"></i>
+            </div>
+            <div id="left-arrow" style="position:absolute;left:30px;color:black;display:none;">
+                <i class="fa fa-angle-left fa-5x"></i>
+            </div>
+        </div>
+    </div>
+    <div id="content-container">
+        <div id="content-body-container">
+            <div id="header-container" class="no-margin no-padding" style="height:45px;background:white;border-bottom:1px solid #dddddd;">
+                <div id="logo-container" class="no-padding" style="position:absolute;width:375px;"> 
+                    <a  href="/"> <img src="{{ url_for('static',filename='img/crop_logo.jpg') }}" style="height:40px;margin-left:5px;margin-top:2px;"> </a>
+                </div>
+                <div id="close-button" class="no-padding" style="margin-left:375px;width:45px;height:100%;background:#666666;vertical-align:middle;text-align:center;">
+                    <a href="{{ session['previous_url'] }}">
+                    <i class="fa fa-times fa-3x" style="font-size:2.5em;color:white;margin-top:3px;"></i>
+                </a>
+                </div>
+            </div>
+            <div style="margin-left:20px;margin-right:20px;">
+                <div id="user-container" class="no-margin no-padding" style="height:80px;background:white;">
+                    <div style="padding-top:18px;">
+                        {% if ret.user_profile_image_path %}
+                        <div style="background:url({{url_for('static',filename=ret.user_profile_image_path)}}); border:1px solid #dddddd;height:44px;width:44px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 22px;border-radius:22px;-webkit-border-radius:22px;-moz-border-radius:22px;"></div>
+                        {% else %}
+                        <div style="background-color:#dddddd; border:1px solid #dddddd;height:42px;width:42px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 20px;border-radius:20px;-webkit-border-radius:20px;-moz-border-radius:20px;"></div>
+                        {% endif %}
+                        <div style="display:table-cell;vertical-align:top;;">
+                            <h3 style="padding-bottom:0px;display:table-cell;padding-left:5px;"><a href="/company_portfolio/{{ ret.user.id }}" target="_blank">{{ ret.user.username }} &nbsp;</a>{% if session and 'user_id' in session and session['user_id'] == ret.user.id %}<button class='btn btn-primary' id='edit-button'><a href="/project_edit/{{ret.feed.id}}" style="display:block;color:#FFFFFF;">수정하기</a></button> <button class="btn btn-danger">삭제하기 </button>{% endif %}</h3>
+                            <div style="font-size:9px;padding-left:5px;">
+                                <span class="fa-stack " style="display:table-cell;padding-right:15px;line-height:1.6em;" >
+                                    <i class="fa  fa-circle-thin fa-stack-2x" style="{% if ret.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}top:0;" id="like-button-icon-circle-{{ ret.feed.id }}"> </i>
+                                    <i class="fa   fa-heart fa-stack-1x" style="{% if ret.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}top:0;" id="like-button-icon-thumb-{{ ret.feed.id }}"> </i>
+                                </span>
+                                <h5 style="display:table-cell;padding-bottom:0px;padding-left:4px;padding-right:8px;vertical-align:middle;font-size:11px;" ><a onclick="likePost({{ ret.feed.id }});" style="{% if ret.is_user_like %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}" id="like-button-{{ ret.feed.id }}"> {{ ret.number_of_like }} 좋아요</a></h5>
+                                <span class="fa-stack " style="display:table-cell;padding-right:15px;line-height:1.6em;">
+                                    <i class="fa  fa-circle-thin fa-stack-2x" style="color:#777777;top:0;" > </i>
+                                    <i class="fa   fa-comment fa-stack-1x" style="color:#777777;top:0;" > </i>
+                                </span>
+                                <h5 id="comment-button" style="vertical-align:middle;display:table-cell;padding-bottom:0px;padding-left:4px;font-size:11px;">{{ ret.all_comments | length }} 댓글</h5>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <hr class="no-paddig " style="margin:0px -20px 0px -20px;"/>
+                <div id="feed-body-container" class="no-margin no-padding" style="background:white;" >
+                    <p class="no-margin" style="font-size:14px;color:#000000;padding-top:20px;">
+                    <strong>
+                        {{ ret.feed.title }}
+                    </strong>
+                    </p>
+                    <p class="no-margin" style="font-size:13px;color:#949c12;padding-bottom:20px;">
+                    <a href="/photos/{{ ret.feed.feed_category_id }}" target="_blank">갤러리&nbsp; |&nbsp; {{ ret.feed_category_name }}사진 &nbsp;|&nbsp; 바로가기 ></a>
+                    </p>
+                    <p class="no-margin" style="color:#666666;font-size:13px;padding-bottom:20px;">
+                        {{ ret.feed.body }}
+                    </p>
+                </div>
+                <hr class="no-paddig " style="margin:0px -20px 0px -20px;"/>
+                <div id="other-photos-container" class="no-margin no-padding" style="height:130px;background:white;">
+                    <p class="no-margin" style="color:#000000;font-size:13px;padding-top:20px;padding-bottom:10px;">
+                    <strong>
+                    <a href="/project_detail/{{ ret.project.id }}" target="_blank">{{ ret.project.project_name }}</a>의 다른 사진들
+                </strong>
+                    </p>
+                    <div style="overflow-x: scroll;">
+                        {% for other_feed in ret.other_feeds_in_same_project %}
+                        <a href="/company_feed_detail/{{ other_feed.feed.id }}" >
+                            <img src="{{ url_for('static',filename=other_feed.image_path)|resize("100x100") }}" style="height:70px;width:70px;max-height:70px;max-width:70px;margin:0px 0px 0px 0px;">
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <hr class="no-paddig " style="margin:0px -20px 0px -20px;"/>
+                <div id="other-project-container" class="no-margin no-padding" style="height:130px;background:white;">
+                    <p class="no-margin" style="color:#000000;font-size:13px;padding-top:20px;padding-bottom:10px;">
+                    <strong>
+                    <a href="/project_detail/{{ ret.project.id }}" target="_blank">{{ ret.project.project_name }}</a>의 다른 사진들
+                </strong>
+                    </p>
+                    <div style="overflow-x: scroll;">
+                        {% for other_project in ret.other_projects %}
+                        <a href="/project_detail/{{ other_project.project.id }}" target="_blank">
+                            <img src="{{ url_for('static',filename=other_project.image_path)|resize("100x100") }}" style="height:70px;width:70px;max-height:70px;max-width:70px;">
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <hr class="no-paddig " style="margin:0px -20px 0px -20px;"/>
+                <div id="recommend-photos-container" class="no-margin no-padding" style="height:130px;background:white;">
+                    <p class="no-margin" style="color:#000000;font-size:13px;padding-top:20px;padding-bottom:10px;">
+                    <strong>
+                    다른 <a href="/photos/{{ ret.feed.feed_category_id }}">{{ ret.feed_category_name }}</a> 추천 사진
+                </strong>
+                    </p>
+                </div>
+                <hr class="no-paddig " style="margin:0px -20px 0px -20px;"/>
+                <div id="comment-container" class="no-margin no-padding" style="background:white;">
+                    <p class="no-margin" style="color:#000000;font-size:13px;padding-top:20px;">
+                    <strong>
+                    해당 사진에 대한 댓글
+                </strong>
+                    {% for comment in ret.all_comments %}
+                    <div style="padding-top:20px;">
+                        <div style="position:absolute;width:30px;">
+                            {% if comment.user_profile_image_path %}
+                            <div style="background:url({{url_for('static',filename=comment.user_profile_image_path)}}); ;height:30px;width:30px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;"></div>
+                            {% else %}
+                            <div style="background-color:#dddddd; ;height:30px;width:30px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;"></div>
+                            {% endif %}
+                        </div>
+                        <div style="margin-left:30px;padding-left:5px;">
+                            <p style="padding-top:5px;" class="no-margin">
+                            {% if comment.user.level >= 2 %}
+                            <a href="/company_portfolio/{{ comment.user.id }}" style="color:#343434;"> 
+                            {% elif comment.user.level == 1 %}
+                            <a href="/user_portfolio/{{ comment.user.id }}" style="color:#343434;"> 
+                            {% endif %}
+                            <strong>
+                            {{ comment.user.username }}
+                        </strong>
+                            </a> 
+                            </p>
+                            <p class="no-margin" style="font-size:12px;color:#666666;">
+                            {{ comment.comment.body}}
+                            </p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <button class="btn btn-primary" style="margin-top:20px;margin-bottom:20px;width:100%;height:50px;background:#e6e6e6;color:#777777;">
+                        {{ ret.all_comments | length }} 개의 다른 댓글 더보기
+                    </button> 
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div id="content-comment-container" style="border-top:1px solid #dddddd;">
+            <form action="{{ url_for('company_feed_detail',feed_id=ret.feed.id) }}" method="post">
+            <div style="position:absolute;width:370px;background:gray;height:100%;">
+                {{ commentForm.hidden_tag() }}
+                {% for message in commentForm.body.errors %}
+                <div class="flash">{{ message }}</div>
+                {% endfor %}
+                {{ commentForm.body(placeholder="댓글 입력...") }}
+            </div>
+            <div style="margin-left:370px;background:black;width:50px;height:50px;;background:#f4f4f4;vertical-align:middle;text-align:center;">
+                    {% if session.logged_in %}
+                    <input name="submit" value="확인" style="border:0;background:#f4f4f4;padding-top:15px;color:#aaaaaa;" type="submit">
+                    {% else %}
+                    <h5 style="padding-top:15px;">
+                        비회원
+                    </h5>
+                    {% endif %}
+            </div>
+            </form>
+        </div>
+    </div>
+
+
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="{{  url_for('static',filename='bootstrap/js/bootstrap.min.js') }}"></script>
+<script>
+    // this script required for subscribe modal
+    $(window).load(function () {
+        // full load
+    });
+/*
+    $('#ModalCompanySignup').on('shown', function () {
+    $('body').on('wheel.modal mousewheel.modal', function () {return false;});
+}).on('hidden', function () {
+    $('body').off('wheel.modal mousewheel.modal');
+});
+*/
+</script>
+
+<!-- include jqueryCycle plugin -->
+<script src="{{  url_for('static',filename='js/jquery.cycle2.min.js') }}"></script>
+<!-- include easing plugin -->
+<script src="{{  url_for('static',filename='js/jquery.easing.1.3.js') }}"></script>
+
+<!-- include  parallax plugin -->
+<!--
+<script src="{{  url_for('static',filename='js/jquery/parallax-1.1.js') }}"></script>
+-->
+
+<!-- optionally include helper plugins -->
+<script src="{{  url_for('static',filename='js/helper-plugins/jquery.mousewheel.min.js') }}"></script>
+
+<!-- include mCustomScrollbar plugin //Custom Scrollbar  -->
+
+<script src="{{  url_for('static',filename='js/jquery.mCustomScrollbar.js') }}"></script>
+
+<!-- include checkRadio plugin //Custom check & Radio  -->
+<script src="{{  url_for('static',filename='js/ion-checkRadio/ion.checkRadio.min.js') }}"></script>
+
+<!-- include grid.js // for equal Div height  -->
+<script src="{{  url_for('static',filename='js/grids.js') }}"></script>
+
+<!-- include carousel slider plugin  -->
+<script src="{{  url_for('static',filename='js/owl.carousel.min.js') }}"></script>
+
+<!-- jQuery minimalect // custom select   -->
+<script src="{{  url_for('static',filename='js/jquery.minimalect.min.js') }}"></script>
+
+<!-- include touchspin.js // touch friendly input spinner component   -->
+<script src="{{  url_for('static',filename='js/bootstrap.touchspin.js') }}"></script>
+
+<!-- include custom script for only homepage  -->
+<script src="{{  url_for('static',filename='js/home.js') }}"></script>
+<!-- include custom script for site  -->
+<script src="{{  url_for('static',filename='js/script.js') }}"></script>
+<script>
+</script>
+</body>
+</html>

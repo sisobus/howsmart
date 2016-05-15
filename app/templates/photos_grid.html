@@ -105,16 +105,16 @@ card_header {
                 <div id="collapseCategory-space" class="panel-collapse collapse in">
                     <div class="panel-body">
                         <ul class="nav nav-pills nav-stacked tree">
-                            <li><a href="/photos/1"> 거실</a></li>
-                            <li><a href="/photos/2"> 주방</a></li>
-                            <li><a href="/photos/3"> 침실</a></li>
-                            <li><a href="/photos/4"> 서재</a></li>
-                            <li><a href="/photos/5"> 유아/주니어방</a></li>
-                            <li><a href="/photos/6"> 욕실</a></li>
-                            <li><a href="/photos/7"> 현관</a></li>
-                            <li><a href="/photos/8"> 기타</a></li>
-                            <li><a href="/photos/9"> 상업공간</a></li>
-                            <li><a href="/photos/10"> 사무공간</a></li>
+                            <li><a href="/photos/1/grid"> 거실</a></li>
+                            <li><a href="/photos/2/grid"> 주방</a></li>
+                            <li><a href="/photos/3/grid"> 침실</a></li>
+                            <li><a href="/photos/4/grid"> 서재</a></li>
+                            <li><a href="/photos/5/grid"> 유아/주니어방</a></li>
+                            <li><a href="/photos/6/grid"> 욕실</a></li>
+                            <li><a href="/photos/7/grid"> 현관</a></li>
+                            <li><a href="/photos/8/grid"> 기타</a></li>
+                            <li><a href="/photos/9/grid"> 상업공간</a></li>
+                            <li><a href="/photos/10/grid"> 사무공간</a></li>
                         </ul>
                     </div>
                 </div>
@@ -195,33 +195,30 @@ card_header {
                 <div class="photos-contents-list-container-items">
                     <ul class="breadcrumb" style="border:0px;margin:0px;padding:0px;padding-top:16px;padding-bottom
 :16px;padding-left:5px;">
-                        <li><a href="/photos" style="color:#949c12;">갤러리</a></li>
+                        <li><a href="/photos" style="color:#84bd5e;">갤러리</a></li>
                         {% if feed_category_id %}
-                        <li><a href="/photos/{{ feed_category_id }}" style="color:#949c12;">{{ feed_category_name }}</a></li>
+                        <li><a href="/photos/{{ feed_category_id }}" style="color:#84bd5e;">{{ feed_category_name }}</a></li>
                         {% endif %}
                         {% if not feed_category_id %}
-                        <li><a href="/photos/" style="color:#949c12;">{{ feed_category_name }}</a></li>
+                        <li><a href="/photos/" style="color:#84bd5e;">{{ feed_category_name }}</a></li>
                         {% endif %}
-                    </ul>
-                    <hr style="margin:0px;padding:0px;margin-left:5px;">
-                    <div style="padding-left:5px;">
-                        <span class="pull-left" style="padding-top: 10px;padding-bottom:10px;">
+<span class="pull-right" style="margin-top:-6px;">
                             {% if feed_category_id %}
-                            <div class="change-view ">
-                                <a style="margin-left:0px;" href="/photos/{{ feed_category_id }}/grid" title="Grid"
- class=""> <i class="fa fa-th"></i> </a> 
-                                <a style="margin-left:0px;" href="/photos/{{ feed_category_id }}" title="List" clas
-s=""><i class="fa fa-th-list"></i></a>
+                            <div class="change-view " style="height:34px;">
+                                <a style="margin-left:0px;" href="/photos/{{ feed_category_id }}/grid" title="Grid" class=""> <i class="fa fa-th"></i> </a>
+                                <a style="margin-left:0px;" href="/photos/{{ feed_category_id }}" title="List" class=""><i class="fa fa-th-list"></i></a>
                             </div>
                             {% endif %}
                             {% if not feed_category_id %}
-                            <div class="change-view ">
-                                <a style="margin-left:0px;" href="/photos/grid" title="Grid" class=""> <i class="fa
- fa-th"></i> </a> 
+                            <div class="change-view " style="height:34px;">
+                                <a style="margin-left:0px;" href="/photos/grid" title="Grid" class=""> <i class="fa fa-th"></i> </a>
                                 <a style="margin-left:0px;"href="/photos" title="List" class=""><i class="fa fa-th-list"></i></a>
                             </div>
                             {% endif %}
                         </span>
+                    </ul>
+                    <hr style="margin:0px;padding:0px;margin-left:5px;">
+                    <div style="padding-left:5px;">
                         <div class="pull-right" style="padding:10px;">
                             1-12페이지 총 {{ feed_category_name }}  <strong>{{ feed_count }}</strong>장 사진
                             <button class="btn " style="background:#ffffff;border:1px solid #dddddd;width:35px;"><i
@@ -243,19 +240,19 @@ openFeed = function(feed_id) {
 }
                                         </script>
                                         <a href="javascript:openFeed({{ feed.feed.id }});">
-                                        <div class="bg" id="photos_background_image" style="background: url({{ '/static/'+feed.image_path }});
+                                        <div class="bg" id="photos_background_image" style="background: url({{ ('/static/'+feed.image_path)|resize('400x400') }});
                                             background-repeat: no-repeat;
                                             background-size: cover;
                                             background-position: center;
                                             ">
                                         </div>
                                     </a>
-                                    <div id="photos_body" style="height:68px;">
-                                        <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:10px;">
-                                            <a href="/company_portfolio/{{ feed.user.id }}"><h4 style="vertical-align:middle; padding-bottom:0px;color:#ababab;">{{ feed.user.username }}</h4></a>
+                                    <div id="photos_body" style="height:54px;">
+                                        <div style="display:table-cell;vertical-align:middle;padding-left:10px;padding-top:5px;">
+                                            <a href="/company_portfolio/{{ feed.user.id }}"><h5 style="vertical-align:middle; padding-bottom:0px;color:#ababab;">{{ feed.user.username }}</h5></a>
                                         </div>
                                         <a href="javascript:openFeed({{ feed.feed.id }});">
-                                            <h5 style="font-weight:bold;padding: 3px 0px 2px 10px;">{{ feed.feed.title }}</h5>
+                                            <h4 style="font-weight:bold;padding: 1px 0px 2px 10px;">{{ feed.feed.title }}</h4>
                                         </a>
                                     </div>
                                 </div>
@@ -285,6 +282,11 @@ $(window).scroll(function() {
         });
     }
 });
+$(document).ready(function() {
+        $('#nav-dropdown-toggle-1').css('color','#84bd5e');
+        $('#nav-dropdown-toggle-1').hover(function() {
+            });
+        });
 </script>
 <script type="text/javascript">
 function likePost(feed_id) {

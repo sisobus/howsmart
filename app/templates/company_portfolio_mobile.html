@@ -22,11 +22,9 @@ mobile-card-header {
         <div class="col-lg-2 col-md-2 col-sm-12">
             <br>
             <div class="col-lg-6 col-md-6 col-xs-6">
-                <a onclick="followPost({{ret.user.id}});">
-                    <button class="btn btn-primary" style="width:100%;">
-                        팔로우 하기
-                    </button>
-                </a>
+                <button onclick="followPost({{ret.user.id}});" class="btn btn-primary" style="width:100%;cursor:pointer;">
+                    팔로우 하기
+                </button>
             </div>
             <div class="col-lg-6 col-md-6 col-xs-6">
                 <a >
@@ -73,8 +71,8 @@ mobile-card-header {
                 <div class="col-md-6 col-xs-6" style="padding-right:0px;margin:10px 0px 10px 0px;">
                     <div style="height:50px;border:1px solid #dddddd;">
                         <center>
-                        <h5 style="{% if ret.is_user_follow %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}vertical-align:middle;padding-bottom:0px;padding-top:7px;" id="follow-button-number">{{ ret.number_of_follow }}</h5>
-                        <h5 style="{% if ret.is_user_follow %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}vertical-align:middle;padding-bottom:0px;" id="follow-button">팔로워</h5>
+                        <h5 style="{% if ret.is_user_follow %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}vertical-align:middle;padding-bottom:0px;padding-top:7px;" id="follow-button-mobile-number">{{ ret.number_of_follow }}</h5>
+                        <h5 style="{% if ret.is_user_follow %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}vertical-align:middle;padding-bottom:0px;" id="follow-button-mobile">팔로워</h5>
                     </center>
                     </div>
                 </div>
@@ -188,17 +186,17 @@ function followPost(to_user_id) {
             var jsonData = JSON.parse(response);
 console.log(jsonData);
             if ( jsonData["is_followed"] ) {
-                $('#follow-button-number').css('color','#777777');
-                $('#follow-button-number').css('font-weight','400');
-                $('#follow-button').css('color','#777777');
-                $('#follow-button').css('font-weight','400');
-                $('#follow-button-number').text(jsonData['number_of_to_user_follow']);
+                $('#follow-button-mobile-number').css('color','#777777');
+                $('#follow-button-mobile-number').css('font-weight','400');
+                $('#follow-button-mobile').css('color','#777777');
+                $('#follow-button-mobile').css('font-weight','400');
+                $('#follow-button-mobile-number').text(jsonData['number_of_to_user_follow']);
             } else {
-                $('#follow-button-number').css('color','#3B5998');
-                $('#follow-button-number').css('font-weight','600');
-                $('#follow-button').css('color','#3B5998');
-                $('#follow-button').css('font-weight','600');
-                $('#follow-button-number').text(jsonData['number_of_to_user_follow']);
+                $('#follow-button-mobile-number').css('color','#3B5998');
+                $('#follow-button-mobile-number').css('font-weight','600');
+                $('#follow-button-mobile').css('color','#3B5998');
+                $('#follow-button-mobile').css('font-weight','600');
+                $('#follow-button-mobile-number').text(jsonData['number_of_to_user_follow']);
             }
         },
         error: function(error) {

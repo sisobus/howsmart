@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div id="main-contents-container" >
+    <div class="main-container" id="feed_container" style="padding-top:110px;">
+        {% include "main_blog_posts.html" %}
+    </div>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+$('#nav-dropdown-toggle-4').css('color','#84bd5e');
+$('#nav-dropdown-toggle-4').hover(function() {
+        });
+});
+/*
+$(window).scroll(function() {
+        if ( {{ offset }} >= {{ all_feed_count }} ) return;
+    if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+        $.ajax({
+            async : true,
+            type : "POST",
+            url : "{{ url_for('main') }}",
+            data : { offset: "{{ offset+10 }}" },
+            success: function(result) {
+                $("#main-contents-container").html(result);
+            }
+        });
+    }
+});
+*/
+</script>
+{% endblock %}

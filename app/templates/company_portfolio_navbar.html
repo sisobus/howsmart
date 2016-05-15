@@ -7,7 +7,7 @@
 <script src="{{ url_for('static',filename='js/jquery.Jcrop.js') }}"></script>
 <script src="{{ url_for('static',filename='js/jquery.SimpleCropper.js') }}"></script>
 <div class="container nav-margin" style="padding: 0px 0px 0px 0px;height:300px;">
-    <div class="custom_jumbo_container" style="background: url({{ '/static/'+ret.image_path }});
+    <div class="custom_jumbo_container" style="background: url({{ ('/static/'+ret.image_path)|resize('1280x800') }});
             background-repeat:no-repeat; background-size: cover; background-position: center;">
         <div id="leftside_container" >
             {% if ret.user_profile_image_path | length != 0 %}
@@ -58,11 +58,20 @@ error: function(error) {
             });
         
         </script>
-        <!--
         <div id="rightside_container">
             <h1>{{ ret.user.username }}</h1>
+            <h4 style="margin:0;padding:0;font-size:14px;color:#84bd5e;">
+                <span style="display:table-cell;">
+                    {% for i in range(ret.average_star) %}
+                    <i class="fa fa-star"></i>
+                    {% endfor %}
+                    {% for i in range(5-ret.average_star) %}
+                    <i class="fa fa-star-o"></i>
+                    {% endfor %}
+                    <span style="color:white;">전문가에 대한 리뷰 {{ret.reviews|length}} ></span>
+                </span>
+            </h4>
         </div>
-        -->
     </div>
 </div>
 <div class="container" style="margin-bottom:0px;background:#ffffff;border: 1px solid #dddddd;">
@@ -76,20 +85,19 @@ error: function(error) {
                     <li>
                         <a id="nav-toggle-2" href="/company_portfolio/{{ ret.user.id }}/project">프로젝트</a>
                     </li>
+                    {% if ret.has_furniture_category %}
                     <li>
                         <a id="nav-toggle-3" href="/company_portfolio/{{ ret.user.id }}/shop">스토어</a>
                     </li>
+                    {% endif %}
                     <li>
-                        <a id="nav-toggle-4" href="#">질문/답변</a>
-                    <!--
                         <a id="nav-toggle-4" href="/company_portfolio/{{ ret.user.id }}/qna">질문/답변</a>
-                        -->
                     </li>
                     <li>
-                    <a id="nav-toggle-5" href="#">리뷰</a>
                     <!--
+                    <a id="nav-toggle-5" href="#">리뷰</a>
+                    -->
                         <a id="nav-toggle-5" href="/company_portfolio/{{ ret.user.id }}/review">리뷰</a>
-                        -->
                     </li>
                 </ul>
             </div>
@@ -98,37 +106,37 @@ error: function(error) {
 </div>
 <script>
 $('#nav-toggle-1').hover(function() {
-    $(this).css('border-bottom','2px solid #959d16');
+    $(this).css('border-bottom','2px solid #84bd5e');
 },function() {
     $(this).css('border-bottom','2px solid #ffffff');
 });
 $('#nav-toggle-2').hover(function() {
-    $(this).css('border-bottom','2px solid #959d16');
+    $(this).css('border-bottom','2px solid #84bd5e');
 },function() {
     $(this).css('border-bottom','2px solid #ffffff');
 });
 $('#nav-toggle-3').hover(function() {
-    $(this).css('border-bottom','2px solid #959d16');
+    $(this).css('border-bottom','2px solid #84bd5e');
 },function() {
     $(this).css('border-bottom','2px solid #ffffff');
 });
 $('#nav-toggle-4').hover(function() {
-    $(this).css('border-bottom','2px solid #959d16');
+    $(this).css('border-bottom','2px solid #84bd5e');
 },function() {
     $(this).css('border-bottom','2px solid #ffffff');
 });
 $('#nav-toggle-5').hover(function() {
-    $(this).css('border-bottom','2px solid #959d16');
+    $(this).css('border-bottom','2px solid #84bd5e');
 },function() {
     $(this).css('border-bottom','2px solid #ffffff');
 });
 $('#nav-dropdown-toggle-1').hover(function() {
-        $(this).css('border-top','2px solid #959d16');
+        $(this).css('border-top','2px solid #84bd5e');
         }, function() {
         var $cur = $(this);
         $cur.css('border-top','2px solid #ffffff'); 
         $('#dropdown-menu-1').hover(function() {
-            $cur.css('border-top','2px solid #959d16');
+            $cur.css('border-top','2px solid #84bd5e');
             },function() {
             $cur.css('border-top','2px solid #ffffff'); 
             });

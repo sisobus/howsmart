@@ -40,19 +40,19 @@
                         class="icon-bar"> </span> <span class="icon-bar"> </span></button>
                         -->
 
-                <a  href="/"> <img src="{{ url_for('static',filename='img/crop_logo.jpg') }}" style="height:45px;margin-top:-8px;"> </a>
+                <a  href="/"> <img src="{{ url_for('static',filename='img/logo_2016_04_28.png') }}" style="height:45px;margin-top:-8px;"> </a>
             </div>
 
 
                     <div class="pull-left " style="margin-left:24px;">
                         <ul class="userMenu ">
                             <li style="height:37px;">
-                            <div style="width:37px;height:37px;background-color:white;border:1px solid #dddddd;border-right:0px;text-align:center;">
-                            <i class="fa fa-search fa-2x" style="color:#dddddd;margin:0;display:inline-block;text-align:center;vertical-align:bottom;line-height:30px;margin-top:2px;"></i>
-                        </div>
+                            <div id="search-icon" style="width:37px;height:37px;background-color:white;border:1px solid #eeeeee;border-right:0px;text-align:center;">
+                                <i class="fa fa-search fa-2x" style="color:#dddddd;margin:0;display:inline-block;text-align:center;vertical-align:bottom;line-height:30px;margin-top:2px;"></i>
+                            </div>
                             </li>
                             <li>
-                            <input type="text" id="search-bar" placeholder="사진, 전문가, 제품으로 검색하기" style="display:table-cell;margin-top: 0px;margin-bottom: 0px;height: 37px;border-left: 0px;font-size:13px;width:663px;">
+                            <input type="text" id="search-bar" placeholder="사진, 전문가, 제품으로 검색하기" style="display:table-cell;margin-top: 0px;margin-bottom: 0px;height: 37px;border-left: 0px;font-size:13px;width:663px;" autofocus>
                             </li>
                         </ul>
                     </div>
@@ -72,17 +72,26 @@
                             {% if session['is_company'] %}
                             <li><a href="/company_portfolio/{{ session['user_id'] }}"><span class="hidden-xs">
                                     {% if session['user_profile_image_path'] %}
-                                    <div style="background:url({{ url_for('static',filename=session['user_profile_image_path']) }}); border:1px solid #dddddd;height:40px;width:40px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;transform:scale(0.5);-webkit-transform: scale(0.5);-ms-transform: scale(0.5);"></div>
+                                    <div style="background:url({{ url_for('static',filename=session['user_profile_image_path'])|resize('50x50') }}); border:1px solid #dddddd;height:40px;width:40px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;transform:scale(0.5);-webkit-transform: scale(0.5);-ms-transform: scale(0.5);"></div>
                                     {% else %}
                                     <div style="background-color:#dddddd; border:1px solid #dddddd;height:40px;width:40px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;transform:scale(0.5);-webkit-transform: scale(0.5);-ms-transform: scale(0.5);"></div>
                                     {% endif %}
                                     <div style="padding-bottom:0px;display:table-cell;padding-left:5px;">
-                                        {{ session['username'] }}
+                                        {{ session['username'][:13] }}
                                     </div>
                                 </span>
                                 {% endif %}
                                 {% if not session['is_company'] %}
-                                <li><a href="/user_portfolio/{{ session['user_id'] }}"><span class="hidden-xs">{{ session['username'] }}님 환영합니다</span>
+                                <li><a href="/user_portfolio/{{ session['user_id'] }}">
+                                    {% if session['user_profile_image_path'] %}
+                                    <div style="background:url({{ url_for('static',filename=session['user_profile_image_path'])|resize('50x50') }}); border:1px solid #dddddd;height:40px;width:40px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;transform:scale(0.5);-webkit-transform: scale(0.5);-ms-transform: scale(0.5);"></div>
+                                    {% else %}
+                                    <div style="background-color:#dddddd; border:1px solid #dddddd;height:40px;width:40px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;transform:scale(0.5);-webkit-transform: scale(0.5);-ms-transform: scale(0.5);"></div>
+                                    {% endif %}
+                                    <div style="padding-bottom:0px;display:table-cell;padding-left:5px;">
+                                        {{ session['username'][:13] }}
+                                    </div>
+
                                     {% endif %}
                                 <li><a href="{{ url_for('signout') }}">
 
@@ -111,7 +120,7 @@
                                         |
                                     </div>
                                 </li>
-                                <li class="hidden-xs"><a href="#" data-toggle="modal" data-target="#ModalSignup" style="padding-right:15px;"> 
+                                <li class="hidden-xs"><a href="#" data-toggle="modal" data-target="#ModalSignup" style="padding-right:13px;"> 
 
                                 <div style="display:table-cell;color:#ababab;">
                                     회원가입 
@@ -129,7 +138,7 @@
 
         <div class="container">
             <div class="navbar-header">  
-                <button type="button" class="navbar-toggle pull-left" data-toggle="collapse" data-target="#navbar-collapse" style="background:#ffffff;margin-left:5px;">
+                <button type="button" class="navbar-toggle pull-left" data-toggle="collapse" data-target="#navbar-collapse" style="background:#ffffff;margin-left:5px;padding-left:0px;">
                     <span class="sr-only"> Toggle navigation </span> 
                     <span class="icon-bar" style="border:solid 2px #777777;"> </span> 
                     <span class="icon-bar" style="border:solid 2px #777777;"> </span> 
@@ -137,12 +146,10 @@
                 </button>
                 <div class="visible-xs">
                     <ul class="userMenu">
-                                <li style="margin-top:12px;">
-                        <a href="/">
-                            <h3 style="padding-bottom:0px;">
-                            <b>LOGO</b>
-                        </h3>
-                    </a>
+                        <li style="margin-top:2px;">
+                        <a href="/" style="padding-right:0px;">
+                            <img src="{{ url_for('static',filename='img/logo_2016_04_28.jpg') }}" style="height:40px;"> 
+                        </a>
                         </li>
                     </ul>
                 </div>
@@ -153,22 +160,33 @@
                                 <li style="margin-top:3px;">
                             <a href="/company_portfolio/{{ session['user_id'] }}"><span class="visible-xs">
                                     {% if session['user_profile_image_path'] %}
-                                    <div style="background:url({{ url_for('static',filename=session['user_profile_image_path']) }}); border:1px solid #dddddd;height:40px;width:40px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;transform:scale(0.5);-webkit-transform: scale(0.5);-ms-transform: scale(0.5);"></div>
+                                    <div style="background:url({{ url_for('static',filename=session['user_profile_image_path'])|resize('50x50') }}); border:1px solid #dddddd;height:40px;width:40px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;transform:scale(0.5);-webkit-transform: scale(0.5);-ms-transform: scale(0.5);"></div>
                                     {% else %}
                                     <div style="background-color:#dddddd; border:1px solid #dddddd;height:40px;width:40px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;transform:scale(0.5);-webkit-transform: scale(0.5);-ms-transform: scale(0.5);"></div>
                                     {% endif %}
                                     <div style="padding-bottom:0px;display:table-cell;padding-left:5px;">
                                         <b>
-                                        {{ session['username'] }}
+                                        {{ session['username'][:13] }}
                                     </b>
                                     </div>
                                 </span>
                                 {% endif %}
                                 {% if not session['is_company'] %}
-                                <li><a href="/user_portfolio/{{ session['user_id'] }}"><span class="visible-xs">{{ session['username'] }}님 환영합니다</span>
+                                <li><a href="/user_portfolio/{{ session['user_id'] }}">
+                                    {% if session['user_profile_image_path'] %}
+                                    <div style="background:url({{ url_for('static',filename=session['user_profile_image_path'])|resize('50x50') }}); border:1px solid #dddddd;height:40px;width:40px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;transform:scale(0.5);-webkit-transform: scale(0.5);-ms-transform: scale(0.5);"></div>
+                                    {% else %}
+                                    <div style="background-color:#dddddd; border:1px solid #dddddd;height:40px;width:40px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;transform:scale(0.5);-webkit-transform: scale(0.5);-ms-transform: scale(0.5);"></div>
+                                    {% endif %}
+                                    <div style="padding-bottom:0px;display:table-cell;padding-left:5px;">
+                                        {{ session['username'][:13] }}
+                                    </div>
+<!--
+                                    <span class="visible-xs">{{ session['username'] }}님</span>
+                                    -->
                                     {% endif %}
                                 <li style="margin-top:3px;">
-                                <a href="{{ url_for('signout') }}">
+                                <a href="{{ url_for('signout') }}" style="padding-right:0px;">
 
                                     <i class="fa fa-sign-out 1x" style="color:#777777;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;display:table-cell;" > </i>
                                     <div style="display:table-cell;">
@@ -193,7 +211,7 @@
                                 </a>
                                 </li>
                                 <li class="visible-xs" style="margin-top:3px;">
-                                <a href="#" data-toggle="modal" data-target="#ModalSignup" style="padding-right:15px;"> 
+                                <a href="#" data-toggle="modal" data-target="#ModalSignup" style="padding-right:13px;"> 
 
                                     <i class="fa fa-user-plus 1x" style="color:#777777;transform:scale(1.4);-webkit-transform: scale(1.4);-ms-transform: scale(1.4);padding-right:5px;display:table-cell;" > </i>
                                         <div style="display:table-cell;">
@@ -259,7 +277,7 @@
 }
 .panel-body ul li:hover {
     background:#eeeeee;
-    color:#949c12;
+    color:#84bd5e;
 }
 .panel-body ul li a{
     color: #6a6a6a;
@@ -269,7 +287,7 @@
     left: 20px;
 }
 .panel-title {
-    color: #949c12;
+    color: #84bd5e;
 }
 #dropdown-menu-1 ul li {
     padding-bottom: 0px;
@@ -285,8 +303,11 @@
                         <div class="navbar-collapse collapse" id="navbar-collapse" style="overflow-x:hidden;">
                             <hr class="visible-xs" style="margin:0px 15px 0px -15px;width:2580px;"/>
                 <ul class="nav navbar-nav" >
-                    <li class="dropdown megamenu-20width"><a id="nav-dropdown-toggle-1" class="dropdown-toggle nav-dropdown-toggle" href="/photos/" style="padding-top:9px;padding-bottom:11px;border-top:2px solid #ffffff;"> 
-                        <i class="fa fa-camera fa-1x" style="color:#777777;transform:scale(1.1);-webkit-transform: scale(1.1);-ms-transform: scale(1.1);padding-right:5px;display:table-cell;" > </i>
+                    <li class="dropdown megamenu-20width"><a id="nav-dropdown-toggle-1" class="dropdown-toggle nav-dropdown-toggle" href="/photos/" style="padding-top:9px;padding-bottom:11px;border-top:2px solid #ffffff;color:#777777;"> 
+                        <i class="fa fa-camera fa-1x" style=";transform:scale(1.1);-webkit-transform: scale(1.1);-ms-transform: scale(1.1);padding-right:5px;display:table-cell;" > </i>
+                        <!--
+                        <img src="{{url_for('static',filename='icon/gallery.png')}}" style="display:table-cell;;">
+                        -->
                         <div style="display:table-cell;padding-left:4px;padding-right:4px;">
                             갤러리 <b class="caret"> </b> </div></a>
                     <ul class="dropdown-menu" id="dropdown-menu-1" style="min-width:283px;border-top:0px;padding-top:0px;padding-bottom:0px;">
@@ -320,7 +341,7 @@
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" href="#" class="collapseWill">
-                                        타입
+                                        스타일
                                         <span class="pull-right"><i class="fa fa-caret-right"></i></span>
                                     </a>
                                 </h4>
@@ -329,7 +350,7 @@
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" href="#" class="collapseWill">
-                                        스타일
+                                        타입
                                         <span class="pull-right"><i class="fa fa-caret-right"></i></span>
                                     </a>
                                 </h4>
@@ -338,13 +359,19 @@
                         </div>
                     </ul>
                     </li>
-                    <li class="dropdown megamenu-20width"><a  id="nav-dropdown-toggle-2" class="dropdown-toggle nav-dropdown-toggle" href="/find_pros/" style="padding-top:9px;padding-bottom:11px;border-top:2px solid #ffffff;"> 
-                        <i class="fa fa-users fa-1x" style="color:#777777;transform:scale(1.1);-webkit-transform: scale(1.1);-ms-transform: scale(1.1);padding-right:5px;display:table-cell;" > </i>
+                    <li class="dropdown megamenu-20width"><a  id="nav-dropdown-toggle-2" class="dropdown-toggle nav-dropdown-toggle" href="/find_pros/" style="padding-top:9px;padding-bottom:11px;border-top:2px solid #ffffff;color:#777777;"> 
+                        <i class="fa fa-users fa-1x" style=";transform:scale(1.1);-webkit-transform: scale(1.1);-ms-transform: scale(1.1);padding-right:5px;display:table-cell;" > </i>
                         <div style="display:table-cell;padding-left:4px;padding-right:4px;">
                             전문가<b class="caret"> </b> </div></a>
                     <ul class="dropdown-menu" id="dropdown-menu-2" style="min-width:283px;border-top:0px;padding-top:0px;padding-bottom:0px;">
                         <li class="megamenu-content " style="padding-top:0px;padding-bottom:0px;">
                         <div class="panel panel-default" style="margin-bottom:0px;">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a href="/find_pros/4"> 홈스타일링</a>
+                                </h4>
+                            </div>
+<hr style="margin:0px;padding:0px;">
                             <div class="panel-heading" >
                                 <h4 class="panel-title">
                                     <a href="/find_pros/1"> 주거 인테리어 회사</a>
@@ -359,20 +386,20 @@
 <hr style="margin:0px;padding:0px;">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a href="/find_pros/4"> 인테리어 디자이너</a>
+                                    <a href="/find_pros/6"> 인테리어 디자이너</a>
                                 </h4>
                             </div>
 <hr style="margin:0px;padding:0px;">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a href="/find_pros/3"> 가구 회사</a>
+                                    <a href="/find_pros/3"> 가구(제작 가구)</a>
                                 </h4>
                             </div>
                         </div>
                     </ul>
                     </li>
-                    <li class="dropdown megamenu-20width"><a  id="nav-dropdown-toggle-3" class="dropdown-toggle nav-dropdown-toggle" href="/shop/" style="padding-top:9px;padding-bottom:11px;border-top:2px solid #ffffff;">
-                        <i class="fa fa-tag fa-1x" style="color:#777777;transform:scale(1.1);-webkit-transform: scale(1.1);-ms-transform: scale(1.1);padding-right:5px;display:table-cell;" > </i>
+                    <li class="dropdown megamenu-20width"><a  id="nav-dropdown-toggle-3" class="dropdown-toggle nav-dropdown-toggle" href="/shop/" style="padding-top:9px;padding-bottom:11px;border-top:2px solid #ffffff;color:#777777;">
+                        <i class="fa fa-tag fa-1x" style=";transform:scale(1.1);-webkit-transform: scale(1.1);-ms-transform: scale(1.1);padding-right:5px;display:table-cell;" > </i>
                         <div style="display:table-cell;padding-left:4px;padding-right:4px;">
                             스토어<b class="caret"> </b> </div></a>
                     <ul class="dropdown-menu" id="dropdown-menu-3" style="min-width:283px;border-top:0px;padding-top:0px;padding-bottom:0px;">
@@ -425,7 +452,7 @@
                     </ul>
                     
                     </li>
-                    <li class="dropdown megamenu-20width"><a  id="nav-dropdown-toggle-4" class="dropdown-toggle nav-dropdown-toggle" href="/find_pros/" style="padding-top:9px;padding-bottom:11px;border-top:2px solid #ffffff;"> 
+                    <li class="dropdown megamenu-20width"><a  id="nav-dropdown-toggle-4" class="dropdown-toggle nav-dropdown-toggle" href="/magazine" style="padding-top:9px;padding-bottom:11px;border-top:2px solid #ffffff;"> 
                         <div style="display:table-cell;padding-left:4px;padding-right:4px;">
                             매거진</div></a>
                     </li>
@@ -449,41 +476,47 @@
 
 </div>
 <script>
+$('#search-bar').keydown(function(e) {
+    if (e.which === 13) {
+        var val = $(this).val();
+        window.location.href='/search?q='+val;
+    }
+});
 $('#nav-dropdown-toggle-1').hover(function() {
-        $(this).css('border-top','2px solid #959d16');
+        $(this).css('border-top','2px solid #84bd5e');
         }, function() {
         var $cur = $(this);
         $cur.css('border-top','2px solid #ffffff'); 
         $('#dropdown-menu-1').hover(function() {
-            $cur.css('border-top','2px solid #959d16');
+            $cur.css('border-top','2px solid #84bd5e');
             },function() {
             $cur.css('border-top','2px solid #ffffff'); 
             });
         });
 $('#nav-dropdown-toggle-2').hover(function() {
-        $(this).css('border-top','2px solid #959d16');
+        $(this).css('border-top','2px solid #84bd5e');
         }, function() {
         var $cur = $(this);
         $cur.css('border-top','2px solid #ffffff'); 
         $('#dropdown-menu-2').hover(function() {
-            $cur.css('border-top','2px solid #959d16');
+            $cur.css('border-top','2px solid #84bd5e');
             },function() {
             $cur.css('border-top','2px solid #ffffff'); 
             });
         });
 $('#nav-dropdown-toggle-3').hover(function() {
-        $(this).css('border-top','2px solid #959d16');
+        $(this).css('border-top','2px solid #84bd5e');
         }, function() {
         var $cur = $(this);
         $cur.css('border-top','2px solid #ffffff'); 
         $('#dropdown-menu-3').hover(function() {
-            $cur.css('border-top','2px solid #959d16');
+            $cur.css('border-top','2px solid #84bd5e');
             },function() {
             $cur.css('border-top','2px solid #ffffff'); 
             });
         });
 $('#nav-dropdown-toggle-4').hover(function() {
-        $(this).css('border-top','2px solid #959d16');
+        $(this).css('border-top','2px solid #84bd5e');
         }, function() {
         $(this).css('border-top','2px solid #ffffff'); 
         });

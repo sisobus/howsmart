@@ -2,46 +2,47 @@
 <div class="modal signUpContent fade" id="ModalLogin" tabindex="-1" role="dialog">
     <div class="modal-dialog ">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="border-top-left-radius:7px;border-top-right-radius:7px;">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
-                <h3 class="modal-title-site text-center"> 로그인 </h3>
+                <h4 class="modal-title-site text-center" style="font-size:22px;color:#333333;font-weight:bold;"> 로그인 </h4>
             </div>
             <div class="modal-body">
-                <a href="#" class="btn btn-block btn-primary btn-lg" style="background-color:#3b5998;">
-                    페이스북으로 로그인</a></p>
+                <a href="#" class="btn btn-block btn-primary btn-lg" style="background-color:#4a6bb2;">
+                    페이스북으로 로그인</a>
                 <h5 style="padding:10px 0 10px 0;" class="text-center"> 또는 </h5>
+                <hr style="margin-top:0px;">
                 <!-- user loginForm -->
                 <form action="{{ url_for('signin') }}" method=post>
                     {{ signinForm.hidden_tag() }}
                 <div class="form-group login-username">
+                    <h5 style="padding-bottom:5px;">이메일 주소</h5>
                     <div>
                         {% for message in signinForm.email.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ signinForm.email(placeholder="이메일 주소") }}
+                        {{ signinForm.email(placeholder="") }}
                     </div>
                 </div>
                 <div class="form-group login-password">
+                    <h5 style="padding-bottom:5px;">비밀번호<span class="pull-right"><a href="{{url_for('find_password')}}" style="color:#84bd5e;">< 비밀번호 찾기</a></span></h5>
                     <div>
                         {% for message in signinForm.password.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ signinForm.password(placeholder="비밀번호") }}
+                        {{ signinForm.password(placeholder="") }}
                     </div>
                 </div>
                 <div>
                     <div>
-                        <input name="submit" class="btn  btn-block btn-lg btn-primary" value="로그인" type="submit">
+                        <input name="submit" class="btn  btn-block btn-lg btn-primary" style="background:#84bd5e;" value="로그인" type="submit">
                     </div>
                 </div>
                     </form>
                 <!--userForm-->
 
             </div>
-            <div class="modal-footer">
-                <p class="text-center"> 하우스마트 계정이 없으세요? <a data-toggle="modal" data-dismiss="modal"
-                                                            href="#ModalSignup"> 회원가입 </a> <br>
-                    <a href="forgot-password.html"> 비밀번호 찾기 </a></p>
+            <div class="modal-footer" style="background:#ffffff;">
+                <p class="text-center" style="margin-top:5px;"> 하우스마트 계정이 없으세요? <a data-toggle="modal" data-dismiss="modal" href="#ModalSignup" style="color:#84bd5e;"> 회원가입 </a> <br>
             </div>
         </div>
         <!-- /.modal-content -->

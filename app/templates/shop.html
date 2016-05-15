@@ -69,12 +69,12 @@ card_header {
             <div class="shop-contents-list-container" style="padding-left:15px;padding-right:20px;">
                 <div class="shop-contents-list-container-items">
                     <ul class="breadcrumb" style="border:0px;margin:0px;padding:0px;padding-top:16px;padding-bottom:16px;padding-left:5px;">
-                        <li><a href="/shop" style="color:#949c12;">스토어</a></li>
+                        <li><a href="/shop" style="color:#84bd5e;">스토어</a></li>
                         {% if ret.shop_category_id == 0 %}
-                        <li><a href="/shop/#" style="color:#949c12;">{{ ret.shop_category_name }}</a></li>
+                        <li><a href="/shop/#" style="color:#84bd5e;">{{ ret.shop_category_name }}</a></li>
                         {% endif %}
                         {% if ret.shop_category_id != 0 %}
-                        <li><a href="/shop/{{ ret.shop_category_id }}" style="color:#949c12;">{{ ret.shop_category_name }}</a></li>
+                        <li><a href="/shop/{{ ret.shop_category_id }}" style="color:#84bd5e;">{{ ret.shop_category_name }}</a></li>
                         {% endif %}
                     </ul>
                     <hr style="margin:0px;padding:0px;margin-left:5px;">
@@ -99,10 +99,11 @@ card_header {
                                 <div class="card_container">
                                     <div class="card_header" >
                                         <a href="/product_detail/{{ product.product.id }}">
-                                            <div class="bg" style="background: url({{ '/static/'+product.image_path }});
+                                            <div class="bg" style="background: url({{ ('/static/'+product.image_path)|resize('400x400') }});
                                                 background-repeat: no-repeat;
                                                 background-size: cover;
                                                 background-position: center;
+                                                cursor:pointer;
                                                 " id="image-{{product.product.id}}">
                                                 <div style="position: absolute;left:23%;top:250px;display:none;" id="button-container-{{product.product.id}}">
                                                     <a href="#">
@@ -114,10 +115,13 @@ card_header {
                                                 </div>
 <script>
 $('#image-{{product.product.id}}').hover(function() {
-    $('#button-container-{{ product.product.id}}').fadeIn('slow');
+    $('#button-container-{{ product.product.id}}').fadeIn('fast');
     }, function() {
-    $('#button-container-{{product.product.id}}').fadeOut('slow');
+    $('#button-container-{{product.product.id}}').fadeOut('fast');
 });
+$('#image-{{product.product.id}}').click(function(e) {
+        location.href="/product_detail/{{product.product.id}}";
+    });
 $('#save-button-{{product.product.id}}').bind('click',function(e) {
         // Prevents the default action to be triggered. 
     e.preventDefault();
@@ -147,6 +151,7 @@ $('#save-button-{{product.product.id}}').bind('click',function(e) {
         });
         $('#popup').bPopup().close();
     });
+    e.stopPropagation();
 });
 </script>
                                             </div>
@@ -158,8 +163,8 @@ $('#save-button-{{product.product.id}}').bind('click',function(e) {
                                                 <h4 style="padding-bottom:5px;">{{ product.product.product_name }} by {{ product.user.username }}</h4>
                                             </a>
                                         </div>
-                                            <h5 style="color:#a5ac4c;font-weight:bold;padding-bottom:5px;"><strike style="color:#dddddd;">{{ product.product_real_price }}원</strike> {{ product.product_real_sale_price }}원 </h5>
-                                            <h4 style="margin:0;padding:0;font-size:14px;color:#a5ac4c;">
+                                            <h5 style="color:#84bd5e;font-weight:bold;padding-bottom:5px;"><strike style="color:#dddddd;">{{ product.product_real_price }}원</strike> {{ product.product_real_sale_price }}원 </h5>
+                                            <h4 style="margin:0;padding:0;font-size:14px;color:#84bd5e;">
                                                 <span style="display:table-cell;">
                                                     <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i>&nbsp;
                                                     제품에 대한 리뷰 136>
@@ -181,5 +186,10 @@ $('#save-button-{{product.product.id}}').bind('click',function(e) {
     </div>
 </div>
 <script type="text/javascript">
+$(document).ready(function() {
+        $('#nav-dropdown-toggle-3').css('color','#84bd5e');
+        $('#nav-dropdown-toggle-3').hover(function() {
+            });
+        });
 </script>
 {% endblock %}

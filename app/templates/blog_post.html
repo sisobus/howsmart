@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+{% include "modal_save_post.html" %}
 <link href="{{ url_for('static',filename='css/summernote.css') }}" rel="stylesheet">
 <script src="{{ url_for('static',filename='js/summernote.min.js') }}"></script>
 <script src="{{ url_for('static',filename='js/summernote-ko-KR.js') }}"></script>
@@ -16,7 +17,7 @@
 <a id="kakao-link-btn" href="javascript:;" >
       <img src="{{ url_for('static',filename='images/kakao-share.png') }}" style="height:21px;">
     </a>
-    <a id="save-button" href="javascript:;" >
+    <a id="save-button-{{post.post.id}}" href="javascript:;" >
         <button class="btn btn-primary" style="height:21px;vertical-align:middle;padding:0px 5px 0px 5px;font-size:13px;">스토리 저장</button>
     </a>
     <a id="comment-button" href="#comment-container" >
@@ -141,6 +142,35 @@ $(document).ready(function() {
             scrollTarget: '#comment-container'
         });
     });
+    $('#save-button-{{post.post.id}}').bind('click',function(e) {
+        // Prevents the default action to be triggered. 
+    e.preventDefault();
+    // Triggering bPopup when click event is fired
+    $('#popup').bPopup({
+        contentContainer:'.content',
+    });
+    $('#image-preview').attr('src',"{{ url_for('static',filename=post.image_path) }}");
+    $('#save-button').click(function() {
+        var data = {
+            "post_id": "{{ post.post.id }}",
+            "comment": $('#comment-box').val(),
+            "user_id": "{{ session['user_id'] }}"
+        };
+        $.ajax({
+            url: '/save_post',
+            data: data,
+            type: 'POST',
+            success: function(response) {
+                var jsonData = JSON.parse(response);
+                console.log(jsonData);
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+        $('#popup').bPopup().close();
+    });
+}); 
 });
 </script>
 {% endblock %}
