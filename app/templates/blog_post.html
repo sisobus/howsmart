@@ -7,7 +7,7 @@
 <!-- Go to www.addthis.com/dashboard to customize your tools -->
 <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-56ad8661d48c9c55" async="async"></script>
 
-<div class="container nav-margin" style="background:#ffffff;border:1px solid #dddddd;border-top:0px;">
+<div class="container nav-margin" style="background:#ffffff;border:1px solid #dddddd;border-top:0px;padding-left:30px;padding-right:30px;">
     <br>
     <h3>{{ post.post.post_name }}</h3>
     <h5>{{ post.post.post_summary}}</h5>
@@ -88,7 +88,7 @@ form input#body:focus {
 }
 </style>
 {% if session.logged_in %}
-        <div class="container" style="background:#ffffff;border:1px solid #dddddd;border-top:0px;" id="comment-container">
+        <div class="container" style="padding-left:30px;padding-right:30px;background:#ffffff;border:1px solid #dddddd;border-top:0px;" id="comment-container">
         <form action="{{ url_for('blog_post',post_id=post.post.id) }}" method="post">
             {{ commentForm.hidden_tag() }}
             <div class="form-group login-username">
@@ -104,7 +104,7 @@ form input#body:focus {
     </div>
         {% endif %}
     {% if post.all_comments | length != 0 %}
-        <div class="container" style="background:#ffffff;border:1px solid #dddddd;border-top:0px;margin-bottom:25px;" id="comment-container">
+        <div class="container" style="padding-left:30px;padding-right:30px;background:#ffffff;border:1px solid #dddddd;border-top:0px;margin-bottom:25px;" id="comment-container">
             {% for comment in post.all_comments %}
             <div class="main-comment-item">
                 <div class="main-comment-profile">

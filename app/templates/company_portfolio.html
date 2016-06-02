@@ -118,9 +118,9 @@ card_header {
                 <div class="col-lg-6 col-md-6 col-sm-6" style="padding:0;margin:0;vertical-align:middle;border-right:1px solid #dddddd;height:100%;">
                     <center>
                     <h5 style="{% if ret.is_user_follow %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}vertical-align:middle;padding-bottom:0px;padding-top:7px;" id="follow-button-number">{{ ret.number_of_follow }}</h5>
-                    <a onclick="followPost({{ret.user.id}});">
-                    <h5 style="{% if ret.is_user_follow %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}vertical-align:middle;padding-bottom:0px;" id="follow-button">{% if ret.is_user_follow %}팔로워{% else %}팔로우{% endif %}</h5>
-                </a>
+                    <a href="/company_portfolio/{{ret.user.id}}/follower">
+                        <h5 style="{% if ret.is_user_follow %}color:#3B5998;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}vertical-align:middle;padding-bottom:0px;" id="follow-button">{% if ret.is_user_follow %}팔로워{% else %}팔로워{% endif %}</h5>
+                    </a>
                 </center>
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-6" style="padding:0;margin:0;vertical-align:middle;height:100%;">
@@ -130,6 +130,17 @@ card_header {
                     </center>
                 </div>
             </div>
+            {% if ('logged_in' in session) and (session['user_id'] != ret.user.id) %}
+            <a onclick="followPost({{ret.user.id}});" style="padding-top:30px;width:100%;">
+                <button class="btn btn-warning" style="margin-top:10px;width:100%;" id="follow-text">
+                    {% if ret.is_user_follow %}
+                    팔로우 해제
+                    {% else %}
+                    팔로우 하기
+                    {% endif %}
+                </button>
+            </a>
+            {% endif %}
         </div>
         <div class="col-lg-10 col-md-10 col-sm-12" style="padding-left:0px;">
                 <div class="col-lg-8 col-md-8 col-sm-12">
@@ -161,7 +172,7 @@ card_header {
                                 <img src="{{url_for('static',filename='icon/company_name.png')}}" style="height:12px;margin-top:4px;">
                                 </center>
                             </td>
-                            <td>
+                            <td style="width:70px;">
                                 회사이름
                             </td>
                             <td>
@@ -394,12 +405,14 @@ console.log(jsonData);
                 $('#follow-button').css('color','#777777');
                 $('#follow-button').css('font-weight','400');
                 $('#follow-button-number').text(jsonData['number_of_to_user_follow']);
+                $('#follow-text').html('팔로우 하기');
             } else {
                 $('#follow-button-number').css('color','#3B5998');
                 $('#follow-button-number').css('font-weight','600');
                 $('#follow-button').css('color','#3B5998');
                 $('#follow-button').css('font-weight','600');
                 $('#follow-button-number').text(jsonData['number_of_to_user_follow']);
+                $('#follow-text').html('팔로우 해제');
             }
         },
         error: function(error) {

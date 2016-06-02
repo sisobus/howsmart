@@ -16,6 +16,7 @@
         <!-- PAGE CONTENT BEGINS -->
         <div class="row">
             <div class="col-xs-12">
+                {{ pagination.info }}
                 <table id="simple-table" class="table  table-bordered table-hover">
                     <thead>
                         <tr>
@@ -88,12 +89,16 @@
 
                     </tbody>
                 </table>
+                <center>
+                    {{ pagination.links }}
+                </center>
             </div><!-- /.span -->
         </div><!-- /.row -->
     </div>
 </div>
 <script type="text/javascript">
             jQuery(function($) {
+                    $('.pagination ul').addClass('pagination');
                 /***************/
                 $('.show-details-btn').on('click', function(e) {
                     e.preventDefault();

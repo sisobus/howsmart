@@ -133,6 +133,7 @@ card_header {
 
 </style>
 
+{% include "modal_delete_confirm.html" %}
 <div class="visible-xs">
     {% include "project_detail_mobile.html" %}
 </div>
@@ -196,7 +197,15 @@ card_header {
         </div>
         <div class="col-lg-10 col-md-10 col-sm-12" style="padding-right:10px;padding-left:0px;">
             <h5 style="padding-bottom:30px; font-size:23px;font-weight:bold;color:#323232;padding-left:10px;padding-right:10px;">
-{{ ret.project.project_name }}{% if session and 'user_id' in session and session['user_id'] == ret.user.id %}<div class="pull-right"><button class="btn btn-primary" id='edit-button'>수정하기</button><button class="btn btn-danger">삭제하기</button></div>{% endif %}
+                {{ ret.project.project_name }}
+                {% if ('logged_in' in session) and (session['user_id'] == ret.user.id or session['level'] == 99) %}
+                <div class="pull-right">
+                    <button class="btn btn-primary" id='edit-button'>
+                        수정하기
+                    </button>
+                    <button data-toggle="modal" name="delete-button" data-target="#modal-delete" class="btn btn-danger">삭제하기 </button>
+                </div>
+                {% endif %}
             </h5>
         <h5 style="padding-bottom:0px;padding-left:10px;padding-right:10px;" id="project-body">
             {{ ret.project.project_body }}
@@ -235,6 +244,23 @@ openFeed = function(feed_id) {
     $('#edit-button').click(function() {
         window.location.href = '/project_detail_edit/{{ ret.project.id }}';
     });
+    $('#delete-confirm').click(function() {
+        var data = {
+            "project_id": "{{ ret.project.id }}"
+        };
+        $.ajax({
+            url: '/delete_project',
+            data: data,
+            type: 'POST',
+            success: function(response) {
+            console.log(response);
+            window.location.href="{{url_for('company_portfolio',user_id=ret.user.id)}}";
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    }); 
 </script>
 </div>
 {% endblock %}

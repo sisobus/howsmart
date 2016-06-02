@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-<link rel="stylesheet" href="{{  url_for('static',filename='css/bootstrap-rating.css') }}" />
-<script src="{{ url_for('static',filename='js/bootstrap-rating.min.js') }}"></script>
 <style type="text/css">
     * {
   -webkit-box-sizing: border-box;
@@ -139,70 +137,24 @@ textarea#comment {
         <div class="col-lg-10 col-md-10 col-sm-12" style="padding-right:10px;padding-left:0px;">
             <div style="width:600px;padding-left:10px;padding-right:20px;">
                 <h5 style="padding-bottom:20px; font-size:23px;font-weight:bold;color:#323232;">
-                    {{ret.total_count}}개의 리뷰
+                    팔로워
                 </h5>
-                {% if session['logged_in'] %}
-                <div class="no-margin no-padding" style="width:100%;height:220px;">
-                    <div style="padding:10px 10px 10px 10px;">
-                        <form action="/save_review?company_id={{ret.company.id}}&user_id={{session['user_id']}}" method="post">
-                        <!-- form url add -->
-                        <input type="hidden" name="review-rating" id="review-rating" class="rating" data-filled="fa fa-star fa-2x symbol-filled" data-empty="fa fa-star-o fa-2x symbol-empty" value="0"/>
-                        <span style="font-size: 20px;padding-left:10px;color:black;">
-                        평점을 매겨주세요
-                        </span>
-                        <script>
-    $('#review-rating').rating();
-    $('#review-rating').on('change', function () {
-            //alert('Rating: ' + $(this).val());
-            });
-                        </script>
-                        <br><br>
-                        {{ reviewCommentForm.hidden_tag() }}
-                        {% for message in reviewCommentForm.comment.errors %}
-                        <div class="flash">{{ message }}</div>
-                        {% endfor %}
-                        {{ reviewCommentForm.comment(placeholder="리뷰 입력...",autofocus=true) }}
-                    <input type="submit" class="btn btn-primary pull-right" style="width:100px;" value="입력">
-                </form>
-                    </div>
-                </div>
-                <br>
-                <br>
-                <hr class="no-margin no-padding" >
-                {% endif %}
-                {% for review in ret.cur_reviews %}
+                {% for follower in ret.followers %}
                 <div class="no-margin no-padding" style="width:100%;">
                     <div class="no-margin" style="padding-top:30px;">
-                        {% if review.user_profile_image_path %}
-                        <div style="background:url({{url_for('static',filename=review.user_profile_image_path)}}); border:1px solid #dddddd;height:50px;width:50px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;"></div>
+                        {% if follower.from_user_profile_image_path %}
+                        <div style="background:url({{url_for('static',filename=follower.from_user_profile_image_path)}}); border:1px solid #dddddd;height:50px;width:50px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;"></div>
                         {% else %}
                         <div style="background-color:#dddddd; border:1px solid #dddddd;height:50px;width:50px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;"></div>
                         {% endif %}
                         <div style="display:table-cell;vertical-align:middle;padding-left:10px;">
                             <h5 style="vertical-align:top; padding-bottom:0px;font-size:21px;line-height:23px;">
-                                {{ review.user.username }}
+                                {{ follower.from_user.username }}
                             </h5>
-                            <h4 style="margin:0;padding:0;font-size:14px;color:#84bd5e;">
-                                <span style="display:table-cell;">
-                                    {% for i in range(review.review.star) %}
-                                    <i class="fa fa-star"></i>
-                                    {% endfor %}
-                                    {% for i in range(5-review.review.star) %}
-                                    <i class="fa fa-star-o"></i>
-                                    {% endfor %}
-                                </span>
-                            </h4>
                         </div>
                     </div>
-                    <p class="no-margin" style="padding-top:10px;font-size:13px;color:#777777;padding-bottom:20px;">
-                    {{ review.review.comment }}
-                    </p>
                 </div>
-                <hr class="no-margin no-padding" >
                 {% endfor %}
-                <center>
-                    {{ ret.pagination.links }}
-                </center>
             </div>
         </div>
     </div>

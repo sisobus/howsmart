@@ -19,11 +19,15 @@
     <link rel="stylesheet" href="{{  url_for('static',filename='css/twitter_card.css') }}" />
     <link rel="stylesheet" href="{{  url_for('static',filename='css/style-add-20151122.css') }}" />
     <link rel="stylesheet" href="{{  url_for('static',filename='css/jquery-ui.min.css') }}" />
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <!--
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    -->
     <script src="{{ url_for('static',filename='js/jquery-ui.min.js') }}"></script>
     <script src="{{ url_for('static',filename='js/jquery.smooth-scroll.js') }}"></script>
     <script src="{{  url_for('static',filename='js/dropzone.js') }}"></script>
     <script src="{{  url_for('static',filename='js/parse-1.3.5.min.js') }}"></script>
+    <script type="text/javascript" src="https://service.iamport.kr/js/iamport.payment-1.1.1.js"></script>
     <link rel="stylesheet" href="{{  url_for('static',filename='css/dropzone.css') }}" />
     <script>
         paceOptions = {
@@ -114,6 +118,23 @@ body::-webkit-scrollbar { display: none;  }
         $("#image-container").css("width",image_container_width);
     }
     $(document).ready(function() {
+        $('#delete-confirm').click(function() {
+            var data = {
+                "product_id": "{{ret.product.id}}"
+            };
+            $.ajax({
+            url: '/delete_product',
+            data: data,
+            type: 'POST',
+            success: function(response) {
+                console.log(response);
+                window.location.href="{{url_for('shop')}}";
+            },
+            error: function(error) {
+                console.log(error);
+            }
+            });
+        });
         image_container_width_resize();
         $('#image-container').hover(function() {
             $('#image-button-container').fadeIn('fast');
@@ -163,14 +184,18 @@ body::-webkit-scrollbar { display: none;  }
     });
 </script>
 </head>
+{% include "modal_delete_confirm.html" %}
 <body oncontextmenu="return false;" style="padding-right:0px;padding-left:0px;margin-top:0px;">
 {% include "modal_save_product.html" %}
     <div id="image-container" class="hidden-xs">
         <div id="image-real-container">
             <img id="uploadImagePreview" src="{{ url_for('static',filename=ret.image_paths[0]) }}" class="img-responsive "/>
+            <div id="image-button-container" style="position:absolute;left:50%;margin-left:-80px;bottom:10px;">
+            <!--
             <div id="image-button-container" style="position:absolute;left:40%;bottom:10px;display:none;">
+            -->
                 <a href="#">
-                    <button class="btn " id="save-button-first" style="background: #949c12;color:white;"><i class="fa fa-plus"></i> 저장</button>
+                    <button class="btn " id="save-button-first" style="background: #84bd5e;color:white;"><i class="fa fa-plus"></i> 저장</button>
                 </a>
                 <a href="#">
                     <button class="btn " id="share-button" style="background: #383431;color:white;"><i class="fa fa-share-alt"></i> 공유</button>
@@ -195,16 +220,24 @@ body::-webkit-scrollbar { display: none;  }
                     <a  href="/"> <img src="{{ url_for('static',filename='img/logo_2016_04_28.png') }}" style="height:40px;margin-left:5px;margin-top:2px;"> </a>
                 </div>
                 <div id="close-button" class="no-padding" style="margin-left:375px;width:45px;height:100%;background:#666666;vertical-align:middle;text-align:center;">
-                    <a href="{{ session['previous_url'] }}">
+                    <a href="javascript:window.history.back()">
                     <i class="fa fa-times fa-3x" style="font-size:2.5em;color:white;margin-top:3px;"></i>
                 </a>
                 </div>
             </div>
             <div style="margin-left:20px;margin-right:20px;">
                 <div id="title-container" class="no-padding no-margin" style="height:250px;">
-                    <p class="no-margin" style="font-size:13px;color:#949c12;padding-top:20px;padding-bottom:20px;">
+                    <p class="no-margin" style="font-size:13px;color:#84bd5e;padding-top:20px;padding-bottom:20px;">
                     <a href="/shop/{{ ret.shop_category_id }}">스토어 &nbsp; | &nbsp; {{ ret.shop_category_name }} &nbsp; | &nbsp; 바로가기 ></a>
                     </p>
+                        {% if ('logged_in' in session) and (session['user_id'] == ret.user.id or session['level'] == 99 ) %}
+                        <div class="pull-right">
+                            <button class='btn btn-primary' id='edit-button'>
+                                <a "#"  style="display:block;color:#FFFFFF;">수정하기</a>
+                            </button> 
+                            <button data-toggle="modal" name="delete-button" data-target="#modal-delete" class="btn btn-danger">삭제하기 </button>
+                        </div>
+                        {% endif %}
                     <p class="no-margin" style="font-size:14px;color:#000000;">
                     <strong>
                         {{ ret.product.product_name }}
@@ -212,7 +245,7 @@ body::-webkit-scrollbar { display: none;  }
                     </p>
                     <p class="no-margin" style="font-size:14px;color:#777777;">
                     <span style="display:table-cell;">
-                        <i class="fa fa-star" style="color:#949c12;"></i><i class="fa fa-star" style="color:#949c12;"></i><i class="fa fa-star" style="color:#949c12;"></i><i class="fa fa-star" style="color:#949c12;"></i><i class="fa fa-star-o" style="color:#949c12;"></i>&nbsp;
+                        <i class="fa fa-star" style="color:#84bd5e;"></i><i class="fa fa-star" style="color:#84bd5e;"></i><i class="fa fa-star" style="color:#84bd5e;"></i><i class="fa fa-star" style="color:#84bd5e;"></i><i class="fa fa-star-o" style="color:#84bd5e;"></i>&nbsp;
                         제품에 대한 리뷰 136 >
                     </span>
                     </p>
@@ -252,7 +285,7 @@ body::-webkit-scrollbar { display: none;  }
                 </div>
                 <hr class="no-paddig " style="margin:0px -20px 0px -20px;"/>
                 <div id="button-container" class="no-margin " style="height:100px;padding-top:20px;">
-                    <button class="btn btn-primary" style="height:60px;width:185px;font-size:18px;font-weight:bold;"><i class="fa fa-tag"></i> 구매하기</button>
+                    <button id="buy-button" class="btn btn-primary" style="height:60px;width:185px;font-size:18px;font-weight:bold;"><i class="fa fa-tag"></i> 구매하기</button>
                     <button class="btn btn-primary" style="position:absolute;height:60px;width:185px;right:20px;font-size:18px;font-weight:bold;background:#e6e6e6;color:#bfbfbf;"><i class="fa fa-shopping-cart"></i> 장바구니</button>
                 </div>
                 <hr class="no-paddig " style="margin:0px -20px 0px -20px;"/>
@@ -361,7 +394,7 @@ body::-webkit-scrollbar { display: none;  }
 <script src="{{  url_for('static',filename='js/home.js') }}"></script>
 <!-- include custom script for site  -->
 <script src="{{  url_for('static',filename='js/script.js') }}"></script>
-<script>
+<script type="text/javascript">
   window.fbAsyncInit = function() {
     FB.init({
       appId      : '231482033876622',
@@ -377,6 +410,12 @@ body::-webkit-scrollbar { display: none;  }
      js.src = "//connect.facebook.net/en_US/sdk.js";
      fjs.parentNode.insertBefore(js, fjs);
    }(document, 'script', 'facebook-jssdk'));
+
+        $('#buy-button').click(function() {
+                console.log('click');
+        });
+
+
 
 </script>
 </body>

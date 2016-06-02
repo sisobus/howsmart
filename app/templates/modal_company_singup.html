@@ -137,7 +137,7 @@
                         {% for meesage in companySignupForm.tel.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.tel(placeholder="전화 번호") }}
+                        {{ companySignupForm.tel(placeholder="전화 번호(XX-XXXX-XXXX 형식)") }}
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom:0px;">
@@ -172,7 +172,7 @@
 
                 <div>
                     <div>
-                        <input name="submit" class="btn  btn-block btn-lg btn-primary" value="기업회원으로 가입하기" type="submit" style="background-color:#193271;">
+                        <input name="submit" class="btn  btn-block btn-lg btn-primary" value="기업회원으로 가입하기" type="submit" style="background-color:#193271;" id="submit-button">
                     </div>
                 </div>
                 </form>
@@ -192,6 +192,54 @@
 
 </div>
 <script type="text/javascript">
+function tel_check(s) {
+    var re = /^\+?([0-9][0-9][0-9]?)\)?[-]([0-9][0-9][0-9][0-9]?)[-]([0-9]{4})$/;
+    if ( s.match(re) ) {
+        return true;
+    } else {
+        return false;
+    }
+}
+$(document).ready(function() {
+    $('#tel').change(function() {
+        var tel = $(this).val();
+        if ( tel_check(tel) ) {
+            $(this).css('border','1px solid #ccc');
+            $('#submit-button').prop('disabled',false);
+        } else {
+            $(this).val('');
+            $(this).css('border','2px solid red');
+            $('#submit-button').prop('disabled',true);
+        }
+    });
+    $('#submit-button').click(function(e) {
+        if ( $('#username').val() == '' ) {
+            alert('회사이름을 기입하지 않으셨습니다.');
+            e.preventDefault();
+        }
+        if ( $('#address').val() == '' ) {
+            alert('나머지 주소를 입력해주세요 ');
+            e.preventDefault();
+        }
+        if ( $('#tel').val() == '' ) {
+            alert('전화번호를 입력해주세요 ');
+            e.preventDefault();
+        }
+        if ( $('#website').val() == '' ) {
+            alert('웹사이트를 입력해주세요 ');
+            e.preventDefault();
+        }
+        if ( $('#uploadImageContainer').val() == '' ) {
+            alert('대표 이미지를 설정해주세요 ');
+            e.preventDefault();
+        }
+    });
+    if ( $('#username').val() == '' || $('#email').val() == '' ||
+        $('#password').val() == '' || $('#password_check').val() == '' ||
+        $('#introduction').val() == '' || $('#company_si').val() == '' ) {
+//            $('#submit-button').prop('disabled',true);
+            } 
+});
     window.state = {};
 function modalBindLocal1(obj) {
         var map = window.state.map;

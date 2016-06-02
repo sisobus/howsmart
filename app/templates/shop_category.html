@@ -26,13 +26,21 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h4 class="panel-title">
+            {% if ret.shop_category_id != 0 %}
+            <a data-toggle="collapse" href="#collapseCategory-space" class="collapseWill pressed">
+            {% else %}
             <a data-toggle="collapse" href="#collapseCategory-space" class="collapseWill">
+            {% endif %}
                 가구
                 <span class="pull-right"><i class="fa fa-caret-right"></i></span>
             </a>
         </h4>
     </div>
+    {% if ret.shop_category_id != 0 %}
+    <div id="collapseCategory-space" class="panel-collapse collapse ">
+    {% else %}
     <div id="collapseCategory-space" class="panel-collapse collapse in">
+    {% endif %}
         <div class="panel-body">
             <ul class="nav nav-pills nav-stacked tree">
                 {% for category in ret.category %}
@@ -48,24 +56,32 @@
     <hr style="margin:0px;padding:0px;">
     <div class="panel-heading">
         <h4 class="panel-title">
-            <a data-toggle="collapse" href="#collapseCategory-style" class="collapseWill">
+            {% if ret.style_category_id %}
+            <a data-toggle="collapse" href="#collapseCategory-style" class="collapseWill pressed">
+            {% else %}
+            <a data-toggle="collapse" href="#collapseCategory-style" class="collapseWill ">
+            {% endif %}
                 스타일
                 <span class="pull-right"><i class="fa fa-caret-right"></i></span>
             </a>
         </h4>
     </div>
+    {% if ret.style_category_id %}
+    <div id="collapseCategory-style" class="panel-collapse collapse">
+    {% else %}
     <div id="collapseCategory-style" class="panel-collapse collapse in">
+    {% endif %}
         <div class="panel-body">
             <ul class="nav nav-pills nav-stacked tree">
-                <li><a href="#"> 모던 </a></li>
-                <li><a href="#"> 북유럽</a></li>
-                <li><a href="#"> 빈티지</a></li>
-                <li><a href="#"> 내츄럴</a></li>
-                <li><a href="#"> 프로방스</a></li>
-                <li><a href="#"> 클래식+앤틱</a></li>
-                <li><a href="#"> 오리엔탈</a></li>
-                <li><a href="#"> 유니크</a></li>
-                <li><a href="#"> 기타</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=2'));"> 모던 </a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=3'));"> 북유럽</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=4'));"> 빈티지</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=5'));"> 내츄럴</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=6'));"> 프로방스</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=7'));"> 클래식+앤틱</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=8'));"> 오리엔탈</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=9'));"> 유니크</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=10'));"> 기타</a></li>
             </ul>
         </div>
     </div>
@@ -73,19 +89,29 @@
 
     <div class="panel-heading">
         <h4 class="panel-title">
+            {% if ret.price_id %}
+            <a data-toggle="collapse" href="#collapseCategory-price" class="collapseWill pressed">
+            {% else %}
             <a data-toggle="collapse" href="#collapseCategory-price" class="collapseWill">
+            {% endif %}
                 가격
                 <span class="pull-right"><i class="fa fa-caret-right"></i></span>
             </a>
         </h4>
     </div>
+    {% if ret.price_id %}
+    <div id="collapseCategory-price" class="panel-collapse collapse ">
+    {% else %}
     <div id="collapseCategory-price" class="panel-collapse collapse in">
+    {% endif %}
         <div class="panel-body">
             <ul class="nav nav-pills nav-stacked tree">
-                <input style="width:40px;"></input>
-                ~
-                <input style="width:40px;"></input>
-                <i class="fa fa-play-circle-o"></i>
+                <li><a onclick="redirect(addParameterToURL('price_id=1'));"> 5만원 미만 </a></li>
+                <li><a onclick="redirect(addParameterToURL('price_id=2'));"> 5만원 ~ 10만원</a></li>
+                <li><a onclick="redirect(addParameterToURL('price_id=3'));"> 10만원~ 20만원</a></li>
+                <li><a onclick="redirect(addParameterToURL('price_id=4'));"> 20만원~ 50만원</a></li>
+                <li><a onclick="redirect(addParameterToURL('price_id=5'));"> 50만원~ 100만원</a></li>
+                <li><a onclick="redirect(addParameterToURL('price_id=6'));"> 100만원 이상</a></li>
             </ul>
         </div>
     </div>

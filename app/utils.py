@@ -268,3 +268,14 @@ def get_address_list():
                 ret['dong'].append((dong['name'],dong['name']))
     return ret
 
+def get_area_name(area_id):
+    l = [u'10평대 미만',u'10평대',u'20평대',u'30평대',u'40평대',u'50평대 이상']
+    return l[int(area_id)-1];
+
+def get_price_name(price_id):
+    l = [u'5만원 미만',u'5만원 ~ 10만원',u'10만원 ~ 20만원',u'20만원 ~ 50만원',u'50만원 ~ 100만원',u'100만원 이상']
+    return l[int(price_id)-1];
+
+def get_price_range(price_id):
+    l = [(0,50000),(50000,100000),(100000,200000),(200000,500000),(500000,1000000),(1000000,50000000)]
+    return l[int(price_id)-1];

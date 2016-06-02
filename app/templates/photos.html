@@ -2,6 +2,13 @@
 {% block content %}
     <style type="text/css">
 
+.custom-tag-button {
+    border: 1px solid #dddddd;
+    border-radius: 1px;
+    background: white;
+    color: #aaaaaa;
+    padding:3px 7px 3px 7px;
+}
     #all_photos_container {
         background-color: #FFFFFF;
     }
@@ -110,107 +117,63 @@ card_header {
         padding-left: 0px;
     }
     </style>
+    <script type="text/javascript">
+function addParameterToURL(param){
+    _url = location.href;
+    if ( _url.split('?')[1] ) {
+        var prevParams = _url.split('?')[1].split('&');
+        if ( !prevParams ) prevParams = [_url.split('?')[1]];
+        _url = _url.split('?')[0];
+        var first = true;
+        var key = param.split('=')[0];
+        var change = false;
+        for ( var prevParam in prevParams ) {
+            prevParam = prevParams[prevParam];
+            curKey = prevParam.split('=')[0];
+            if ( curKey == key ) {
+                _url += ((first?'?':'&')+param);
+                change = true;
+            } else {
+                _url += ((first?'?':'&')+prevParam);
+            }
+            first = false;
+        }
+        if ( !change ) _url += '&'+param;
+    } else {
+        _url += '?'+param;
+    }
+    return _url;
+}
+function delParameterToURL(param) {
+    _url = location.href;
+    if ( _url.split('?')[1] ) {
+        var prevParams = _url.split('?')[1].split('&');
+        if ( !prevParams ) prevParams = [_url.split('?')[1]];
+        _url = _url.split('?')[0];
+        var first = true;
+        var key = param.split('=')[0];
+        var change = false;
+        for ( var prevParam in prevParams ) {
+            prevParam = prevParams[prevParam];
+            curKey = prevParam.split('=')[0];
+            if ( curKey == key ) {
+            } else {
+                _url += ((first?'?':'&')+prevParam);
+            first = false;
+            }
+        }
+    }
+    return _url;
+}
+function redirect(url) {
+    window.location.href=url;
+}
+    </script>
 
     <div class="row" style="padding-top:19px;">
         <div class="col-lg-3 col-md-3 col-sm-12" style="padding-right:0px;width:20%;">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#collapseCategory-space" class="collapseWill">
-                            공간
-                            <span class="pull-right"><i class="fa fa-caret-right"></i></span>
-                        </a>
-                    </h4>
-                </div>
-                <div id="collapseCategory-space" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                        <ul class="nav nav-pills nav-stacked tree">
-                            <li><a href="/photos/1"> 거실</a></li>
-                            <li><a href="/photos/2"> 주방</a></li>
-                            <li><a href="/photos/3"> 침실</a></li>
-                            <li><a href="/photos/4"> 서재</a></li>
-                            <li><a href="/photos/5"> 유아/주니어방</a></li>
-                            <li><a href="/photos/6"> 욕실</a></li>
-                            <li><a href="/photos/7"> 현관</a></li>
-                            <li><a href="/photos/8"> 기타</a></li>
-                            <li><a href="/photos/9"> 상업공간</a></li>
-                            <li><a href="/photos/10"> 사무공간</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <hr style="margin:0px;padding:0px;">
-
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#collapseCategory-style" class="collapseWill">
-                            스타일
-                            <span class="pull-right"><i class="fa fa-caret-right"></i></span>
-                        </a>
-                    </h4>
-                </div>
-                <div id="collapseCategory-style" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                        <ul class="nav nav-pills nav-stacked tree">
-                            <li><a href="#"> 모던 </a></li>
-                            <li><a href="#"> 북유럽</a></li>
-                            <li><a href="#"> 빈티지</a></li>
-                            <li><a href="#"> 내츄럴</a></li>
-                            <li><a href="#"> 프로방스</a></li>
-                            <li><a href="#"> 클래식+앤틱</a></li>
-                            <li><a href="#"> 오리엔탈</a></li>
-                            <li><a href="#"> 유니크</a></li>
-                            <li><a href="#"> 기타</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <hr style="margin:0px;padding:0px;">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#collapseCategory-type" class="collapseWill">
-                            타입 
-                            <span class="pull-right"><i class="fa fa-caret-right"></i></span>
-                        </a>
-                    </h4>
-                </div>
-                <div id="collapseCategory-type" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                        <ul class="nav nav-pills nav-stacked tree">
-                            <li><a href="#"> 원룸</a></li>
-                            <li><a href="#"> 투베이</a></li>
-                            <li><a href="#"> 오피스텔</a></li>
-                            <li><a href="#"> 아파트</a></li>
-                            <li><a href="#"> 빌라연립</a></li>
-                            <li><a href="#"> 단독주택</a></li>
-                            <li><a href="#"> 사무공간</a></li>
-                            <li><a href="#"> 상업공간</a></li>
-                            <li><a href="#"> 기타</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <hr style="margin:0px;padding:0px;">
-                                <div class="panel-heading">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#collapseCategory-area" class="collapseWill">
-                            면적
-                            <span class="pull-right"><i class="fa fa-caret-right"></i></span>
-                        </a>
-                    </h4>
-                </div>
-                <div id="collapseCategory-area" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                        <ul class="nav nav-pills nav-stacked tree">
-                            <li><a href="#"> 10평대 미만</a></li>
-                            <li><a href="#"> 10평대</a></li>
-                            <li><a href="#"> 20평대</a></li>
-                            <li><a href="#"> 30평대</a></li>
-                            <li><a href="#"> 40평대</a></li>
-                            <li><a href="#"> 50평대 이상</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            {% include "photos_category.html" %}
         </div>
-
         <div class="col-lg-9 col-md-9 col-sm-12" style="width:80%;">
             <div class="photos-contents-list-container" style="padding-left:20px;padding-right:20px;">
                 <div class="photos-contents-list-container-items">
@@ -222,16 +185,27 @@ card_header {
                         {% if not feed_category_id %}
                         <li><a href="/photos/" style="color:#84bd5e;">{{ feed_category_name }}</a></li>
                         {% endif %}
-<span class="pull-right" style="margin-top:-6px;">
+
+                        {% if style_category_id %}
+                        <li><a class="custom-tag-button" onclick="redirect(delParameterToURL('style_category_id'));">{{ style_category_name }} <i class="fa fa-times" aria-hidden="true"></i></a></li>
+                        {% endif %}
+                        {% if type_category_id %}
+                        <li><a class="custom-tag-button" onclick="redirect(delParameterToURL('type_category_id'));">{{ type_category_name }} <i class="fa fa-times" aria-hidden="true"></i></a></li>
+                        {% endif %}
+                        {% if area_id %}
+                        <li><a class="custom-tag-button"  onclick="redirect(delParameterToURL('area_id'));">{{ area_name }} <i class="fa fa-times" aria-hidden="true"></i></a></li>
+                        {% endif %}
+
+                        <span class="pull-right" style="margin-top:-6px;">
                             {% if feed_category_id %}
                             <div class="change-view " style="height:34px;">
-                                <a style="margin-left:0px;" href="/photos/{{ feed_category_id }}/grid" title="Grid" class=""> <i class="fa fa-th"></i> </a> 
+                                <a style="margin-left:0px;" href="/photos/{{ feed_category_id }}?is_grid=true" title="Grid" class=""> <i class="fa fa-th"></i> </a> 
                                 <a style="margin-left:0px;" href="/photos/{{ feed_category_id }}" title="List" class=""><i class="fa fa-th-list"></i></a>
                             </div>
                             {% endif %}
                             {% if not feed_category_id %}
                             <div class="change-view " style="height:34px;">
-                                <a style="margin-left:0px;" href="/photos/grid" title="Grid" class=""> <i class="fa fa-th"></i> </a> 
+                                <a style="margin-left:0px;" href="/photos?is_grid=true" title="Grid" class=""> <i class="fa fa-th"></i> </a> 
                                 <a style="margin-left:0px;"href="/photos" title="List" class=""><i class="fa fa-th-list"></i></a>
                             </div>
                             {% endif %}
@@ -239,12 +213,14 @@ card_header {
 
                     </ul>
                     <hr style="margin:0px;padding:0px;">
+                    <!--
                     <div >
                                                 <div class="pull-right" style="padding:10px;">
                             1-12페이지 총 {{ feed_category_name }}  {{ feed_count }}장 사진
                             <button class="btn " style="background:#ffffff;border:1px solid #dddddd;width:35px;"><i class="fa fa-angle-right"></i></button>
                         </div>
                     </div>
+                    -->
                     <hr style="margin:0px;padding:0px;margin-top:55px;">
 
 
@@ -323,7 +299,10 @@ openFeed = function(feed_id) {
                                             position:absolute;width: 440px; height:290px; 
                                             cursor:pointer;
                                             " id="image-{{feed.feed.id}}">
+                                            <div style="position:absolute;left:50%;margin-left:-70px;bottom:10px;display:none;" id="button-container-{{feed.feed.id}}">
+                                            <!--
                                             <div style="position: absolute;left:34%;bottom:10px;display:none;" id="button-container-{{feed.feed.id}}">
+                                            -->
                                                 <a href="#">
                                                     <button class="btn " id="save-button-{{feed.feed.id}}" style="background: black;color:white;"><i class="fa fa-plus"></i> 저장</button>
                                                 </a>
@@ -415,8 +394,8 @@ $('#save-button-{{feed.feed.id}}').bind('click',function(e) {
 $(document).ready(function() {
     $('#nav-dropdown-toggle-1').css('color','#84bd5e');
     $('#nav-dropdown-toggle-1').hover(function() {
-        });
     });
+});
 </script>
 
                                         </div>

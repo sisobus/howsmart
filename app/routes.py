@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 from flask import Flask, url_for
+from flask.ext.paginate import Pagination
 from flask_mail import Mail, Message
 from werkzeug import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict 
@@ -118,6 +119,7 @@ def get_user_profile_image_path(user):
 
     return user_profile_image_path 
 
+
 def get_feed_information(feeds):
     ret = []
     for feed in feeds:
@@ -152,6 +154,24 @@ def get_feed_information(feeds):
         ret.append(d)
     return ret
 
+def get_product_information(t_products):
+    products = []
+    for t_product in t_products:
+        product_has_image = Product_has_image.query.filter_by(product_id=t_product.id).first()
+        image_id = product_has_image.image_id
+        image = Image.query.filter_by(id=image_id).first()
+        image_path = utils.get_image_path(image.image_path)
+        user = User.query.filter_by(id=t_product.user_id).first()
+        d = {
+            'product': t_product,
+            'product_real_price': utils.convert_price_to_won(t_product.product_price),
+            'product_real_sale_price': utils.convert_price_to_won(t_product.product_sale_price),
+            'user': user,
+            'image_path': image_path
+        }
+        products.append(d)
+    return products
+
 def get_blog_post_information(posts):
     ret = []
     for post in posts:
@@ -175,6 +195,20 @@ def get_blog_post_information(posts):
         d['user'] = user
         d['post'] = post
         d['number_of_comment'] = len(blog_post_comments)
+        ret.append(d)
+    return ret
+
+def get_follower_information(followers):
+    ret = []
+    for follower in followers:
+        from_user = User.query.filter_by(id=follower.from_user_id).first()
+        to_user = User.query.filter_by(id=follower.to_user_id).first()
+        from_user_profile_image_path = get_user_profile_image_path(from_user)
+        d = {
+                'from_user': from_user,
+                'to_user': to_user,
+                'from_user_profile_image_path': from_user_profile_image_path 
+                }
         ret.append(d)
     return ret
 
@@ -1731,8 +1765,20 @@ def company_portfolio_qna(user_id):
     reviews = Review.query.filter_by(company_id=company.id).all()
     average_star = get_average_review_star(reviews)
 
-    qna_q = Qna_q.query.filter_by(company_id=company.id).order_by(Qna_q.created_at.desc()).all()
+    search = False
+    per_page = 10
+    q = request.args.get('q')
+    if q:
+        search = True
+    try:
+        page = int(request.args.get('page', 1))
+    except ValueError:
+        page = 1
+
+    total_count = Qna_q.query.filter_by(company_id=company.id).count()
+    qna_q = Qna_q.query.filter_by(company_id=company.id).order_by(Qna_q.created_at.desc()).limit(per_page).offset((page-1)*per_page)
     qna_q = get_qna_q_information(qna_q)
+    pagination = Pagination(page=page, total=total_count, search=search, record_name='qna_q', per_page=per_page)
     ret = {
         'user': user,
         'company': company,
@@ -1741,7 +1787,9 @@ def company_portfolio_qna(user_id):
         'has_furniture_category': has_furniture_category(company.id),
         'reviews': reviews,
         'average_star': average_star,
-        'qna_q': qna_q
+        'qna_q': qna_q,
+        'pagination': pagination,
+        'total_count': total_count
     }
 
     return render_template('company_portfolio_qna.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,qnaQForm=qnaQForm,qnaAForm=qnaAForm,ret=ret)
@@ -1778,8 +1826,21 @@ def company_portfolio_review(user_id):
         image = Image.query.filter_by(id=user_profile.image_id).first()
         user_profile_image_path = utils.get_image_path(image.image_path)
 
-    cur_reviews = Review.query.filter_by(company_id=company.id).order_by(Review.created_at.desc()).all()
+    search = False
+    per_page = 10
+    q = request.args.get('q')
+    if q: 
+        search = True
+    try:
+        page = int(request.args.get('page', 1))
+    except ValueError:
+        page = 1
+
+    total_count = Review.query.filter_by(company_id=company.id).count()
+    cur_reviews = Review.query.filter_by(company_id=company.id).order_by(Review.created_at.desc()).limit(per_page).offset((page-1)*per_page)
     cur_reviews = get_review_information(cur_reviews)
+    pagination = Pagination(page=page, total=total_count, search=search, record_name='review', per_page=per_page)
+
     
     reviews = Review.query.filter_by(company_id=company.id).all()
     average_star = get_average_review_star(reviews)
@@ -1791,11 +1852,49 @@ def company_portfolio_review(user_id):
         'cur_reviews': cur_reviews,
         'has_furniture_category': has_furniture_category(company.id),
         'reviews': reviews,
-        'average_star': average_star
+        'average_star': average_star,
+        'pagination': pagination,
+        'total_count': total_count
     }
 
     return render_template('company_portfolio_review.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,reviewCommentForm=reviewCommentForm,\
                            ret=ret)
+
+@app.route('/company_portfolio/<int:user_id>/follower')
+def company_portfolio_follower(user_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    user = User.query.filter_by(id=user_id).first()
+    company = Company.query.filter_by(user_id=user.id).first()
+    image   = Image.query.filter_by(id=company.image_id).first()
+    image_path = utils.get_image_path(image.image_path)
+
+    user_profile_image_path = ''
+    user_profile = User_profile.query.filter_by(user_id=user.id).order_by(User_profile.created_at.desc()).first()
+    if user_profile:
+        image = Image.query.filter_by(id=user_profile.image_id).first()
+        user_profile_image_path = utils.get_image_path(image.image_path)
+    
+    reviews = Review.query.filter_by(company_id=company.id).all()
+    average_star = get_average_review_star(reviews)
+
+    followers = Follow.query.filter_by(to_user_id=user.id).all()
+    followers = get_follower_information(followers)
+
+    ret = {
+        'user': user,
+        'company': company,
+        'image_path': image_path,
+        'user_profile_image_path': user_profile_image_path,
+        'has_furniture_category': has_furniture_category(company.id),
+        'reviews': reviews,
+        'average_star': average_star,
+        'followers': followers 
+    }
+
+    return render_template('company_portfolio_follower.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret=ret)
 
 
 @app.route('/project_detail/<int:project_id>')
@@ -2257,6 +2356,33 @@ def find_pros_detail(pros_category_id):
         return render_template('find_pros.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret_pros=ret_pros,pros_size=len(ret_pros),pros_category_name=pros_category_name,findProsForm=findProsForm,pros_category_id=pros_category_id)
 
 
+def get_feed(feed_id):
+    feed = Feed.query.filter_by(id=feed_id).first()
+    d = {}
+    image = Image.query.filter_by(id=feed.image_id).first()
+    image_path = utils.get_image_path(image.image_path)
+    user = User.query.filter_by(id=feed.user_id).first()
+    user_profile_image_path = get_user_profile_image_path(user)
+    all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
+    all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
+    is_user_like = False
+    if 'user_id' in session:
+        if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
+            is_user_like = True
+    d['number_of_like'] = len(all_likes)
+    d['is_user_like'] = is_user_like
+
+    d['image_path'] = image_path
+    d['user'] = user
+    d['feed'] = feed
+    d['number_of_comment'] = len(all_comments)
+    d['user_profile_image_path'] = user_profile_image_path 
+
+    project_has_feed = Project_has_feed.query.filter_by(feed_id=feed_id).first()
+    project_hash_tags = Project_hash_tag.query.filter_by(project_id=project_has_feed.project_id).all()
+    d['project_hash_tags'] = project_hash_tags
+    return d
+
 @app.route('/photos/',methods=['GET','POST'])
 def photos():
     feed_category_id = 0
@@ -2266,77 +2392,81 @@ def photos():
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
 
+    style_category_id = None
+    style_category_name = None
+    if request.args.get('style_category_id'):
+        style_category_id = request.args.get('style_category_id')
+        style_category_name = Style_category.query.filter_by(id=style_category_id).first()
+        style_category_name = style_category_name.style_name
+    type_category_id = None
+    type_category_name = None
+    if request.args.get('type_category_id'):
+        type_category_id = request.args.get('type_category_id')
+        type_category_name = Project_type_category.query.filter_by(id=type_category_id).first()
+        type_category_name = type_category_name.type_name
+    area_id = None
+    area_name = None
+    if request.args.get('area_id'):
+        area_id = request.args.get('area_id')
+        area_name = utils.get_area_name(area_id)
+
     feed_count = Feed.query.count()
     if request.method == 'GET':
         offset = 15
+        if style_category_id and type_category_id and area_id:
+            projects = Project.query\
+                    .filter_by(style_category_id=style_category_id)\
+                    .filter_by(project_type_category_id=type_category_id)\
+                    .filter_by(project_area=area_id)\
+                    .order_by(Project.created_at.desc())
+        elif style_category_id and type_category_id :
+            projects = Project.query\
+                    .filter_by(style_category_id=style_category_id)\
+                    .filter_by(project_type_category_id=type_category_id)\
+                    .order_by(Project.created_at.desc())
+        elif type_category_id and area_id:
+            projects = Project.query\
+                    .filter_by(project_type_category_id=type_category_id)\
+                    .filter_by(project_area=area_id)\
+                    .order_by(Project.created_at.desc())
+        elif style_category_id and area_id:
+            projects = Project.query\
+                    .filter_by(style_category_id=style_category_id)\
+                    .filter_by(project_area=area_id)\
+                    .order_by(Project.created_at.desc())
+        elif style_category_id:
+            projects = Project.query\
+                    .filter_by(style_category_id=style_category_id)\
+                    .order_by(Project.created_at.desc())
+        elif type_category_id:
+            projects = Project.query\
+                    .filter_by(project_type_category_id=type_category_id)\
+                    .order_by(Project.created_at.desc())
+        elif area_id:
+            projects = Project.query\
+                    .filter_by(project_area=area_id)\
+                    .order_by(Project.created_at.desc())
+        else :
+            projects = Project.query.order_by(Project.created_at.desc())
+
         projects = Project.query.order_by(Project.created_at.desc())
         ret_feeds = []
         for project in projects:
             project_has_feed = Project_has_feed.query.filter_by(project_id=project.id).first()
-            feed = Feed.query.filter_by(id=project_has_feed.feed_id).first()
-            d = {}
-            image = Image.query.filter_by(id=feed.image_id).first()
-            image_path = utils.get_image_path(image.image_path)
-            user = User.query.filter_by(id=feed.user_id).first()
-            user_profile_image_path = get_user_profile_image_path(user)
-            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
-            is_user_like = False
-            if 'user_id' in session:
-                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
-                    is_user_like = True
-            d['number_of_like'] = len(all_likes)
-            d['is_user_like'] = is_user_like
-
-            d['image_path'] = image_path
-            d['user'] = user
-            d['feed'] = feed
-            d['number_of_comment'] = len(all_comments)
-            d['user_profile_image_path'] = user_profile_image_path 
-
-            project_hash_tags = Project_hash_tag.query.filter_by(project_id=project.id).all()
-            d['project_hash_tags'] = project_hash_tags
+            d = get_feed(project_has_feed.feed_id)
 
             ret_feeds.append(d)
+        template_code = 'photos.html'
+        if request.args.get('is_grid'):
+            template_code = 'photos_grid.html'
 
-        #feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
-        #ret_feeds = []
-        #for feed in feeds:
-        #    d = {}
-        #    image = Image.query.filter_by(id=feed.image_id).first()
-        #    image_path = utils.get_image_path(image.image_path)
-        #    user = User.query.filter_by(id=feed.user_id).first()
-        #    all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-        #    d['image_path'] = image_path
-        #    d['user'] = user
-        #    d['feed'] = feed
-        #    d['number_of_comment'] = len(all_comments)
-        #    ret_feeds.append(d)
-
-        return render_template('photos.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name, feed_count=feed_count)
+        return render_template(template_code, signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id, feed_category_name=feed_category_name, feed_count=feed_count, style_category_id=style_category_id, style_category_name=style_category_name, type_category_id=type_category_id, type_category_name=type_category_name, area_id=area_id, area_name=area_name)
     elif request.method == 'POST':
         offset = int(request.form['offset'])
         feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
         ret_feeds = []
         for feed in feeds:
-            d = {}
-            image = Image.query.filter_by(id=feed.image_id).first()
-            image_path = utils.get_image_path(image.image_path)
-            user = User.query.filter_by(id=feed.user_id).first()
-            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-
-
-            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
-            is_user_like = False
-            if 'user_id' in session:
-                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
-                    is_user_like = True
-            d['number_of_like'] = len(all_likes)
-            d['is_user_like'] = is_user_like
-            d['image_path'] = image_path
-            d['user'] = user
-            d['feed'] = feed
-            d['number_of_comment'] = len(all_comments)
+            d = get_feed(feed.id)
             ret_feeds.append(d)
 
         html_code = render_template('photos.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name,feed_count=feed_count)
@@ -2349,13 +2479,64 @@ def photos_detail(feed_category_id):
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
 
+    style_category_id = None
+    style_category_name = None
+    if request.args.get('style_category_id'):
+        style_category_id = request.args.get('style_category_id')
+        style_category_name = Style_category.query.filter_by(id=style_category_id).first()
+        style_category_name = style_category_name.style_name
+    type_category_id = None
+    type_category_name = None
+    if request.args.get('type_category_id'):
+        type_category_id = request.args.get('type_category_id')
+        type_category_name = Project_type_category.query.filter_by(id=type_category_id).first()
+        type_category_name = type_category_name.type_name
+    area_id = None
+    area_name = None
+    if request.args.get('area_id'):
+        area_id = request.args.get('area_id')
+        area_name = utils.get_area_name(area_id)
 
     feed_category = Feed_category.query.filter_by(id=feed_category_id).first()
     feed_category_name = feed_category.category_name
     feed_count = Feed.query.filter_by(feed_category_id=feed_category_id).count()
     if request.method == 'GET':
         offset = 15
-        projects = Project.query.order_by(Project.created_at.desc())
+        if style_category_id and type_category_id and area_id:
+            projects = Project.query\
+                    .filter_by(style_category_id=style_category_id)\
+                    .filter_by(project_type_category_id=type_category_id)\
+                    .filter_by(project_area=area_id)\
+                    .order_by(Project.created_at.desc())
+        elif style_category_id and type_category_id :
+            projects = Project.query\
+                    .filter_by(style_category_id=style_category_id)\
+                    .filter_by(project_type_category_id=type_category_id)\
+                    .order_by(Project.created_at.desc())
+        elif type_category_id and area_id:
+            projects = Project.query\
+                    .filter_by(project_type_category_id=type_category_id)\
+                    .filter_by(project_area=area_id)\
+                    .order_by(Project.created_at.desc())
+        elif style_category_id and area_id:
+            projects = Project.query\
+                    .filter_by(style_category_id=style_category_id)\
+                    .filter_by(project_area=area_id)\
+                    .order_by(Project.created_at.desc())
+        elif style_category_id:
+            projects = Project.query\
+                    .filter_by(style_category_id=style_category_id)\
+                    .order_by(Project.created_at.desc())
+        elif type_category_id:
+            projects = Project.query\
+                    .filter_by(project_type_category_id=type_category_id)\
+                    .order_by(Project.created_at.desc())
+        elif area_id:
+            projects = Project.query\
+                    .filter_by(project_area=area_id)\
+                    .order_by(Project.created_at.desc())
+        else :
+            projects = Project.query.order_by(Project.created_at.desc())
         ret_feeds = []
         for project in projects:
             project_has_feeds = Project_has_feed.query.filter_by(project_id=project.id).all()
@@ -2367,73 +2548,27 @@ def photos_detail(feed_category_id):
                     break
             if feed == None:
                 continue
-#            feed = Feed.query.filter_by(id=project_has_feed.feed_id).first()
-            d = {}
-            image = Image.query.filter_by(id=feed.image_id).first()
-            image_path = utils.get_image_path(image.image_path)
-            user = User.query.filter_by(id=feed.user_id).first()
-            user_profile_image_path = get_user_profile_image_path(user)
-            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-
-
-            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
-            is_user_like = False
-            if 'user_id' in session:
-                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
-                    is_user_like = True
-            d['number_of_like'] = len(all_likes)
-            d['is_user_like'] = is_user_like
-            d['image_path'] = image_path
-            d['user'] = user
-            d['feed'] = feed
-            d['number_of_comment'] = len(all_comments)
-            d['user_profile_image_path'] = user_profile_image_path 
+            d = get_feed(feed.id)
             ret_feeds.append(d)
+        template_code = 'photos.html'
+        if request.args.get('is_grid'):
+            template_code = 'photos_grid.html'
 
-
-        #offset = 10
-        #feeds = Feed.query.filter_by(feed_category_id=feed_category_id).order_by(Feed.created_at.desc()).limit(offset).all()
-        #ret_feeds = []
-        #for feed in feeds:
-        #    d = {}
-        #    image = Image.query.filter_by(id=feed.image_id).first()
-        #    image_path = utils.get_image_path(image.image_path)
-        #    user = User.query.filter_by(id=feed.user_id).first()
-        #    all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-        #    d['image_path'] = image_path
-        #    d['user'] = user
-        #    d['feed'] = feed
-        #    d['number_of_comment'] = len(all_comments)
-        #    ret_feeds.append(d)
-
-        return render_template('photos.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id, feed_category_name=feed_category_name, feed_count=feed_count)
+        return render_template(template_code, signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id, feed_category_name=feed_category_name, feed_count=feed_count, style_category_id=style_category_id, style_category_name=style_category_name, type_category_id=type_category_id, type_category_name=type_category_name, area_id=area_id, area_name=area_name)
 
     elif request.method == 'POST':
         offset = int(request.form['offset'])
         feeds = Feed.query.filter_by(feed_category_id=feed_category_id).order_by(Feed.created_at.desc()).limit(offset).all()
         ret_feeds = []
         for feed in feeds:
-            d = {}
-            image = Image.query.filter_by(id=feed.image_id).first()
-            image_path = utils.get_image_path(image.image_path)
-            user = User.query.filter_by(id=feed.user_id).first()
-            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-
-
-            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
-            is_user_like = False
-            if 'user_id' in session:
-                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
-                    is_user_like = True
-            d['number_of_like'] = len(all_likes)
-            d['is_user_like'] = is_user_like
-            d['image_path'] = image_path
-            d['user'] = user
-            d['feed'] = feed
-            d['number_of_comment'] = len(all_comments)
+            d = get_feed(feed.id)
             ret_feeds.append(d)
-
-        html_code = render_template('photos.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name,feed_count=feed_count)
+        
+        template_code = 'photos.html'
+        if request.args.get('is_grid'):
+            template_code = 'photos_grid.html'
+            
+        html_code = render_template(template_code, signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name,feed_count=feed_count)
         return html_code
 
 @app.route('/photos/grid/',methods=['GET','POST'])
@@ -2452,40 +2587,8 @@ def photos_grid():
         ret_feeds = []
         for project in projects:
             project_has_feed = Project_has_feed.query.filter_by(project_id=project.id).first()
-            feed = Feed.query.filter_by(id=project_has_feed.feed_id).first()
-            d = {}
-            image = Image.query.filter_by(id=feed.image_id).first()
-            image_path = utils.get_image_path(image.image_path)
-            user = User.query.filter_by(id=feed.user_id).first()
-            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-
-
-            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
-            is_user_like = False
-            if 'user_id' in session:
-                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
-                    is_user_like = True
-            d['number_of_like'] = len(all_likes)
-            d['is_user_like'] = is_user_like
-            d['image_path'] = image_path
-            d['user'] = user
-            d['feed'] = feed
-            d['number_of_comment'] = len(all_comments)
+            d = get_feed(project_has_feed.feed_id)
             ret_feeds.append(d)
-
-        #feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
-        #ret_feeds = []
-        #for feed in feeds:
-        #    d = {}
-        #    image = Image.query.filter_by(id=feed.image_id).first()
-        #    image_path = utils.get_image_path(image.image_path)
-        #    user = User.query.filter_by(id=feed.user_id).first()
-        #    all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-        #    d['image_path'] = image_path
-        #    d['user'] = user
-        #    d['feed'] = feed
-        #    d['number_of_comment'] = len(all_comments)
-        #    ret_feeds.append(d)
 
         return render_template('photos_grid.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name, feed_count=feed_count)
     elif request.method == 'POST':
@@ -2493,24 +2596,7 @@ def photos_grid():
         feeds = Feed.query.order_by(Feed.created_at.desc()).limit(offset).all()
         ret_feeds = []
         for feed in feeds:
-            d = {}
-            image = Image.query.filter_by(id=feed.image_id).first()
-            image_path = utils.get_image_path(image.image_path)
-            user = User.query.filter_by(id=feed.user_id).first()
-            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-
-
-            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
-            is_user_like = False
-            if 'user_id' in session:
-                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
-                    is_user_like = True
-            d['number_of_like'] = len(all_likes)
-            d['is_user_like'] = is_user_like
-            d['image_path'] = image_path
-            d['user'] = user
-            d['feed'] = feed
-            d['number_of_comment'] = len(all_comments)
+            d = get_feed(feed.id)
             ret_feeds.append(d)
 
         html_code = render_template('photos_grid.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name,feed_count=feed_count)
@@ -2541,42 +2627,8 @@ def photos_detail_grid(feed_category_id):
                     break
             if feed == None:
                 continue
-#            feed = Feed.query.filter_by(id=project_has_feed.feed_id).first()
-            d = {}
-            image = Image.query.filter_by(id=feed.image_id).first()
-            image_path = utils.get_image_path(image.image_path)
-            user = User.query.filter_by(id=feed.user_id).first()
-            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-
-
-            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
-            is_user_like = False
-            if 'user_id' in session:
-                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
-                    is_user_like = True
-            d['number_of_like'] = len(all_likes)
-            d['is_user_like'] = is_user_like
-            d['image_path'] = image_path
-            d['user'] = user
-            d['feed'] = feed
-            d['number_of_comment'] = len(all_comments)
+            d = get_feed(feed.id)
             ret_feeds.append(d)
-
-
-        #offset = 10
-        #feeds = Feed.query.filter_by(feed_category_id=feed_category_id).order_by(Feed.created_at.desc()).limit(offset).all()
-        #ret_feeds = []
-        #for feed in feeds:
-        #    d = {}
-        #    image = Image.query.filter_by(id=feed.image_id).first()
-        #    image_path = utils.get_image_path(image.image_path)
-        #    user = User.query.filter_by(id=feed.user_id).first()
-        #    all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-        #    d['image_path'] = image_path
-        #    d['user'] = user
-        #    d['feed'] = feed
-        #    d['number_of_comment'] = len(all_comments)
-        #    ret_feeds.append(d)
 
         return render_template('photos_grid.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id, feed_category_name=feed_category_name, feed_count=feed_count)
 
@@ -2585,24 +2637,7 @@ def photos_detail_grid(feed_category_id):
         feeds = Feed.query.filter_by(feed_category_id=feed_category_id).order_by(Feed.created_at.desc()).limit(offset).all()
         ret_feeds = []
         for feed in feeds:
-            d = {}
-            image = Image.query.filter_by(id=feed.image_id).first()
-            image_path = utils.get_image_path(image.image_path)
-            user = User.query.filter_by(id=feed.user_id).first()
-            all_comments = Comment.query.filter_by(feed_id=feed.id).order_by(Comment.created_at.desc()).all()
-
-
-            all_likes = User_like_feed.query.filter_by(feed_id=feed.id).all()
-            is_user_like = False
-            if 'user_id' in session:
-                if User_like_feed.query.filter_by(user_id=session['user_id']).filter_by(feed_id=feed.id).first():
-                    is_user_like = True
-            d['number_of_like'] = len(all_likes)
-            d['is_user_like'] = is_user_like
-            d['image_path'] = image_path
-            d['user'] = user
-            d['feed'] = feed
-            d['number_of_comment'] = len(all_comments)
+            d = get_feed(feed.id)
             ret_feeds.append(d)
 
         html_code = render_template('photos_grid.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm ,feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name,feed_count=feed_count)
@@ -2616,31 +2651,55 @@ def shop():
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
 
-    cur_category_product_count = Product.query.count()
-    t_products = Product.query.order_by(Product.created_at.desc()).all()
-    products = []
-    for t_product in t_products:
-        product_has_image = Product_has_image.query.filter_by(product_id=t_product.id).first()
-        image_id = product_has_image.image_id
-        image = Image.query.filter_by(id=image_id).first()
-        image_path = utils.get_image_path(image.image_path)
-        user = User.query.filter_by(id=t_product.user_id).first()
-        d = {
-            'product': t_product,
-            'product_real_price': utils.convert_price_to_won(t_product.product_price),
-            'product_real_sale_price': utils.convert_price_to_won(t_product.product_sale_price),
-            'user': user,
-            'image_path': image_path
-        }
-        products.append(d)
+    style_category_id = None
+    style_category_name = None
+    if request.args.get('style_category_id'):
+        style_category_id = request.args.get('style_category_id')
+        style_category_name = Style_category.query.filter_by(id=style_category_id).first()
+        style_category_name = style_category_name.style_name
 
+    price_id = None
+    price_name = None
+    if request.args.get('price_id'):
+        price_id = request.args.get('price_id')
+        price_name = utils.get_price_name(price_id)
+    
+
+    products = []
+    if style_category_id and price_id :
+        t_products = Product.query\
+                .filter_by(style_category_id=style_category_id)\
+                .filter(and_(Product.product_price >= utils.get_price_range(price_id)[0],\
+                             Product.product_price < utils.get_price_range(price_id)[1]))\
+                .order_by(Product.created_at.desc()).all()
+        products = get_product_information(t_products)
+    elif style_category_id:
+        t_products = Product.query\
+                .filter_by(style_category_id=style_category_id)\
+                .order_by(Product.created_at.desc()).all()
+        products = get_product_information(t_products)
+    elif price_id:
+        t_products = Product.query\
+                .filter(and_(Product.product_price >= utils.get_price_range(price_id)[0],\
+                             Product.product_price < utils.get_price_range(price_id)[1]))\
+                .order_by(Product.created_at.desc()).all()
+        products = get_product_information(t_products)
+    else :
+        t_products = Product.query.order_by(Product.created_at.desc()).all()
+        products = get_product_information(t_products)
+
+    cur_category_product_count = len(products)
     ret_category = utils.get_all_category()
     ret = {
         'cur_category_product_count': cur_category_product_count,
         'shop_category_id': 0,
         'shop_category_name': '전체',
         'category': ret_category,
-        'products': products
+        'products': products,
+        'style_category_id': style_category_id,
+        'style_category_name': style_category_name,
+        'price_id': price_id,
+        'price_name': price_name
     }
 
     return render_template('shop.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm,ret=ret)
@@ -2652,6 +2711,20 @@ def shop_detail(shop_category_id):
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
 
+    style_category_id = None
+    style_category_name = None
+    if request.args.get('style_category_id'):
+        style_category_id = request.args.get('style_category_id')
+        style_category_name = Style_category.query.filter_by(id=style_category_id).first()
+        style_category_name = style_category_name.style_name
+
+    price_id = None
+    price_name = None
+    if request.args.get('price_id'):
+        price_id = request.args.get('price_id')
+        price_name = utils.get_price_name(price_id)
+
+
     products = []
     cur_category_product_count = 0
     shop_category_1st_list = utils.get_shop_category_1st_list()
@@ -2662,47 +2735,69 @@ def shop_detail(shop_category_id):
                 break
         shop_category_2nd_list = utils.get_shop_category_tree()[idx]
         for cur_shop_category_id in shop_category_2nd_list:
-            cur_category_product_count += Product.query.filter_by(shop_category_id=cur_shop_category_id).count()
-            t_products = Product.query.filter_by(shop_category_id=cur_shop_category_id).order_by(Product.created_at.desc()).all()
-            for t_product in t_products:
-                product_has_image = Product_has_image.query.filter_by(product_id=t_product.id).first()
-                image_id = product_has_image.image_id
-                image = Image.query.filter_by(id=image_id).first()
-                image_path = utils.get_image_path(image.image_path)
-                user = User.query.filter_by(id=t_product.user_id).first()
-                d = {
-                    'product': t_product,
-                    'product_real_price': utils.convert_price_to_won(t_product.product_price),
-                    'product_real_sale_price': utils.convert_price_to_won(t_product.product_sale_price),
-                    'user': user,
-                    'image_path': image_path
-                }
-                products.append(d)
-    else:
-        cur_category_product_count = Product.query.filter_by(shop_category_id=shop_category_id).count()
-        t_products = Product.query.filter_by(shop_category_id=shop_category_id).order_by(Product.created_at.desc()).all()
-        for t_product in t_products:
-            product_has_image = Product_has_image.query.filter_by(product_id=t_product.id).first()
-            image_id = product_has_image.image_id
-            image = Image.query.filter_by(id=image_id).first()
-            image_path = utils.get_image_path(image.image_path)
-            user = User.query.filter_by(id=t_product.user_id).first()
-            d = {
-                'product': t_product,
-                'product_real_price': utils.convert_price_to_won(t_product.product_price),
-                'product_real_sale_price': utils.convert_price_to_won(t_product.product_sale_price),
-                'user': user,
-                'image_path': image_path
-            }
-            products.append(d)
 
+            if style_category_id and price_id :
+                t_products = Product.query\
+                        .filter_by(shop_category_id=cur_shop_category_id)\
+                        .filter_by(style_category_id=style_category_id)\
+                        .filter(and_(Product.product_price >= utils.get_price_range(price_id)[0],\
+                                     Product.product_price < utils.get_price_range(price_id)[1]))\
+                        .order_by(Product.created_at.desc()).all()
+                products = products + get_product_information(t_products)
+            elif style_category_id:
+                t_products = Product.query\
+                        .filter_by(shop_category_id=cur_shop_category_id)\
+                        .filter_by(style_category_id=style_category_id)\
+                        .order_by(Product.created_at.desc()).all()
+                products = products + get_product_information(t_products)
+            elif price_id:
+                t_products = Product.query\
+                        .filter_by(shop_category_id=cur_shop_category_id)\
+                        .filter(and_(Product.product_price >= utils.get_price_range(price_id)[0],\
+                                     Product.product_price < utils.get_price_range(price_id)[1]))\
+                        .order_by(Product.created_at.desc()).all()
+                products = products + get_product_information(t_products)
+            else :
+                t_products = Product.query.filter_by(shop_category_id=cur_shop_category_id).order_by(Product.created_at.desc()).all()
+                products = products + get_product_information(t_products)
+    else:
+        if style_category_id and price_id :
+            t_products = Product.query\
+                    .filter_by(shop_category_id=cur_shop_category_id)\
+                    .filter_by(style_category_id=style_category_id)\
+                    .filter(and_(Product.product_price >= utils.get_price_range(price_id)[0],\
+                                 Product.product_price < utils.get_price_range(price_id)[1]))\
+                    .order_by(Product.created_at.desc()).all()
+            products = products + get_product_information(t_products)
+        elif style_category_id:
+            t_products = Product.query\
+                    .filter_by(shop_category_id=cur_shop_category_id)\
+                    .filter_by(style_category_id=style_category_id)\
+                    .order_by(Product.created_at.desc()).all()
+            products = products + get_product_information(t_products)
+        elif price_id:
+            t_products = Product.query\
+                    .filter_by(shop_category_id=cur_shop_category_id)\
+                    .filter(and_(Product.product_price >= utils.get_price_range(price_id)[0],\
+                                 Product.product_price < utils.get_price_range(price_id)[1]))\
+                    .order_by(Product.created_at.desc()).all()
+            products = products + get_product_information(t_products)
+        else :
+            t_products = Product.query.filter_by(shop_category_id=cur_shop_category_id).order_by(Product.created_at.desc()).all()
+            products = products + get_product_information(t_products)
+
+    cur_category_product_count = len(products)
     ret_category = utils.get_all_category()
     ret = {
         'cur_category_product_count': cur_category_product_count,
         'shop_category_id': shop_category_id,
         'shop_category_name': utils.get_shop_category_dictionary()[shop_category_id],
         'category': ret_category,
-        'products': products
+        'products': products,
+        'style_category_id': style_category_id,
+        'style_category_name': style_category_name,
+        'price_id': price_id,
+        'price_name': price_name
     }
 
     return render_template('shop.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm,ret=ret )
@@ -3200,3 +3295,116 @@ def search():
         ret_feeds = sorted(ret_feeds, key=lambda k: k['feed'].created_at, reverse=True)
 
         return render_template('photos.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm, feeds=ret_feeds, offset=offset, feed_category_id=feed_category_id,feed_category_name=feed_category_name, feed_count=feed_count, q=q)
+
+@app.route('/test_buy',methods=['POST'])
+def test_buy():
+    print request.form
+    if request.method == 'POST':
+        print request.POST
+
+@app.route('/privacy_policy')
+def privacy_policy():
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    return render_template('privacy_policy.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm)
+
+@app.route('/delete_feed',methods=['POST'])
+def delete_feed():
+    feed_id = int(request.form['feed_id'])
+    feed = Feed.query.filter_by(id=feed_id).first()
+    project_has_feeds = Project_has_feed.query.filter_by(feed_id=feed.id).all()
+    project = None
+    if len(project_has_feeds) != 0 :
+        project = Project.query.filter_by(id=project_has_feeds[0].project_id).first()
+    for project_has_feed in project_has_feeds:
+        db.session.delete(project_has_feed)
+    if project:
+        project_has_feeds = Project_has_feed.query.filter_by(project_id=project.id).all()
+        if len(project_has_feeds) == 0:
+            project_hash_tags = Project_hash_tag.query.filter_by(project_id=project.id).all()
+            for project_hash_tag in project_hash_tags:
+                db.session.delete(project_hash_tag)
+            db.session.commit()
+            db.session.delete(project)
+            db.session.commit()
+    comments = Comment.query.filter_by(feed_id=feed.id).all()
+    for comment in comments:
+        db.session.delete(comment)
+    tags = Tag.query.filter_by(feed_id=feed.id).all()
+    for tag in tags:
+        db.session.delete(tag)
+    user_save_feeds = User_save_feed.query.filter_by(feed_id=feed.id).all()
+    for user_save_feed in user_save_feeds:
+        db.session.delete(user_save_feed)
+    user_like_feeds = User_like_feed.query.filter_by(feed_id=feed.id).all()
+    for user_like_feed in user_like_feeds:
+        db.session.delete(user_like_feed)
+    db.session.commit()
+    db.session.delete(feed)
+    db.session.commit()
+    d = {
+        'status': 'OK',
+            }
+    return json.dumps(d)
+
+@app.route('/delete_project',methods=['POST'])
+def delete_project():
+    project = Project.query.filter_by(id=int(request.form['project_id'])).first()
+    project_has_feeds = Project_has_feed.query.filter_by(project_id=project.id).all()
+    for project_has_feed in project_has_feeds:
+        feed = Feed.query.filter_by(id=project_has_feed.feed_id).first()
+        comments = Comment.query.filter_by(feed_id=feed.id).all()
+        for comment in comments:
+            db.session.delete(comment)
+        tags = Tag.query.filter_by(feed_id=feed.id).all()
+        for tag in tags:
+            db.session.delete(tag)
+        user_save_feeds = User_save_feed.query.filter_by(feed_id=feed.id).all()
+        for user_save_feed in user_save_feeds:
+            db.session.delete(user_save_feed)
+        user_like_feeds = User_like_feed.query.filter_by(feed_id=feed.id).all()
+        for user_like_feed in user_like_feeds:
+            db.session.delete(user_like_feed)
+        db.session.delete(project_has_feed)
+        db.session.commit()
+        db.session.delete(feed)
+        db.session.commit()
+    project_hash_tags = Project_hash_tag.query.filter_by(project_id=project.id).all()
+    for project_hash_tag in project_hash_tags:
+        db.session.delete(project_hash_tag)
+    db.session.commit()
+    db.session.delete(project)
+    db.session.commit()
+    d = {
+        'status': 'OK',
+            }
+    return json.dumps(d)
+
+@app.route('/delete_comment',methods=['POST'])
+def delete_comment():
+    comment = Comment.query.filter_by(id=int(request.form['comment_id'])).first()
+    db.session.delete(comment)
+    db.session.commit()
+    d = {
+        'status': 'OK',
+            }
+    return json.dumps(d)
+
+@app.route('/delete_product',methods=['POST'])
+def delete_product():
+    product = Product.query.filter_by(id=int(request.form['product_id'])).first()
+    product_has_images = Product_has_image.query.filter_by(product_id=product.id).all()
+    for product_has_image in product_has_images:
+        db.session.delete(product_has_image)
+    product_hash_tags = Product_hash_tag.query.filter_by(product_id=product.id).all()
+    for product_hash_tag in product_hash_tags:
+        db.session.delete(product_hash_tag)
+    db.session.commit()
+    db.session.delete(product)
+    db.session.commit()
+    d = {
+        'status': 'OK',
+            }
+    return json.dumps(d)

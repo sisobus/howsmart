@@ -46,6 +46,14 @@ try{ace.settings.loadState('sidebar')}catch(e){}
 
         <b class="arrow"></b>
         </li>
+        <li class="">
+        <a href="{{ url_for('project') }}">
+            <i class="menu-icon fa fa-camera"></i>
+            <span class="menu-text"> 프로젝트 </span>
+        </a>
+
+        <b class="arrow"></b>
+        </li>
 
 
         <li class="">
@@ -212,6 +220,20 @@ try{ace.settings.loadState('sidebar')}catch(e){}
         <a href="{{ url_for('comment') }}">
             <i class="menu-icon fa fa-list"></i>
             <span class="menu-text"> 댓글 </span>
+        </a>
+        </li>
+
+        <li class="">
+        <a href="{{ url_for('qna_q') }}">
+            <i class="menu-icon fa fa-list"></i>
+            <span class="menu-text"> 질문답변 질문 </span>
+        </a>
+        </li>
+
+        <li class="">
+        <a href="{{ url_for('qna_a') }}">
+            <i class="menu-icon fa fa-list"></i>
+            <span class="menu-text"> 질문답변 답변</span>
         </a>
         </li>
 

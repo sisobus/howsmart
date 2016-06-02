@@ -1,5 +1,5 @@
 <!-- Modal Signup start -->
-<div class="modal signUpContent fade" id="modal-delete" tabindex="-1" role="dialog">
+<div class="modal signUpContent fade" id="modal-delete-{{comment.comment.id}}" tabindex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -11,7 +11,7 @@
             </div>
             <div class="modal-footer">
                 <button data-dismiss="modal" class="btn btn-primary">취소</button>
-                <button class="btn btn-danger" id="delete-confirm">삭제</button>
+                <button class="btn btn-danger" id="delete-confirm-{{comment.comment.id}}">삭제</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -21,3 +21,22 @@
 
 </div>
 <!-- /.ModalSignup End -->
+<script>
+$('#delete-confirm-{{comment.comment.id}}').click(function() {
+    var data = {
+        "comment_id": "{{comment.comment.id}}"
+    };
+    $.ajax({
+        url: '/delete_comment',
+        data: data,
+        type: 'POST',
+        success: function(response) {
+        console.log(response);
+        window.location.href="{{url_for('company_feed_detail',feed_id=ret.feed.id)}}";
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+});
+</script>

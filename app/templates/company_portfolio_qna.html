@@ -128,7 +128,7 @@ textarea#body {
         <div class="col-lg-10 col-md-10 col-sm-12" style="padding-right:10px;padding-left:0px;">
             <div style="width:600px;padding-left:10px;padding-right:20px;">
                 <h5 style="padding-bottom:20px; font-size:23px;font-weight:bold;color:#323232;">
-                    {{ret.qna_q|length}}개의 질문/답변 
+                    {{ret.total_count}}개의 질문/답변 
                 </h5>
                 {% if session['logged_in'] %}
                 <div class="no-margin no-padding" style="width:100%;height:220px;">
@@ -195,8 +195,14 @@ textarea#body {
                 <hr class="no-margin no-padding" >
                 {% endfor %}
                 <br>
+                <center>
+                    {{ ret.pagination.links }}
+                </center>
             </div>
         </div>
     </div>
 </div>
+<script>
+$('.pagination ul').addClass('pagination');
+</script>
 {% endblock %}

@@ -7,6 +7,14 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box; }
 
+.custom-tag-button {
+    border: 1px solid #dddddd;
+    border-radius: 1px;
+    background: white;
+    color: #aaaaaa;
+    padding:3px 7px 3px 7px;
+}
+
 card_header {
   display: block;
   overflow: hidden;
@@ -59,6 +67,58 @@ card_header {
 }
 
     </style>
+<script>
+function addParameterToURL(param){
+    _url = location.href;
+    if ( _url.split('?')[1] ) {
+        var prevParams = _url.split('?')[1].split('&');
+        if ( !prevParams ) prevParams = [_url.split('?')[1]];
+        _url = _url.split('?')[0];
+        var first = true;
+        var key = param.split('=')[0];
+        var change = false;
+        for ( var prevParam in prevParams ) {
+            prevParam = prevParams[prevParam];
+            curKey = prevParam.split('=')[0];
+            if ( curKey == key ) {
+                _url += ((first?'?':'&')+param);
+                change = true;
+            } else {
+                _url += ((first?'?':'&')+prevParam);
+            }
+            first = false;
+        }
+        if ( !change ) _url += '&'+param;
+    } else {
+        _url += '?'+param;
+    }
+    return _url;
+}
+function delParameterToURL(param) {
+    _url = location.href;
+    if ( _url.split('?')[1] ) {
+        var prevParams = _url.split('?')[1].split('&');
+        if ( !prevParams ) prevParams = [_url.split('?')[1]];
+        _url = _url.split('?')[0];
+        var first = true;
+        var key = param.split('=')[0];
+        var change = false;
+        for ( var prevParam in prevParams ) {
+            prevParam = prevParams[prevParam];
+            curKey = prevParam.split('=')[0];
+            if ( curKey == key ) {
+            } else {
+                _url += ((first?'?':'&')+prevParam);
+            first = false;
+            }
+        }
+    }
+    return _url;
+}
+function redirect(url) {
+    window.location.href=url;
+}
+</script>
     {% include "shop_mobile.html" %}
 <div class="container main-container nav-margin hidden-xs">
     <div class="row" style="padding-top:19px;">
@@ -75,6 +135,12 @@ card_header {
                         {% endif %}
                         {% if ret.shop_category_id != 0 %}
                         <li><a href="/shop/{{ ret.shop_category_id }}" style="color:#84bd5e;">{{ ret.shop_category_name }}</a></li>
+                        {% endif %}
+                        {% if ret.style_category_id %}
+                        <li><a class="custom-tag-button" onclick="redirect(delParameterToURL('style_category_id'));">{{ ret.style_category_name }} <i class="fa fa-times" aria-hidden="true"></i></a></li>
+                        {% endif %}
+                        {% if ret.price_id %}
+                        <li><a class="custom-tag-button" onclick="redirect(delParameterToURL('price_id'));">{{ ret.price_name }} <i class="fa fa-times" aria-hidden="true"></i></a></li>
                         {% endif %}
                     </ul>
                     <hr style="margin:0px;padding:0px;margin-left:5px;">
@@ -94,6 +160,15 @@ card_header {
                     {% include "modal_save_product.html" %}
                     <div class="xsResponse clearfix" style="margin-bottom:40px;">
                         <div ="feed-container" style="padding-top:10px;">
+                            {% if (ret.products|length) == 0 %}
+                            <div id="photos_container" style="border-bottom:0px;padding-top:20px;">
+                                <center>
+                                    <strong>
+                                        상품이 하나도 존재하지 않아요
+                                    </strong>
+                                </center>
+                            </div>
+                            {% endif %}
                             {% for product in ret.products %}
                             <div class="col-lg-4 col-md-4 col-sm-12" style="padding:5px 5px 5px 5px;">
                                 <div class="card_container">
@@ -105,7 +180,10 @@ card_header {
                                                 background-position: center;
                                                 cursor:pointer;
                                                 " id="image-{{product.product.id}}">
+                                                <div style="position:absolute;left:50%;margin-left:-70px;top:250px;display:none;" id="button-container-{{product.product.id}}">
+                                                <!--
                                                 <div style="position: absolute;left:23%;top:250px;display:none;" id="button-container-{{product.product.id}}">
+                                                -->
                                                     <a href="#">
                                                         <button class="btn " id="save-button-{{product.product.id}}" style="background: black;color:white;"><i class="fa fa-plus"></i> 저장</button>
                                                     </a>

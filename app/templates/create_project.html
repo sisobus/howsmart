@@ -144,8 +144,8 @@ border: 1px solid #987654;
             </h1>
             <h3 style="font-size:16px;color:#333333;">프로젝트 사진 올리기 </h3>
             <h5><strong>* 최소 한장 이상의 사진을 올려주세요. 나중에 사진을 추가할 수 있습니다.</strong></h5>
-            <form action="{{ url_for('create_project') }}" method="POST" enctype="multipart/form-data" class="dropzone" style="border:4px dashed #dddddd;height:200px;">
-                <div class="dz-message" data-dz-message style="margin:0;">
+            <form action="{{ url_for('create_project') }}" method="POST" enctype="multipart/form-data" class="dropzone" style="border:4px dashed #dddddd;height:400px;">
+                <div class="dz-message" data-dz-message style="margin:0;padding-top:100px;">
                     <img src="{{url_for('static',filename='icon/cloud-upload-2-128x128.png')}}"><br>
                     <span style="color:#cccccc;font-size:15px;"> 사진을 이 곳으로 드래그하세요. </span>
                 </div>

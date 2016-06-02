@@ -1,0 +1,128 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            {% if feed_category_id %}
+            <a data-toggle="collapse" href="#collapseCategory-space" class="collapseWill pressed">
+            {% else %}
+            <a data-toggle="collapse" href="#collapseCategory-space" class="collapseWill">
+            {% endif %}
+                공간
+                <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+            </a>
+        </h4>
+    </div>
+    {% if feed_category_id %}
+    <div id="collapseCategory-space" class="panel-collapse collapse">
+    {% else %}
+    <div id="collapseCategory-space" class="panel-collapse collapse in">
+    {% endif %}
+        <div class="panel-body">
+            <ul class="nav nav-pills nav-stacked tree">
+                <li><a href="/photos/1"> 거실</a></li>
+                <li><a href="/photos/2"> 주방</a></li>
+                <li><a href="/photos/3"> 침실</a></li>
+                <li><a href="/photos/4"> 서재</a></li>
+                <li><a href="/photos/5"> 유아/주니어방</a></li>
+                <li><a href="/photos/6"> 욕실</a></li>
+                <li><a href="/photos/7"> 현관</a></li>
+                <li><a href="/photos/8"> 기타</a></li>
+                <li><a href="/photos/9"> 상업공간</a></li>
+                <li><a href="/photos/10"> 사무공간</a></li>
+            </ul>
+        </div>
+    </div>
+    <hr style="margin:0px;padding:0px;">
+
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            {% if style_category_id %}
+            <a data-toggle="collapse" href="#collapseCategory-style" class="collapseWill pressed">
+            {% else %}
+            <a data-toggle="collapse" href="#collapseCategory-style" class="collapseWill">
+            {% endif %}
+                스타일
+                <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+            </a>
+        </h4>
+    </div>
+    {% if style_category_id %}
+    <div id="collapseCategory-style" class="panel-collapse collapse">
+    {% else %}
+    <div id="collapseCategory-style" class="panel-collapse collapse in">
+    {% endif %}
+        <div class="panel-body">
+            <ul class="nav nav-pills nav-stacked tree">
+                <li><a onclick="redirect(addParameterToURL('style_category_id=2'));"> 모던 </a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=3'));"> 북유럽</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=4'));"> 빈티지</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=5'));"> 내츄럴</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=6'));"> 프로방스</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=7'));"> 클래식+앤틱</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=8'));"> 오리엔탈</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=9'));"> 유니크</a></li>
+                <li><a onclick="redirect(addParameterToURL('style_category_id=10'));"> 기타</a></li>
+            </ul>
+        </div>
+    </div>
+    <hr style="margin:0px;padding:0px;">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            {% if type_category_id %}
+            <a data-toggle="collapse" href="#collapseCategory-type" class="collapseWill pressed">
+            {% else %}
+            <a data-toggle="collapse" href="#collapseCategory-type" class="collapseWill">
+            {% endif %}
+                타입 
+                <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+            </a>
+        </h4>
+    </div>
+    {% if type_category_id %}
+    <div id="collapseCategory-type" class="panel-collapse collapse">
+    {% else %}
+    <div id="collapseCategory-type" class="panel-collapse collapse in">
+    {% endif %}
+        <div class="panel-body">
+            <ul class="nav nav-pills nav-stacked tree">
+                <li><a onclick="redirect(addParameterToURL('type_category_id=2'));"> 원룸</a></li>
+                <li><a  onclick="redirect(addParameterToURL('type_category_id=3'));"> 투베이</a></li>
+                <li><a  onclick="redirect(addParameterToURL('type_category_id=4'));"> 오피스텔</a></li>
+                <li><a onclick="redirect(addParameterToURL('type_category_id=5'));"> 아파트</a></li>
+                <li><a onclick="redirect(addParameterToURL('type_category_id=6'));"> 빌라연립</a></li>
+                <li><a onclick="redirect(addParameterToURL('type_category_id=7'));"> 단독주택</a></li>
+                <li><a onclick="redirect(addParameterToURL('type_category_id=8'));"> 사무공간</a></li>
+                <li><a onclick="redirect(addParameterToURL('type_category_id=9'));"> 상업공간</a></li>
+                <li><a onclick="redirect(addParameterToURL('type_category_id=10'));"> 기타</a></li>
+            </ul>
+        </div>
+    </div>
+    <hr style="margin:0px;padding:0px;">
+                    <div class="panel-heading">
+        <h4 class="panel-title">
+            {% if area_id %}
+            <a data-toggle="collapse" href="#collapseCategory-area" class="collapseWill pressed">
+            {% else %}
+            <a data-toggle="collapse" href="#collapseCategory-area" class="collapseWill">
+            {% endif %}
+                면적
+                <span class="pull-right"><i class="fa fa-caret-right"></i></span>
+            </a>
+        </h4>
+    </div>
+    {% if area_id %}
+    <div id="collapseCategory-area" class="panel-collapse collapse">
+    {% else %}
+    <div id="collapseCategory-area" class="panel-collapse collapse in">
+    {% endif %}
+        <div class="panel-body">
+            <ul class="nav nav-pills nav-stacked tree">
+                <li><a onclick="redirect(addParameterToURL('area_id=1'));"> 10평대 미만</a></li>
+                <li><a onclick="redirect(addParameterToURL('area_id=2'));"> 10평대</a></li>
+                <li><a onclick="redirect(addParameterToURL('area_id=3'));"> 20평대</a></li>
+                <li><a onclick="redirect(addParameterToURL('area_id=4'));"> 30평대</a></li>
+                <li><a onclick="redirect(addParameterToURL('area_id=5'));"> 40평대</a></li>
+                <li><a onclick="redirect(addParameterToURL('area_id=6'));"> 50평대 이상</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

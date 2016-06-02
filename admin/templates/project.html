@@ -3,10 +3,10 @@
 <!-- /section:settings.box -->
 <div class="page-header">
     <h1>
-        갤러리
+        프로젝트
         <small>
             <i class="ace-icon fa fa-angle-double-right"></i>
-            갤러리 관리
+            프로젝트 관리
         </small>
     </h1>
 </div><!-- /.page-header -->
@@ -31,6 +31,7 @@
                             <th>title</th>
                             <th>username</th>
                             <th class="hidden-480">body</th>
+                            <th>피드개수</th>
 
                             <th>
                                 <i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>
@@ -42,7 +43,7 @@
                     </thead>
 
                     <tbody>
-                    {% for feed in feeds %}
+                    {% for project in projects %}
                     <tr>
                         <td class="center">
                             <label class="pos-rel">
@@ -60,18 +61,19 @@
                             </div>
                         </td>
                         <td>
-                            {{ feed.feed.id }}
+                            {{ project.project.id }}
                         </td>
 
                         <td>
-                            <a href="#">{{ feed.feed.title }}</a>
+                            <a href="#">{{ project.project.project_name }}</a>
                         </td>
-                        <td>{{ feed.user.username }}</td>
-                        <td class="hidden-480">{{ feed.feed.body }}</td>
-                        <td>{{ feed.feed.created_at }}</td>
+                        <td>{{ project.user.username }}</td>
+                        <td class="hidden-480">{{ project.project.project_body }}</td>
+                        <td>{{project.project_has_feeds|length}}</td>
+                        <td>{{ project.project.created_at }}</td>
 
                         <td class="hidden-480">
-                            <span class="label label-sm label-success">{{ feed.status_name }}</span>
+                            <span class="label label-sm label-success">{{ project.status_name }}</span>
                         </td>
                     </tr>
                     {% endfor %}
@@ -99,9 +101,9 @@
 $('#simple-table').Tabledit({
     columns: {
         identifier: [2,'id'],
-        editable: [[3,'title'],[5,'body'],[7,'status','{"1": "accept", "2": "return"}']]
+        editable: [[3,'name'],[5,'body'],[8,'status','{"1": "accept", "2": "return"}']]
     },
-url: "{{url_for('photos_edit')}}"
+url: "{{url_for('project_edit')}}"
 });
 
 </script>

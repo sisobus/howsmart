@@ -198,25 +198,33 @@ body::-webkit-scrollbar { display: none;  }
             {% endfor %}
         }
         function image_container_width_resize() {
-            var image_container_width = $(document).width() - 420;
+            var image_container_width = $(window).width() - 420;
             $("#image-container").css("width",image_container_width);
         }
         $(document).ready(function() {
                 $('#edit-button').click(function() {
                     window.location.href="/project_edit/{{ret.feed.id}}";
                     });
+            $('#delete-confirm').click(function() {
+                var data = {
+                    "feed_id": "{{ ret.feed.id }}"
+                };
+                $.ajax({
+                    url: '/delete_feed',
+                    data: data,
+                    type: 'POST',
+                    success: function(response) {
+                    console.log(response);
+                    window.location.href="{{url_for('company_portfolio',user_id=ret.user.id)}}";
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
             image_container_width_resize();
             createTag();
             shakeAllTag();
-            $('button[name="remove_levels"]').on('click', function(e){
-                var $form=$(this).closest('form');
-                e.preventDefault();
-                $('#confirm').modal({ backdrop: 'static', keyboard: false })
-                .one('click', '#delete', function (e) {
-                    $form.trigger('submit');
-                    });
-                });
-            // .main-comment-container
             $('#comment-button').on('click',function() {
                 $.smoothScroll({
                     scrollTarget: '#comment-container'
@@ -282,7 +290,10 @@ body::-webkit-scrollbar { display: none;  }
     <div id="image-container" class="hidden-xs">
         <div id="image-real-container">
             <img id="uploadImagePreview" src="{{ url_for('static',filename=ret.image_path)|resize('1400x1000') }}" class="img-responsive "/>
+            <div id="image-button-container" style="position:absolute;left:50%;margin-left:-90px;bottom:10px;">
+            <!--
             <div id="image-button-container" style="position:absolute;left:38%;bottom:10px;display:none;">
+            -->
                 <a href="#">
                     <button class="btn " id="save-button-first" style="background: #84bd5e;color:white;"><i class="fa fa-plus"></i> 저장</button>
                 </a>
@@ -313,7 +324,7 @@ body::-webkit-scrollbar { display: none;  }
                     <a  href="/"> <img src="{{ url_for('static',filename='img/logo_2016_04_28.png') }}" style="height:40px;margin-left:5px;margin-top:2px;"> </a>
                 </div>
                 <div id="close-button" class="no-padding" style="margin-left:375px;width:45px;height:100%;background:#666666;vertical-align:middle;text-align:center;">
-                    <a href="{{ session['previous_url'] }}">
+                    <a href="{{ session['previous_url'] }}#image-{{ret.feed.id}}">
                     <i class="fa fa-times fa-3x" style="font-size:2.5em;color:white;margin-top:3px;"></i>
                 </a>
                 </div>
@@ -327,7 +338,17 @@ body::-webkit-scrollbar { display: none;  }
                         <div style="background-color:#dddddd; border:1px solid #dddddd;height:42px;width:42px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 20px;border-radius:20px;-webkit-border-radius:20px;-moz-border-radius:20px;"></div>
                         {% endif %}
                         <div style="display:table-cell;vertical-align:top;;">
-                            <h3 style="padding-bottom:0px;display:table-cell;padding-left:5px;"><a href="/company_portfolio/{{ ret.user.id }}" target="_blank">{{ ret.user.username }} &nbsp;</a>{% if session and 'user_id' in session and session['user_id'] == ret.user.id %}<button class='btn btn-primary' id='edit-button'><a href="/project_edit/{{ret.feed.id}}"  style="display:block;color:#FFFFFF;">수정하기</a></button> <button name="remove_levels" class="btn btn-danger">삭제하기 </button>{% endif %}</h3>
+                            <h3 style="padding-bottom:0px;display:table-cell;padding-left:5px;">
+                                <a href="/company_portfolio/{{ ret.user.id }}" target="_blank">
+                                    {{ ret.user.username }} &nbsp;
+                                </a>
+                                {% if ('logged_in' in session) and (session['user_id'] == ret.user.id or session['level'] == 99) %}
+                                <button class='btn btn-primary' id='edit-button'>
+                                    <a href="/project_edit/{{ret.feed.id}}"  style="display:block;color:#FFFFFF;">수정하기</a>
+                                </button> 
+                                <button data-toggle="modal" name="delete-button" data-target="#modal-delete" class="btn btn-danger">삭제하기 </button>
+                                {% endif %}
+                            </h3>
                             <div style="font-size:9px;padding-left:5px;">
                                 <span class="fa-stack " style="display:table-cell;padding-right:15px;line-height:1.6em;" >
                                     <i class="fa  fa-circle-thin fa-stack-2x" style="{% if ret.is_user_like %}color:#eb7b7b;font-weight:600;{% else %}color:#777777;font-weight:400;{% endif %}top:0;" id="like-button-icon-circle-{{ ret.feed.id }}"> </i>
@@ -425,9 +446,15 @@ body::-webkit-scrollbar { display: none;  }
                             </p>
                             <p class="no-margin" style="font-size:12px;color:#666666;">
                             {{ comment.comment.body}}
+                            {% if ('logged_in' in session) and (session['user_id']==comment.user.id or session['level'] == 99) %}
+                            <a data-toggle="modal" data-target="#modal-delete-{{comment.comment.id}}" style="padding-left:5px;">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </a>
+                            {% endif %}
                             </p>
                         </div>
                     </div>
+                    {% include "modal_delete_comment_confirm.html" %}
                     {% endfor %}
                     <button class="btn btn-primary" style="margin-top:20px;margin-bottom:20px;width:100%;height:50px;background:#e6e6e6;color:#777777;">
                         {{ ret.all_comments | length }} 개의 다른 댓글 더보기

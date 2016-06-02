@@ -3,10 +3,10 @@
 <!-- /section:settings.box -->
 <div class="page-header">
     <h1>
-        갤러리
+        질문답변 질문
         <small>
             <i class="ace-icon fa fa-angle-double-right"></i>
-            갤러리 관리
+        질문답변 질문
         </small>
     </h1>
 </div><!-- /.page-header -->
@@ -28,7 +28,7 @@
                             </th>
                             <th class="detail-col">Details</th>
                             <th>id</th>
-                            <th>title</th>
+                            <th>회사이름</th>
                             <th>username</th>
                             <th class="hidden-480">body</th>
 
@@ -36,13 +36,12 @@
                                 <i class="ace-icon fa fa-clock-o bigger-110 hidden-480"></i>
                                 created_at
                             </th>
-                            <th class="hidden-480">Status</th>
 
                         </tr>
                     </thead>
 
                     <tbody>
-                    {% for feed in feeds %}
+                    {% for qna_q in qna_qs %}
                     <tr>
                         <td class="center">
                             <label class="pos-rel">
@@ -60,19 +59,16 @@
                             </div>
                         </td>
                         <td>
-                            {{ feed.feed.id }}
+                            {{ qna_q.qna_q.id }}
                         </td>
 
                         <td>
-                            <a href="#">{{ feed.feed.title }}</a>
+                            <a href="#">{{ qna_q.company_user.username}}</a>
                         </td>
-                        <td>{{ feed.user.username }}</td>
-                        <td class="hidden-480">{{ feed.feed.body }}</td>
-                        <td>{{ feed.feed.created_at }}</td>
+                        <td>{{ qna_q.user.username }}</td>
+                        <td class="hidden-480">{{ qna_q.qna_q.body }}</td>
+                        <td>{{ qna_q.qna_q.created_at }}</td>
 
-                        <td class="hidden-480">
-                            <span class="label label-sm label-success">{{ feed.status_name }}</span>
-                        </td>
                     </tr>
                     {% endfor %}
 
@@ -101,7 +97,7 @@ $('#simple-table').Tabledit({
         identifier: [2,'id'],
         editable: [[3,'title'],[5,'body'],[7,'status','{"1": "accept", "2": "return"}']]
     },
-url: "{{url_for('photos_edit')}}"
+url: "{{url_for('qna_q_edit')}}"
 });
 
 </script>
