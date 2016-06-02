@@ -81,6 +81,7 @@ from models import (
         Review, 
         Qna_q,
         Qna_a,
+        Product_has_shop_category,
         )
 
 db.init_app(app)
@@ -210,6 +211,13 @@ def get_follower_information(followers):
                 'from_user_profile_image_path': from_user_profile_image_path 
                 }
         ret.append(d)
+    return ret
+
+def get_product_ids_by_shop_category_id(shop_category_id):
+    ret = []
+    product_has_shop_categories = Product_has_shop_category.query.filter_by(shop_category_id=shop_category_id).all()
+    for product_has_shop_category in product_has_shop_categories:
+        ret.append(product_has_shop_category.product_id)
     return ret
 
 @app.route('/magazine',methods=['GET'])
@@ -684,7 +692,8 @@ def merge_image_for_product(createProductForm):
     if len(not_merged_images) != 0:
         product = Product(createProductForm.product_name.data,int(createProductForm.product_price.data),createProductForm.product_color.data,\
                           createProductForm.product_desc.data,createProductForm.product_size.data,createProductForm.product_model_name.data,\
-                          createProductForm.product_meterial.data,int(createProductForm.shop_category.data),user.id,datetime.utcnow())
+                          createProductForm.product_meterial.data,user.id,datetime.utcnow())
+
         product.product_sale_price = product.product_price
         product.status_id = 1
         product.product_brand = createProductForm.product_brand.data
@@ -695,6 +704,13 @@ def merge_image_for_product(createProductForm):
             product_has_image = Product_has_image(product.id,image.id)
             db.session.add(product_has_image)
             db.session.commit()
+
+        for category_data in createProductForm.shop_category.data:
+            cur_shop_category_id = int(category_data)
+            new_product_has_shop_category = Product_has_shop_category(product.id, cur_shop_category_id)
+            db.session.add(new_product_has_shop_category)
+            db.session.commit()
+
         return product.id
 
 @app.route('/create_product',methods=['GET','POST'])
@@ -722,7 +738,7 @@ def create_product():
                 if utils.allowedFile(filename):
                     directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'].replace('@','_'))
                     utils.createDirectory(directory_url)
-                    file_path = os.path.join(directory_url,filename)
+                    file_path = os.path.join(directory_url,filename.split('.')[0]+'-'+str(datetime.now()).replace(' ','-')+'.'+filename.split('.')[-1])
                     file.save(file_path)
                     image = Image(file_path)
                     image.user_id = user.id
@@ -1612,7 +1628,9 @@ def company_portfolio_shop(user_id):
     products = []
     used_category = [ False for i in xrange(128) ]
     for t_product in t_products:
-        used_category[t_product.shop_category_id] = True
+        product_has_shop_categories = Product_has_shop_category.query.filter_by(product_id=t_product.id).all()
+        for product_has_shop_category in product_has_shop_categories:
+            used_category[product_has_shop_category.shop_category_id] = True
         cur_image_id = Product_has_image.query.filter_by(product_id=t_product.id).first().image_id
         cur_image = Image.query.filter_by(id=cur_image_id).first()
         cur_image_path = utils.get_image_path(cur_image.image_path)
@@ -1666,7 +1684,9 @@ def company_portfolio_shop_detail(user_id,shop_category_id):
     used_category = [ False for i in xrange(128) ]
     t_products = Product.query.filter_by(user_id=user.id).order_by(Product.created_at.desc()).all()
     for t_product in t_products:
-        used_category[t_product.shop_category_id] = True
+        product_has_shop_categories = Product_has_shop_category.query.filter_by(product_id=t_product.id).all()
+        for product_has_shop_category in product_has_shop_categories:
+            used_category[product_has_shop_category.shop_category_id] = True
     t_products = Product.query.filter_by(user_id=user.id).filter_by(shop_category_id=shop_category_id).order_by(Product.created_at.desc()).all()
     products = []
     for t_product in t_products:
@@ -2100,7 +2120,7 @@ def product_detail(product_id):
         colors.append(color)
 
     other_image_paths = []
-    for i in xrange(1,min(len(image_paths),5)):
+    for i in xrange(1,min(len(image_paths),9999)):
         other_image_paths.append(image_paths[i])
 
     same_company_other_products = []
@@ -2118,8 +2138,6 @@ def product_detail(product_id):
             'image_path': cur_product_image_path
         }
         same_company_other_products.append(d)
-        if len(same_company_other_products) == 4:
-            break
 
     same_category_other_products = []
     t_products = Product.query.filter_by(shop_category_id=product.shop_category_id).order_by(Product.created_at.desc()).all()
@@ -2136,8 +2154,6 @@ def product_detail(product_id):
             'image_path': cur_product_image_path
         }
         same_category_other_products.append(d)
-        if len(same_category_other_products) == 4:
-            break
 
     shop_category_id = product.shop_category_id
     shop_category_name = utils.get_shop_category_dictionary()[shop_category_id]
@@ -2734,32 +2750,36 @@ def shop_detail(shop_category_id):
                 idx = i
                 break
         shop_category_2nd_list = utils.get_shop_category_tree()[idx]
+        product_ids = []
         for cur_shop_category_id in shop_category_2nd_list:
-
-            if style_category_id and price_id :
-                t_products = Product.query\
-                        .filter_by(shop_category_id=cur_shop_category_id)\
-                        .filter_by(style_category_id=style_category_id)\
-                        .filter(and_(Product.product_price >= utils.get_price_range(price_id)[0],\
-                                     Product.product_price < utils.get_price_range(price_id)[1]))\
-                        .order_by(Product.created_at.desc()).all()
-                products = products + get_product_information(t_products)
-            elif style_category_id:
-                t_products = Product.query\
-                        .filter_by(shop_category_id=cur_shop_category_id)\
-                        .filter_by(style_category_id=style_category_id)\
-                        .order_by(Product.created_at.desc()).all()
-                products = products + get_product_information(t_products)
-            elif price_id:
-                t_products = Product.query\
-                        .filter_by(shop_category_id=cur_shop_category_id)\
-                        .filter(and_(Product.product_price >= utils.get_price_range(price_id)[0],\
-                                     Product.product_price < utils.get_price_range(price_id)[1]))\
-                        .order_by(Product.created_at.desc()).all()
-                products = products + get_product_information(t_products)
-            else :
-                t_products = Product.query.filter_by(shop_category_id=cur_shop_category_id).order_by(Product.created_at.desc()).all()
-                products = products + get_product_information(t_products)
+            product_ids = product_ids + get_product_ids_by_shop_category_id(cur_shop_category_id)
+        product_ids = list(set(product_ids))
+        if style_category_id and price_id :
+            t_products = Product.query\
+                    .filter(Product.id.in_(product_ids))\
+                    .filter_by(style_category_id=style_category_id)\
+                    .filter(and_(Product.product_price >= utils.get_price_range(price_id)[0],\
+                                 Product.product_price < utils.get_price_range(price_id)[1]))\
+                    .order_by(Product.created_at.desc()).all()
+            products = products + get_product_information(t_products)
+        elif style_category_id:
+            t_products = Product.query\
+                    .filter(Product.id.in_(product_ids))\
+                    .filter_by(style_category_id=style_category_id)\
+                    .order_by(Product.created_at.desc()).all()
+            products = products + get_product_information(t_products)
+        elif price_id:
+            t_products = Product.query\
+                    .filter(Product.id.in_(product_ids))\
+                    .filter(and_(Product.product_price >= utils.get_price_range(price_id)[0],\
+                                 Product.product_price < utils.get_price_range(price_id)[1]))\
+                    .order_by(Product.created_at.desc()).all()
+            products = products + get_product_information(t_products)
+        else :
+            t_products = Product.query\
+                    .filter(Product.id.in_(product_ids))\
+                    .order_by(Product.created_at.desc()).all()
+            products = products + get_product_information(t_products)
     else:
         if style_category_id and price_id :
             t_products = Product.query\
@@ -3397,10 +3417,16 @@ def delete_product():
     product = Product.query.filter_by(id=int(request.form['product_id'])).first()
     product_has_images = Product_has_image.query.filter_by(product_id=product.id).all()
     for product_has_image in product_has_images:
+        image = Image.query.filter_by(id=product_has_image.image_id).first()
         db.session.delete(product_has_image)
+        db.session.commit()
+        db.session.delete(image)
     product_hash_tags = Product_hash_tag.query.filter_by(product_id=product.id).all()
     for product_hash_tag in product_hash_tags:
         db.session.delete(product_hash_tag)
+    product_has_shop_categories = Product_has_shop_category.query.filter_by(product_id=product.id).all()
+    for product_has_shop_category in product_has_shop_categories:
+        db.session.delete(product_has_shop_category)
     db.session.commit()
     db.session.delete(product)
     db.session.commit()

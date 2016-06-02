@@ -155,7 +155,20 @@
             {% for message in createProductForm.shop_category.errors %}
                 <div class="flash">{{ message }}</div>
             {% endfor %}
-            {{ createProductForm.shop_category(placeholder='enter product shopcategory') }}
+            <div style="display:inline-block;border:1px solid #dddddd;">
+                {% for category in createProductForm.shop_category %}
+                {% if category.id.split('-')[-1] in ['0','8','14','25','32','41','49','55','62','68'] %}
+                <div class="col-sm-2 col-md-2 col-lg-2 col-xs-6">
+                    <strong>{{category.label }}</strong><br>
+                    {% else %}
+                    {{ category }} {{category.label}}<br> 
+                    {% endif %}
+                    {% if category.id.split('-')[-1] in ['7','13','24','31','40','48','54','61','67'] %}
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
             <h3 style="padding-bottom:5px;font-size:16px;color:#333333;">제품 스타일</h3>
             {{ createProductForm.product_style_category }}
             <h3 style="padding-bottom:5px;font-size:16px;color:#333333;">제품 가격</h3>

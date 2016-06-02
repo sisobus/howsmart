@@ -196,7 +196,7 @@ class Product(db.Model):
     product_brand = db.Column(db.String(500))
     product_soldby = db.Column(db.String(500))
 
-    def __init__(self, product_name, product_price, product_color, product_desc, product_size, product_model_name, product_meterial, shop_category_id, user_id,created_at):
+    def __init__(self, product_name, product_price, product_color, product_desc, product_size, product_model_name, product_meterial,  user_id,created_at):
         self.product_name = product_name
         self.product_price = product_price
         self.product_color = product_color
@@ -204,7 +204,7 @@ class Product(db.Model):
         self.product_size = product_size
         self.product_model_name = product_model_name
         self.product_meterial = product_meterial
-        self.shop_category_id = shop_category_id
+        self.shop_category_id = 1
         self.user_id = user_id
         self.created_at = created_at
 
@@ -415,3 +415,12 @@ class Qna_a(db.Model):
         self.qna_q_id = qna_q_id
         self.created_at = created_at
         self.user_id = user_id
+
+class Product_has_shop_category(db.Model):
+    __tablename__ = 'product_has_shop_category'
+    product_id = db.Column(db.Integer, primary_key=True)
+    shop_category_id = db.Column(db.Integer, primary_key=True)
+
+    def __init__(self, product_id, shop_category_id):
+        self.product_id = product_id
+        self.shop_category_id = shop_category_id
