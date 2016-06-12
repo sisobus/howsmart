@@ -307,13 +307,8 @@ openFeed = function(feed_id) {
                                                     <button class="btn " id="save-button-{{feed.feed.id}}" style="background: black;color:white;"><i class="fa fa-plus"></i> 저장</button>
                                                 </a>
                                                 <a href="#">
-                                                    <share-button id="share-button-{{feed.feed.id}}"></share-button>
-                                            </a>
-                                                <!--
-                                                <a href="#">
-                                                    <button class="btn " id="share-button-{{feed.feed.id}}" style="background: black;color:white;background: black;color:white;background-color: rgba(200,200,200,0.5);border: 1px solid #ffffff;"><i class="fa fa-share-alt"></i> 공유</button>
+                                                    <share-button id="share-button-{{feed.feed.id}}"style="height:33px;"></share-button>
                                                 </a>
-                                                -->
                                             </div>
 <script>
 $('#image-{{feed.feed.id}}').hover(function() {
@@ -402,7 +397,7 @@ $(document).ready(function() {
                                     </a>
                                     <div id="photos_body">
                                                 <span class="pull-right" style="color:#ababab;">
-                                                    2016.03.01
+                                                    {{ feed.feed.created_at.strftime('%Y-%m-%d') }}
                                                 </span>
                                         {% if feed.user_profile_image_path %}
                                         <div style="background: url({{ url_for('static',filename=feed.user_profile_image_path)|resize('60x60') }}); border:1px solid #dddddd;height:50px;width:50px;display:table-cell;background-repeat:no-repeat;background-size:cover;background-position:center;border-radius: 25px;border-radius:25px;-webkit-border-radius:25px;-moz-border-radius:25px;">

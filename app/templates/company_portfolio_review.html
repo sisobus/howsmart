@@ -141,7 +141,7 @@ textarea#comment {
                 <h5 style="padding-bottom:20px; font-size:23px;font-weight:bold;color:#323232;">
                     {{ret.total_count}}개의 리뷰
                 </h5>
-                {% if session['logged_in'] %}
+                {% if session['logged_in'] and not (session['user_id'] == ret.user.id) %}
                 <div class="no-margin no-padding" style="width:100%;height:220px;">
                     <div style="padding:10px 10px 10px 10px;">
                         <form action="/save_review?company_id={{ret.company.id}}&user_id={{session['user_id']}}" method="post">

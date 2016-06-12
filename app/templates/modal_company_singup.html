@@ -111,18 +111,15 @@
             </div>
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                 <div class="modal-item-region" style="display:table-cell;padding-bottom:10px;">
-                    {% for message in companySignupForm.company_si.errors %}
-                    <div class="flash">{{ message }}</div>
-                    {% endfor %}
-                    {{ companySignupForm.company_si }}
-                    {% for message in companySignupForm.company_gu.errors %}
-                    <div class="flash">{{ message }}</div>
-                    {% endfor %}
-                    {{ companySignupForm.company_gu }}
-                    {% for message in companySignupForm.company_dong.errors %}
-                    <div class="flash">{{ message }}</div>
-                    {% endfor %}
-                    {{ companySignupForm.company_dong }}
+                        <select id="company_si" name="company_si">
+                            <option>서울시</option>
+                        </select>
+                        <select id="company_gu" name="company_gu">
+                            <option>전체</option>
+                        </select>
+                        <select id="company_dong" name="company_dong">
+                            <option>전체</option>
+                        </select>
                 </div>
                 <div class="form-group" style="margin-bottom:0px;">
                     <div>
@@ -194,7 +191,8 @@
 <script type="text/javascript">
 function tel_check(s) {
     var re = /^\+?([0-9][0-9][0-9]?)\)?[-]([0-9][0-9][0-9][0-9]?)[-]([0-9]{4})$/;
-    if ( s.match(re) ) {
+    var re1 = /^([0-9]{4})[-]([0-9]{4})$/;
+    if ( s.match(re) || s.match(re1) ) {
         return true;
     } else {
         return false;

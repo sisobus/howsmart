@@ -244,6 +244,7 @@ class Tag(db.Model):
     tag_name = db.Column(db.String(300))
     tag_link = db.Column(db.String(300))
     image_id = db.Column(db.Integer, primary_key=True)
+    brand_name = db.Column(db.String(500))
 
     def __init__(self, tag_x, tag_y, feed_id, tag_name, tag_link):
         self.tag_x = tag_x

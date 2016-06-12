@@ -7,8 +7,11 @@
 <script src="{{ url_for('static',filename='js/jquery.Jcrop.js') }}"></script>
 <script src="{{ url_for('static',filename='js/jquery.SimpleCropper.js') }}"></script>
 <div class="container nav-margin" style="padding: 0px 0px 0px 0px;height:300px;">
-    <div class="custom_jumbo_container" style="background: url({{ ('/static/'+ret.image_path)|resize('1280x800') }});
-            background-repeat:no-repeat; background-size: cover; background-position: center;">
+    {% if session['user_id'] == ret.user.id %}
+    <div class="custom_jumbo_container" style="background: url({{ ('/static/'+ret.image_path)|resize('1280x800') }});background-repeat:no-repeat; background-size: cover; background-position: center;">
+    {% else %}
+    <div class="custom_jumbo_container" style="background: url({{ ('/static/'+ret.image_path)|resize('1280x800') }});background-repeat:no-repeat; background-size: cover; background-position: center;">
+    {% endif %}
         <div id="leftside_container" >
             {% if ret.user_profile_image_path | length != 0 %}
             {% if session['user_id'] == ret.user.id %}
@@ -33,10 +36,10 @@
             {% endif %}
         </div>
         <script>
-                {% if session['user_id'] == ret.user.id %}
+        {% if session['user_id'] == ret.user.id %}
         $('.cropme').simpleCropper();
-                {% endif %}
-        $('.ok').click(function() {
+        {% endif %}
+        $('.cropme .ok').click(function() {
             console.log('ok click');
             var imageData = $('#preview img').attr('src');
              var imageBase64= imageData.replace(/^data:image\/(png|jpeg);base64,/, "");

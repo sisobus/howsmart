@@ -141,42 +141,16 @@ body::-webkit-scrollbar { display: none;  }
                 $('#tagging-container-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}}))
                     .css('top',image_top+image_height*({{tag.tag_y}}))
                     .show()
-                $('body').append($('<div/>', {
-                    id: 'tagging-container-information-'+{{tag.id}},
-                    style: 'position:absolute;display:block;z-index:1000;'
-                }));
-                $('#tagging-container-information-'+{{tag.id}}).append($('<div/>', {
-                    style: 'background:#f5f5f5;'
-                }));
-                $('#tagging-container-information-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}})+35)
+                $('#tag-container-transparent-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}}))
                     .css('top',image_top+image_height*({{tag.tag_y}}))
-                    .css('background','#f5f5f5')
-                    .css('border','1px solid #dddddd')
-                    .css('padding','2px 2px 2px 2px')
-                    .css('width','250px')
-                    .css('height','100px')
                     .hide()
-                $('#tagging-container-information-'+{{tag.id}}).append($('<div/>', {
-                    id: 'tagging-container-information-'+{{tag.id}}+'-container',
-                    style: 'background:#ffffff;padding:0;width:100%;height:100%;'
-                }));
-                $('#tagging-container-information-'+{{tag.id}}+'-container').prepend(
-                        '<div id="tagging-container-information-{{tag.id}}-container-left" style="position:absolute;width:100px;height:100%;background:white;padding:0;margin:0;"></div>'
-                    );
-                $('#tagging-container-information-'+{{tag.id}}+'-container').prepend(
-                        '<div id="tagging-container-information-{{tag.id}}-container-right" style="position:absolute;width:145px;height:100%;background:white;padding:0;margin-left:100px;"><h5 style="padding-top:10px;padding-bottom:0;">{{tag.tag_name}}</h5><a href="{{tag.tag_link}}"><h5 style="padding-bottom:0px;">{{tag.tag_link}}</h5></a></div>'
-                    );
                 $('#tagging-container-'+{{tag.id}}).mouseover(function() {
-                        $('#tagging-container-information-'+{{tag.id}}).fadeIn('fast');
-                    }).mouseout(function() {
-                        $('#tagging-container-information-'+{{tag.id}}).hide();
-                    }).click(function() {
-                        var url = '{{tag.tag_link}}';
-                        alert(url);
-                        if ( url.search('http://') == -1 || url.search('https://') == -1) 
-                            url = 'http://'+url;
-                        window.location.href = url;
-                    });
+                        $('#tag-container-transparent-'+{{tag.id}}).fadeIn('fast');
+                    })
+                $('#tag-container-transparent-'+{{tag.id}}).mouseover(function() {
+                }).mouseleave(function(e) {
+                    $(this).hide();
+                });
             {% endfor %}
         }
         function rePositionTag() {
@@ -188,7 +162,7 @@ body::-webkit-scrollbar { display: none;  }
                 $('#tagging-container-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}}))
                     .css('top',image_top+image_height*({{tag.tag_y}}))
                     .show()
-                $('#tagging-container-information-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}})+35)
+                $('#tag-container-transparent-'+{{tag.id}}).css('left',image_left+image_width*({{tag.tag_x}})+35)
                     .css('top',image_top+image_height*({{tag.tag_y}}))
             {% endfor %}
         }
@@ -287,6 +261,9 @@ body::-webkit-scrollbar { display: none;  }
 <body oncontextmenu="return false;" style="padding-right:0px;padding-left:0px;margin-top:0px;">
 {% include "modal_save_feed.html" %}
 {% include "modal_delete_confirm.html" %}
+{% for tag in ret.tags %}
+{% include "tag_container.html" %}
+{% endfor %}
     <div id="image-container" class="hidden-xs">
         <div id="image-real-container">
             <img id="uploadImagePreview" src="{{ url_for('static',filename=ret.image_path)|resize('1400x1000') }}" class="img-responsive "/>

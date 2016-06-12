@@ -231,7 +231,8 @@
             <img id="uploadImagePreview" src="{{ url_for('static',filename=ret.image_path) }}" class="img-responsive parallaximg sliderImg"/>
             <div id='mapper' ><a><button class="btn btn-primary" onclick='openDialog()' style="width:100%;height:100%;" />태그달기<br>클릭</button></a></div>
             <div id='form_panel'>
-                <input type='text'  placeholder='브랜드' id="tag-name">
+                <input type='text'  placeholder='브랜드 이름' id="brand-name">
+                <input type='text'  placeholder='상품 이름' id="tag-name">
                 <input type='text' placeholder='홈페이지' id="tag-link" >
                 <button class='btn btn-primary' onclick='addTag()' >저장하기</button>
                 <button class='btn btn-danger' onclick='closeDialog()' >닫기</button>
@@ -422,6 +423,7 @@ var addTag = function() {
         "feed_id": {{ ret.feed.id }},
         "tag_name": $('#tag-name').val(),
         "tag_link": $('#tag-link').val(),
+        "brand_name": $('#brand-name').val()
     };
     $.ajax({
         url: '/add_tag',

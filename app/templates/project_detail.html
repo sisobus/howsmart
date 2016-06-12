@@ -147,13 +147,6 @@ card_header {
     .panel {
         border: 0px;
     }
-    .panel-heading,
-    .panel-body{
-        padding-left:0px;
-        padding-top: 0px;
-        padding-bottom:16px;
-        padding-right: 0px;
-    }
     .panel-title {
         font-size: 14px;
         font-weight: bold;
@@ -173,7 +166,7 @@ card_header {
     <div class="row" style="padding-top:25px;height:222px;">
         <div class="col-lg-2 col-md-2 col-sm-12" style="padding-left:20px;padding-right:8px;">
             <div class="panel panel-default">
-                <div class="panel-heading">
+                <div class="panel-heading" style="padding:0px 0px 16px 0px;">
                     <h4 class="panel-title">
                         <a data-toggle="collapse" href="#collapseCategory-space" class="collapseWill">
                             프로젝트
@@ -181,7 +174,7 @@ card_header {
                     </h4>
                 </div>
                 <div id="collapseCategory-space" class="panel-collapse collapse in">
-                    <div class="panel-body">
+                    <div class="panel-body" style="padding:0px 0px 16px 0px;">
                         <ul class="nav nav-pills nav-stacked tree">
                             {% for project in ret.projects %}
                             <li>

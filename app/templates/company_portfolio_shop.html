@@ -101,6 +101,13 @@ card_header {
     background-color: #000;
     margin-left: 20px;
 }
+.custom-tag-button {
+    border: 1px solid #dddddd;
+    border-radius: 1px;
+    background: white;
+    color: #aaaaaa;
+    padding:3px 7px 3px 7px;
+}
 
 </style>
 <div class="visible-xs">
@@ -117,6 +124,21 @@ card_header {
         <div class="col-lg-10 col-md-10 col-sm-12" style="padding-left:0px;">
             <h5 style="padding-bottom:20px; font-size:23px;font-weight:bold;color:#323232;padding-left:10px;">
                 {{ ret.products | length }}개의 제품
+                <span class="breadcrumb" style="border:0px;margin:0px;padding:0px;padding-top:16px;padding-bottom:16px;padding-left:5px;font-size:14px;">
+                    {% if ret.shop_category_id == 0 %}
+                    <li><a href="/company_portfolio/{{ret.user.id}}/shop" style="color:#84bd5e;">{{ ret.shop_category_name }}</a></li>
+                    {% endif %}
+                    {% if ret.shop_category_id != 0 %}
+                    <li><a href="/company_portfolio/{{ret.user.id}}/shop/{{ ret.shop_category_id }}" style="color:#84bd5e;">{{ ret.shop_category_name }}</a></li>
+                    {% endif %}
+                    {% if ret.style_category_id %}
+                    <li><a class="custom-tag-button" onclick="redirect(delParameterToURL('style_category_id'));">{{ ret.style_category_name }} <i class="fa fa-times" aria-hidden="true"></i></a></li>
+                    {% endif %}
+                    {% if ret.price_id %}
+                    <li><a class="custom-tag-button" onclick="redirect(delParameterToURL('price_id'));">{{ ret.price_name }} <i class="fa fa-times" aria-hidden="true"></i></a></li>
+                    {% endif %}
+
+                </span>
             </h5>
             <div  id="feed_container" style="margin-top:10px;">
 
