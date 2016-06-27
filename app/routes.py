@@ -113,6 +113,7 @@ from forms import (
         QnaQForm,
         QnaAForm,
         FindPasswordForm,
+        ChangePasswordForm,
         )
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
@@ -576,9 +577,40 @@ def reset_password():
         signinForm = SigninForm()
         companySignupForm = CompanySignupForm()
         findPasswordForm = FindPasswordForm()
+        changePasswordForm = ChangePasswordForm()
     if not findPasswordForm.validate():
         return render_template('find_password.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,findPasswordForm=findPasswordForm)
-    return redirect(url_for('find_password'))
+    """
+    : send mail
+    """
+    return redirect(url_for('main'))
+#    return render_template('reset_password.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,changePasswordForm=changePasswordForm)
+
+@app.route('/change_password/<user_id>',methods=['GET','POST'])
+def change_password(user_id):
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+        changePasswordForm = ChangePasswordForm()
+    if request.method == 'GET':
+        return render_template('reset_password.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,changePasswordForm=changePasswordForm)
+    elif request.method == 'POST': 
+        if not changePasswordForm.validate():
+            return render_template('reset_password.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,changePasswordForm=changePasswordForm)
+
+        user = User.query.filter_by(id=int(user_id)).first()
+        if not user:
+            changePasswordForm.cur_password.errors.append(u'user x')
+            return render_template('reset_password.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,changePasswordForm=changePasswordForm)
+        if not user.check_password(changePasswordForm.cur_password.data):
+            changePasswordForm.cur_password.errors.append(u'password x')
+            return render_template('reset_password.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,changePasswordForm=changePasswordForm)
+
+        user.set_password(changePasswordForm.next_password.data)
+        db.session.commit()
+
+        return redirect(url_for('main'))
 
 
 @facebook.tokengetter
@@ -1684,8 +1716,11 @@ def shop():
         'price_id': price_id,
         'price_name': price_name
     }
+    template_name = 'shop.html'
+    if request.args.get('is_grid'):
+        template_name = 'shop_grid.html'
 
-    return render_template('shop.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm,ret=ret)
+    return render_template(template_name, signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm,ret=ret)
 
 @app.route('/shop/<int:shop_category_id>')
 def shop_detail(shop_category_id):
@@ -1791,7 +1826,10 @@ def shop_detail(shop_category_id):
         'price_name': price_name
     }
 
-    return render_template('shop.html', signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm,ret=ret )
+    template_name = 'shop.html'
+    if request.args.get('is_grid'):
+        template_name = 'shop_grid.html'
+    return render_template(template_name, signupForm=signupForm, signinForm=signinForm,companySignupForm=companySignupForm,ret=ret )
 
 @app.route('/product_detail/<int:product_id>')
 def product_detail(product_id):
@@ -2385,6 +2423,37 @@ def image_crop_upload():
             }
     return json.dumps(d)
 
+@app.route('/background_image_crop_upload',methods=['POST'])
+def background_image_crop_upload():
+    """
+    :search : route_background_image_crop_upload
+    """
+    base64_string = request.form['imageData']
+    filename = "uploaded_image%s.png" % str(time.time()).replace('.','_')
+    directory_url = os.path.join(app.config['UPLOAD_FOLDER'],session['email'].replace('@','_'))
+    utils.createDirectory(directory_url)
+    directory_url = os.path.join(directory_url,'background')
+    utils.createDirectory(directory_url)
+    file_path = os.path.join(directory_url,filename)
+    fp = open(file_path,'wb')
+    fp.write(base64_string.decode('base64'))
+    fp.close()
+
+    user = User.query.filter_by(id=session['user_id']).first()
+    image = Image(file_path)
+    image.user_id = user.id 
+    image.created_at = datetime.now()
+    db.session.add(image)
+    db.session.commit()
+    company = Company.query.filter_by(user_id=user.id).first()
+    company.image_id = image.id
+    db.session.commit()
+
+    d = {
+        'status': 'OK',
+            }
+    return json.dumps(d)
+
 
 """
 : user portfolio
@@ -2797,6 +2866,33 @@ def company_portfolio_edit_done():
     company.company_website = d['company_website']
     db.session.commit()
     return json.dumps(d)
+
+@app.route('/company_portfolio_background_edit/<int:user_id>')
+def company_portfolio_background_edit(user_id):
+    """
+    : search : route_company_portfolio_background_edit
+    """
+    with app.app_context():
+        signupForm = SignupForm()
+        signinForm = SigninForm()
+        companySignupForm = CompanySignupForm()
+    user = User.query.filter_by(id=user_id).first()
+    company = Company.query.filter_by(user_id=user.id).first()
+    image   = Image.query.filter_by(id=company.image_id).first()
+    image_path = utils.get_image_path(image.image_path)
+    reviews = Review.query.filter_by(company_id=company.id).all()
+    average_star = get_average_review_star(reviews)
+    ret = {
+        'user': user,
+        'company': company,
+        'image_path': image_path,
+        'reviews': reviews,
+        'average_star': average_star
+    }
+
+    return render_template('company_portfolio_background_edit.html', signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,ret=ret)
+
+
 
 
 @app.route('/company_portfolio/<int:user_id>/project')

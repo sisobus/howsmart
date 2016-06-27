@@ -60,6 +60,9 @@ error: function(error) {
         </script>
         <div id="rightside_container">
             <h1>{{ ret.user.username }}</h1>
+            {% if session['user_id'] == ret.user.id %}
+            <a href="{{url_for('change_password',user_id=session['user_id'])}}"><button class="btn btn-primary " >비밀번호 변경</button></a>
+            {% endif %}
         </div>
     </div>
 </div>

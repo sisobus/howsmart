@@ -197,18 +197,10 @@ function redirect(url) {
                         {% endif %}
 
                         <span class="pull-right" style="margin-top:-6px;">
-                            {% if feed_category_id %}
                             <div class="change-view " style="height:34px;">
-                                <a style="margin-left:0px;" href="/photos/{{ feed_category_id }}?is_grid=true" title="Grid" class=""> <i class="fa fa-th"></i> </a> 
-                                <a style="margin-left:0px;" href="/photos/{{ feed_category_id }}" title="List" class=""><i class="fa fa-th-list"></i></a>
+                                <a style="margin-left:0px;" onclick="redirect(addParameterToURL('is_grid=True'));" title="Grid" class=""> <i class="fa fa-th"></i> </a> 
+                                <a style="margin-left:0px;" onclick="redirect(delParameterToURL('is_grid'));" title="List" class=""><i class="fa fa-th-list"></i></a>
                             </div>
-                            {% endif %}
-                            {% if not feed_category_id %}
-                            <div class="change-view " style="height:34px;">
-                                <a style="margin-left:0px;" href="/photos?is_grid=true" title="Grid" class=""> <i class="fa fa-th"></i> </a> 
-                                <a style="margin-left:0px;"href="/photos" title="List" class=""><i class="fa fa-th-list"></i></a>
-                            </div>
-                            {% endif %}
                         </span>
 
                     </ul>

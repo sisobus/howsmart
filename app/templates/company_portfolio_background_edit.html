@@ -1,6 +1,109 @@
-<!--
-<div class="custom_jumbo">
-    -->
+{% extends "base.html" %}
+{% block content %}
+<style type="text/css">
+    * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
+
+card_header {
+  display: block;
+  overflow: hidden;
+  position: relative;
+
+  }
+
+.card_container {
+    outline: 0; max-width:33%;
+    position: relative;
+    float: left;
+    margin: 1px 1px 1px 1px;
+
+  background-color: #ffffff;
+
+  }
+
+.card_custom_body {
+    padding-top: 15px;
+    padding-left:25px;
+    padding-right:25px;
+    height: 70px;
+}
+
+.bg {
+  border-bottom: 0px solid #5cc0ff;
+  max-width: 100%;
+  height:200px;
+}
+
+.bio:hover > .card_desc {
+  cursor: pointer;
+  opacity: 1;
+}
+
+.custom_jumbo{
+  width:100%;
+  z-index:1;
+  height:150px;
+  background-color:#576782;
+  position:relative;
+}
+.custom_jumbo_navbar {
+    width: 100%;
+    height: 50px;
+    background-color:#FFFFFF;
+    position: relative;
+}
+
+.custom_jumbo_container{
+  width:100%;
+    height:100%;
+  min-width:320px;
+  margin: 0px auto;
+  padding:20px 0;
+}
+.custom_jumbo_container h1{
+  font-size:40px;
+  color:#fff;
+    margin-top: 100px;
+    vertical-align: middle;
+}
+
+.custom_jumbo_container h2{
+  font-size:15px;
+  color:#ddd;
+  line-height: 23px;
+  vertical-align: middle;
+  text-align: center;
+}
+#leftside_container {
+    position: absolute;
+    width: 240px;
+    padding: 0;
+    margin: 0;
+    margin-top: 140px;
+}
+#rightside_container {
+    position: relative;
+    margin: 0px 0px 0px 240px;
+}
+#custom_jumbo_navbar_wrapper {
+    position: relative;
+    margin: 0px 0px 0px 200px;
+    vertical-align: middle;
+}
+.profile_container {
+    height:168px;
+    width: 168px;
+    z-index: 2;
+    background-color: #000;
+    margin-left: 20px;
+}
+#feed_container {
+    overflow: auto;
+}
+
+</style>
 <link href="{{ url_for('static',filename='css/jquery.Jcrop.css') }}" rel="stylesheet">
 <link href="{{ url_for('static',filename='css/jquery.SimpleCropper.css') }}" rel="stylesheet">
 <link href="{{ url_for('static',filename='css/image-crop.css') }}" rel="stylesheet">
@@ -8,38 +111,18 @@
 <script src="{{ url_for('static',filename='js/jquery.SimpleCropper.js') }}"></script>
 <div class="container nav-margin" style="padding: 0px 0px 0px 0px;height:300px;">
     {% if session['user_id'] == ret.user.id %}
+    <div class="cropme" style="width:1170px;height:300px;">
     <div class="custom_jumbo_container " style="background: url({{ ('/static/'+ret.image_path)|resize('1280x800') }});background-repeat:no-repeat; background-size: cover; background-position: center;">
     {% else %}
     <div class="custom_jumbo_container " style="background: url({{ ('/static/'+ret.image_path)|resize('1280x800') }});background-repeat:no-repeat; background-size: cover; background-position: center;">
     {% endif %}
         <div id="leftside_container" >
-            {% if ret.user_profile_image_path | length != 0 %}
-            {% if session['user_id'] == ret.user.id %}
-            <div class="cropme" style="width:168px; height:168px; margin-left:20px;">
-                <div style="background: url({{ url_for('static',filename=ret.user_profile_image_path) }});
-                    border:1px solid #ffffff;
-                    background-repeat:no-repeat; background-size: cover; background-position: center;z-index:10;height:168px;"></div>
-            </div>
-            {% else %}
-            <div style="border:1px solid #dddddd;background:#ffffff;width:168px;height:168px; margin-left:20px;">
-                <div style="background: url({{ url_for('static',filename=ret.user_profile_image_path) }});
-                    border:1px solid #ffffff;
-                    background-repeat:no-repeat; background-size: cover; background-position: center;z-index:10;height:168px;"></div>
-            </div>
-            {% endif %}
-            <script>
-            $('.cropme').hover(function() {return false;});
-            </script>
-            {% else %}
-            <div class="cropme" style="width:168px; height:168px; margin-left:20px;">
-            </div>
-            {% endif %}
         </div>
         <script>
         {% if session['user_id'] == ret.user.id %}
         $('.cropme').simpleCropper();
         {% endif %}
-        $('.cropme .ok').click(function() {
+        $('.ok').click(function() {
             console.log('ok click');
             var imageData = $('#preview img').attr('src');
              var imageBase64= imageData.replace(/^data:image\/(png|jpeg);base64,/, "");
@@ -48,7 +131,7 @@
              };
              $.ajax({
                 type: 'POST',
-                url: '/image_crop_upload',
+                url: '/background_image_crop_upload',
                 data: data, 
                 success: function (msg) {
                     console.log(msg);
@@ -63,14 +146,6 @@ error: function(error) {
         </script>
         <div id="rightside_container">
             <h1>{{ ret.user.username }}
-                <span>
-                    {% if session['user_id'] == ret.user.id %}
-                    <a href="{{url_for('company_portfolio_background_edit',user_id=session['user_id'])}}">
-                        <button class="btn btn-primary " id="back-button">배경사진 변경</button>
-                    </a>
-                    <a href="{{url_for('change_password',user_id=session['user_id'])}}"><button class="btn btn-primary " >비밀번호 변경</button></a>
-                    {% endif %}
-                </span>
             </h1>
             <h4 style="margin:0;padding:0;font-size:14px;color:#84bd5e;">
                 <span style="display:table-cell;">
@@ -84,6 +159,7 @@ error: function(error) {
                 </span>
             </h4>
         </div>
+    </div>
     </div>
 </div>
 <div class="container" style="margin-bottom:0px;background:#ffffff;border: 1px solid #dddddd;">
@@ -116,41 +192,5 @@ error: function(error) {
         </div>
     </div>
 </div>
-<script>
-$('#nav-toggle-1').hover(function() {
-    $(this).css('border-bottom','2px solid #84bd5e');
-},function() {
-    $(this).css('border-bottom','2px solid #ffffff');
-});
-$('#nav-toggle-2').hover(function() {
-    $(this).css('border-bottom','2px solid #84bd5e');
-},function() {
-    $(this).css('border-bottom','2px solid #ffffff');
-});
-$('#nav-toggle-3').hover(function() {
-    $(this).css('border-bottom','2px solid #84bd5e');
-},function() {
-    $(this).css('border-bottom','2px solid #ffffff');
-});
-$('#nav-toggle-4').hover(function() {
-    $(this).css('border-bottom','2px solid #84bd5e');
-},function() {
-    $(this).css('border-bottom','2px solid #ffffff');
-});
-$('#nav-toggle-5').hover(function() {
-    $(this).css('border-bottom','2px solid #84bd5e');
-},function() {
-    $(this).css('border-bottom','2px solid #ffffff');
-});
-$('#nav-dropdown-toggle-1').hover(function() {
-        $(this).css('border-top','2px solid #84bd5e');
-        }, function() {
-        var $cur = $(this);
-        $cur.css('border-top','2px solid #ffffff'); 
-        $('#dropdown-menu-1').hover(function() {
-            $cur.css('border-top','2px solid #84bd5e');
-            },function() {
-            $cur.css('border-top','2px solid #ffffff'); 
-            });
-        });
-</script>
+
+{% endblock %}

@@ -313,3 +313,14 @@ class FindPasswordForm(Form):
             self.email.errors.append(u'이메일이 존재하지 않습니다.')
             return False
         return True
+
+class ChangePasswordForm(Form):
+    cur_password    = PasswordField('cur_password', [validators.Required(u'비밀번호를 작성해주세요')])
+    next_password    = PasswordField('next_password', [validators.Required(u'비밀번호를 작성해주세요')])
+    next_password_check = PasswordField('next_password_check', [validators.Required('비밀번호를 한번 더 입력해주세요')])
+    def __init__(self, *args, **kargs):
+        Form.__init__(self, *args, **kargs)
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        return True
