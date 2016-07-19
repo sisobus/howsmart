@@ -7,6 +7,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 import utils
 import os
 import time
+import urllib
 from sqlalchemy import *
 
 from config import (
@@ -32,11 +33,12 @@ app.config['RESIZE_ROOT']               = HOWSMART_RESIZE_ROOT
 app.config['RESIZE_CACHE_DIR']          = HOWSMART_RESIZE_CACHE_DIR
 flask_resize.Resize(app)
 
-app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_SERVER"] = "smtp.googlemail.com"
 app.config["MAIL_PORT"] = 465
+app.config["MAIL_USE_TLS"] = False
 app.config["MAIL_USE_SSL"] = True
-app.config["MAIL_USERNAME"] = '2016ds01@gmail.com'
-app.config["MAIL_PASSWORD"] = 'wkfyrnwhghkdlxld'
+app.config["MAIL_USERNAME"] = 'help.hausmart@gmail.com'
+app.config["MAIL_PASSWORD"] = 'tkdrmsld123'
 mail = Mail(app)
 
 oauth = OAuth()
@@ -117,6 +119,28 @@ from forms import (
         )
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
+from flask.ext.mail import Message
+from decorators import async
+import random
+import string
+
+def generate_temp_password():
+    alphabet     = list(string.ascii_uppercase)+list(string.ascii_lowercase)
+    ret = ''
+    for i in xrange(20):
+        ret += alphabet[random.randint(0,len(alphabet)-1)]
+    return ret
+
+@async
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
+
+def send_email(subject, sender, recipients, text_body, html_body):
+    msg = Message(subject, sender=sender, recipients=recipients)
+    msg.body = text_body
+    msg.html = html_body
+    send_async_email(app,msg)
 
 """
 : get information function
@@ -583,6 +607,17 @@ def reset_password():
     """
     : send mail
     """
+
+    user = User.query.filter_by(email=findPasswordForm.email.data.lower()).first()
+    temp_password = generate_temp_password()
+    user.set_password(temp_password)
+    db.session.commit()
+    send_email(u'[hausmart] %s 임시 비밀번호입니다.'%user.email,
+                'help.hausmart@gmail.com',
+                [user.email],
+                '임시 비밀번호 : %s'%temp_password,
+                '임시 비밀번호 : %s'%temp_password)
+#    return render_template('signin_fail.html', signupForm=signupForm, signinForm=signinForm, companySignupForm=companySignupForm,offset=10)
     return redirect(url_for('main'))
 #    return render_template('reset_password.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm,changePasswordForm=changePasswordForm)
 
@@ -643,7 +678,10 @@ def facebook_authorized(resp):
 
     session['facebook_token'] = (resp['access_token'], '')
     data = facebook.get('/me?fields=email,first_name,last_name,name').data
+    user_photo = facebook.get('/me/picture?redirect=false').data
     print data
+    print user_photo
+    print user_photo['data']['url']
     if not 'email' in data:
         user = User.query.filter_by(username=data['name']).first()
         if user:
@@ -662,9 +700,33 @@ def facebook_authorized(resp):
         db.session.add(newuser)
         db.session.commit()
 
-        user_profile = User_profile(newuser.id, 565, datetime.now())
-        db.session.add(user_profile)
-        db.session.commit()
+        is_aleady_saved_user_profile = False
+        if user_photo:
+            if 'data' in user_photo:
+                if 'url' in user_photo['data']:
+                    photo_url = user_photo['data']['url']
+                    directory_url = os.path.join(app.config['UPLOAD_FOLDER'],newuser.email.replace('@','_'))
+                    utils.createDirectory(directory_url)
+
+                    file_extension = photo_url.split('?')[0].split('.')[-1]
+                    if file_extension:
+                        file_path = os.path.join(directory_url,'fb_profile'+file_extension)
+                    else:
+                        file_path = os.path.join(directory_url,'fb_profile.jpg')
+                    urllib.urlretrieve(photo_url,file_path)
+                    image = Image(file_path)
+                    image.user_id = newuser.id
+                    image.created_at = datetime.now()
+                    db.session.add(image)
+                    db.session.commit()
+                    user_profile = User_profile(newuser.id, image.id, datetime.now())
+                    db.session.add(user_profile)
+                    db.session.commit()
+                    is_aleady_saved_user_profile = True
+        if not is_aleady_saved_user_profile:
+            user_profile = User_profile(newuser.id, 565, datetime.now())
+            db.session.add(user_profile)
+            db.session.commit()
         session['username'] = data['name']
         session['email'] = newuser_email
         session['user_id'] = newuser.id
@@ -686,9 +748,35 @@ def facebook_authorized(resp):
         db.session.add(newuser)
         db.session.commit()
 
-        user_profile = User_profile(newuser.id, 565, datetime.now())
-        db.session.add(user_profile)
-        db.session.commit()
+        is_aleady_saved_user_profile = False
+        if user_photo:
+            if 'data' in user_photo:
+                if 'url' in user_photo['data']:
+                    photo_url = user_photo['data']['url']
+                    directory_url = os.path.join(app.config['UPLOAD_FOLDER'],newuser.email.replace('@','_'))
+                    utils.createDirectory(directory_url)
+
+                    file_extension = photo_url.split('?')[0].split('.')[-1]
+                    if file_extension:
+                        file_path = os.path.join(directory_url,'fb_profile'+file_extension)
+                    else:
+                        file_path = os.path.join(directory_url,'fb_profile.jpg')
+                    urllib.urlretrieve(photo_url,file_path)
+                    image = Image(file_path)
+                    image.user_id = newuser.id
+                    image.created_at = datetime.now()
+                    db.session.add(image)
+                    db.session.commit()
+                    user_profile = User_profile(newuser.id, image.id, datetime.now())
+                    db.session.add(user_profile)
+                    db.session.commit()
+                    is_aleady_saved_user_profile = True
+        if not is_aleady_saved_user_profile:
+            user_profile = User_profile(newuser.id, 565, datetime.now())
+            db.session.add(user_profile)
+            db.session.commit()
+
+
         session['username'] = data['name']
         session['email'] = data['email']
         session['user_id'] = newuser.id
@@ -770,7 +858,7 @@ def create_project():
                     feed.user_id = user.id
                     feed.image_id = image.id
                     feed.feed_category_id = 1
-                    feed.status_id = 1
+                    feed.status_id = 8
                     db.session.add(feed)
                     db.session.commit()
             return render_template('create_project.html',signupForm=signupForm,signinForm=signinForm,companySignupForm=companySignupForm, \
@@ -1838,6 +1926,9 @@ def product_detail(product_id):
     """
     with app.app_context():
         comment = CommentForm()
+    previous_url = '/shop'
+    if request.args.get('previous_url'):
+        previous_url = request.args.get('previous_url')
 
     product = Product.query.filter_by(id=product_id).first()
     user = User.query.filter_by(id=product.user_id).first()
@@ -1908,7 +1999,8 @@ def product_detail(product_id):
         'same_category_other_products_count': same_category_other_products_count,
         'shop_category_id': shop_category_id,
         'shop_category_name': shop_category_name,
-        'user_profile_image_path':get_user_profile_image_path(user)
+        'user_profile_image_path':get_user_profile_image_path(user),
+        'previous_url': previous_url
     }
     return render_template('product_detail.html',ret=ret)
 
@@ -3383,15 +3475,20 @@ def privacy_policy():
 : utils
 : search : utils_all
 """
-def send_mail(title,body,html,sender,recipients):
-    msg = Message(title,sender=sender,recipients=recipients)
-    msg.body = body
-    msg.html = html
-    mail.send(msg)
+#def send_mail(title,body,html,sender,recipients):
+#    msg = Message(title,sender=sender,recipients=recipients)
+#    msg.body = body
+#    msg.html = html
+#    mail.send(msg)
 
 @app.route('/test_mail')
 def test_mail():
-    send_mail("test","hi","<b>test</b>","2016ds01@gmail.com",["sisobus@naver.com"])
+    send_email('test',
+            'help.hausmart@gmail.com',
+            ['sisobus1@gmail.com'],
+            'test',
+            'test')
+    print 'mail go'
     return redirect(url_for('main'))
 
 

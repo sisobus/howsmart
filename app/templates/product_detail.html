@@ -220,7 +220,7 @@ body::-webkit-scrollbar { display: none;  }
                     <a  href="/"> <img src="{{ url_for('static',filename='img/logo_2016_04_28.png') }}" style="height:40px;margin-left:5px;margin-top:2px;"> </a>
                 </div>
                 <div id="close-button" class="no-padding" style="margin-left:375px;width:45px;height:100%;background:#666666;vertical-align:middle;text-align:center;">
-                    <a href="javascript:window.history.back()">
+                    <a href="{{ret.previous_url}}">
                     <i class="fa fa-times fa-3x" style="font-size:2.5em;color:white;margin-top:3px;"></i>
                 </a>
                 </div>
@@ -316,9 +316,14 @@ body::-webkit-scrollbar { display: none;  }
                     </p>
                     <div style="overflow-x: scroll;overflow-y: hidden; white-space:nowrap;">
                         {% for image_path in ret.other_image_paths %}
-                        <a href="#" target="_blank">
+                        <a href="#" id="{{image_path.split('/')[-1].split('.')[0]}}"> 
                             <img src="{{ url_for('static',filename=image_path) }}" style="height:70px;width:70px;max-height:70px;max-width:70px;">
                         </a>
+                        <script>
+        $("#{{image_path.split('/')[-1].split('.')[0]}}").click(function() {
+            $('#uploadImagePreview').attr('src','{{url_for('static',filename=image_path)}}');
+        });
+                        </script>
                         {% endfor %}
                     </div>
                 </div>

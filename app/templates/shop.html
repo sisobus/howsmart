@@ -115,6 +115,10 @@ function delParameterToURL(param) {
     }
     return _url;
 }
+var previous_url = '?previous_url='+window.location.href;
+openProduct= function(product_id) {
+    location.href="/product_detail/"+product_id+previous_url;
+}
 function redirect(url) {
     window.location.href=url;
 }
@@ -198,7 +202,7 @@ $('#image-{{product.product.id}}').hover(function() {
     $('#button-container-{{product.product.id}}').fadeOut('fast');
 });
 $('#image-{{product.product.id}}').click(function(e) {
-        location.href="/product_detail/{{product.product.id}}";
+        location.href="/product_detail/{{product.product.id}}?previous_url="+window.location.href;
     });
 $('#save-button-{{product.product.id}}').bind('click',function(e) {
         // Prevents the default action to be triggered. 

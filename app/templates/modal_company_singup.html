@@ -54,50 +54,55 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> &times; </button>
                 <h3 class="modal-title-site text-center" style="font-size:22px;color:#333333;font-weight:bold;"> 기업회원 가입 </h3>
             </div>
-            <div class="modal-body" style="height:400px;">
+            <div class="modal-body" style="height:530px;">
                 <!-- User form start-->
                 <form action="{{ url_for('company_signup') }}" method=post enctype="multipart/form-data">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     {{ companySignupForm.hidden_tag() }}
                 <div class="form-group reg-username" style="margin-bottom:0px;">
+                    <h5 style="padding-bottom:5px;">회사 이름</h5>
                     <div>
                         {% for message in companySignupForm.username.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.username(placeholder="회사 이름") }}
+                        {{ companySignupForm.username(placeholder="회사 이름을 입력해주세요") }}
                     </div>
                 </div>
                 <div class="form-group reg-email"style="margin-bottom:0px;">
+                    <h5 style="padding-bottom:5px;">이메일</h5>
                     <div>
                         {% for message in companySignupForm.email.errors %}
                             <div class="flash">{{  message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.email(placeholder="이메일") }}
+                        {{ companySignupForm.email(placeholder="이메일 주소를 입력해주세요") }}
                     </div>
                 </div>
                 <div class="form-group reg-password" style="margin-bottom:0px;">
+                    <h5 style="padding-bottom:5px;">비밀번호</h5>
                     <div>
                         {% for message in companySignupForm.password.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.password(placeholder="비밀번호") }}
+                        {{ companySignupForm.password(placeholder="비밀번호를 입력해주세요") }}
                     </div>
                 </div>
                 <div class="form-group reg-password" style="margin-bottom:0px;">
+                    <h5 style="padding-bottom:5px;">비밀번호 확인</h5>
                     <div>
                         {% for message in companySignupForm.password_check.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.password_check(placeholder="비밀번호 확인") }}
+                        {{ companySignupForm.password_check(placeholder="비밀번호를 한번 더 입력해주세요") }}
                     </div>
                 </div>
 
                 <div class="form-group " style="margin-bottom:5px;">
+                    <h5 style="padding-bottom:5px;">회사 소개</h5>
                     <div>
                         {% for message in companySignupForm.introduction.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.introduction(placeholder="회사 소개") }}
+                        {{ companySignupForm.introduction(placeholder="회사를 소개해주세요") }}
                     </div>
                 </div>
                 <div>
@@ -111,6 +116,7 @@
             </div>
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                 <div class="modal-item-region" style="display:table-cell;padding-bottom:10px;">
+                    <h5 style="padding-bottom:5px;">회사 주소</h5>
                         <select id="company_si" name="company_si">
                             <option>서울시</option>
                         </select>
@@ -122,30 +128,34 @@
                         </select>
                 </div>
                 <div class="form-group" style="margin-bottom:0px;">
+                    <h5 style="padding-bottom:5px;">나머지 주소</h5>
                     <div>
                         {% for message in companySignupForm.address.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.address(placeholder="나머지 주소 ") }}
+                        {{ companySignupForm.address(placeholder="나머지 주소를 입력해주세요 ") }}
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom:0px;">
+                    <h5 style="padding-bottom:5px;">전화번호(XX-XXXX-XXXX 형식)</h5>
                     <div>
                         {% for meesage in companySignupForm.tel.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.tel(placeholder="전화 번호(XX-XXXX-XXXX 형식)") }}
+                        {{ companySignupForm.tel(placeholder="전화 번호를 형식에 맞추어 입력해주세요") }}
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom:0px;">
+                    <h5 style="padding-bottom:5px;">회사 웹사이트</h5>
                     <div>
                         {% for message in companySignupForm.website.errors %}
                             <div class="flash">{{ message }}</div>
                         {% endfor %}
-                        {{ companySignupForm.website(placeholder="회사 웹사이트") }}
+                        {{ companySignupForm.website(placeholder="회사 웹사이트 주소를 입력해주세요") }}
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom:0px;height:52px;">
+                    <h5 style="padding-bottom:5px;">회사 카테고리</h5>
                     <div>
                         {% for message in companySignupForm.pros_category.errors %}
                             <div class="flash">{{ message }}</div>
@@ -157,7 +167,7 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="form-group" style="margin-top:30px;">
+                <div class="form-group" style="margin-top:60px;">
                     전문가 찾기에 보일 회사 대표 이미지를 올려주세요(필수)
                     <div>
                     {% for message in companySignupForm.filename.errors %}
