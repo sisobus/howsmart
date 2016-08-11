@@ -46,6 +46,7 @@
     </script>
 <hr/>
     <div id="post_body" class="summernote" style="overflow-x: hidden;">
+        {{post.post.post_body|safe}}
     </div>
 </div>
 <style>
@@ -135,8 +136,6 @@ form input#body:focus {
         {% endif %}
 <script>
 $(document).ready(function() {
-    var html = "{{post.post.post_body}}";
-    $('#post_body').html($('<div/>').html(html).text());
     $('a#comment-button').on('click',function() {
         $.smoothScroll({
             scrollTarget: '#comment-container'

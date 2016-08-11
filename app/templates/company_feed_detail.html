@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="{{  url_for('static',filename='css/twitter_card.css') }}" />
     <link rel="stylesheet" href="{{  url_for('static',filename='css/style-add-20151122.css') }}" />
     <link rel="stylesheet" href="{{  url_for('static',filename='css/jquery-ui.min.css') }}" />
+    <link rel="stylesheet" href="{{  url_for('static',filename='css/share-button.min.css') }}" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
     <script src="{{ url_for('static',filename='js/jquery-ui.min.js') }}"></script>
     <script src="{{ url_for('static',filename='js/jquery.smooth-scroll.js') }}"></script>
@@ -119,8 +120,20 @@ body::-webkit-scrollbar { display: none;  }
         input#body:focus {
             outline: 0;
         }
+        share-button {
+            background:rgba(200,200,200,0.5);
+            color: white;
+            border: medium none;
+            font-size:15px;
+            border-radius: 4px;
+            font-weight: normal;
+            line-height: 1.4;
+            padding: 6px 12px;
+            background: #383431;color:white;border: 1px solid #ffffff;
+        }
     </style>
     <script src="{{  url_for('static',filename='js/pace.min.js') }} "></script>
+    <script src="{{  url_for('static',filename='js/share-button.min.js') }}"></script>
     <script>
         function createTag() {
             var image_width = $('#uploadImagePreview').width();
@@ -222,6 +235,35 @@ body::-webkit-scrollbar { display: none;  }
                     }
                 {% endfor %}
                 });
+
+new ShareButton('#share-button-id',{
+    url: 'http://www.hausmart.co.kr/company_feed_detail/{{ret.feed.id}}',
+    ui: {
+        button_font: false,
+        buttonText: '<i class="fa fa-share-alt"></i> 공유',
+        icon_font: 'false'
+    },
+    networks: {
+        facebook: {
+            appId: "231482033876622"
+        },
+        pinterest: {
+            enabled: false
+        },
+        reddit: {
+            enabled: false
+        },
+        linkedin: {
+            enabled: false
+        },
+        whatsapp:{
+            enabled: false
+        },
+        email: {
+            enabled: false
+        }
+    }
+});
             $('#save-button-first').bind('click',function(e) {
                 // Prevents the default action to be triggered. 
                 e.preventDefault();
@@ -275,7 +317,10 @@ body::-webkit-scrollbar { display: none;  }
                     <button class="btn " id="save-button-first" style="background: #84bd5e;color:white;"><i class="fa fa-plus"></i> 저장</button>
                 </a>
                 <a href="#">
+                    <!--
                     <button class="btn " id="share-button" style="background: #383431;color:white;"><i class="fa fa-share-alt"></i> 공유</button>
+                    -->
+                     <share-button id="share-button-id"style="height:40px;"></share-button>
                 </a>
                 <a href="#">
                     <button class="btn " id="tag-button" style="background: #383431;color:#84bd5e;"><i class="fa fa-tag fa-rotate-270" style="font-size:1.3em;"></i> </button>

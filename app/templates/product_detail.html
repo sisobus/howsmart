@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="{{  url_for('static',filename='css/twitter_card.css') }}" />
     <link rel="stylesheet" href="{{  url_for('static',filename='css/style-add-20151122.css') }}" />
     <link rel="stylesheet" href="{{  url_for('static',filename='css/jquery-ui.min.css') }}" />
+      <link rel="stylesheet" href="{{  url_for('static',filename='css/share-button.min.css') }}" />
     <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
     <!--
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
@@ -28,6 +29,7 @@
     <script src="{{  url_for('static',filename='js/dropzone.js') }}"></script>
     <script src="{{  url_for('static',filename='js/parse-1.3.5.min.js') }}"></script>
     <script type="text/javascript" src="https://service.iamport.kr/js/iamport.payment-1.1.1.js"></script>
+        <script src="{{  url_for('static',filename='js/share-button.min.js') }}"></script>
     <link rel="stylesheet" href="{{  url_for('static',filename='css/dropzone.css') }}" />
     <script>
         paceOptions = {
@@ -109,6 +111,17 @@ body::-webkit-scrollbar { display: none;  }
             background: blue;
             overflow-y: hidden;
         }
+         share-button {
+            background:rgba(200,200,200,0.5);
+            color: white;
+            border: medium none;
+            font-size:15px;
+            border-radius: 4px;
+            font-weight: normal;
+            line-height: 1.4;
+            padding: 6px 12px;
+            background: #383431;color:white;border: 1px solid #ffffff;
+        }
 </style>
     <script src="{{  url_for('static',filename='js/pace.min.js') }} "></script>
     <script>
@@ -149,6 +162,34 @@ body::-webkit-scrollbar { display: none;  }
             image_index += 1;
             console.log(next_image_filename);
             });
+new ShareButton('#share-button-id',{
+    url: 'http://www.hausmart.co.kr/product_detail/{{ret.product.id}}',
+    ui: {
+        button_font: false,
+        buttonText: '<i class="fa fa-share-alt"></i> 공유',
+        icon_font: 'false'
+    },
+    networks: {
+        facebook: {
+            appId: "231482033876622"
+        },
+        pinterest: {
+            enabled: false
+        },
+        reddit: {
+            enabled: false
+        },
+        linkedin: {
+            enabled: false
+        },
+        whatsapp:{
+            enabled: false
+        },
+        email: {
+            enabled: false
+        }
+    }
+});
         $('#save-button-first').bind('click',function(e) {
         // Prevents the default action to be triggered. 
             e.preventDefault();
@@ -198,7 +239,10 @@ body::-webkit-scrollbar { display: none;  }
                     <button class="btn " id="save-button-first" style="background: #84bd5e;color:white;"><i class="fa fa-plus"></i> 저장</button>
                 </a>
                 <a href="#">
+                    <share-button id="share-button-id"style="height:40px;"></share-button>
+<!--
                     <button class="btn " id="share-button" style="background: #383431;color:white;"><i class="fa fa-share-alt"></i> 공유</button>
+-->
                 </a>
             </div>
             <a href="#">
